@@ -19,5 +19,6 @@ module "managed_config_rules" {
     "alb-internal-scheme-check",
     "alb-listener-tagged",
     "alb-tagged",
-    "alb-waf-enabled",
+    "alb-waf-enabled"
   ]
+}
