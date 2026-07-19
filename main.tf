@@ -12,8 +12,6 @@ module "managed_config_rules" {
     "acm-certificate-rsa-check",
     "acm-certificate-transparent-logging-enabled",
     "acm-pca-root-ca-disabled",
-    "active-mq-supported-version",
-    "alb-desync-mode-check",
     "alb-http-drop-invalid-header-enabled",
     "alb-http-to-https-redirection-check",
     "alb-internal-scheme-check",
