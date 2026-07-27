@@ -1,0 +1,4 @@
+[console_scripts]
+hcl2tojson = cli.hcl_to_json:main
+hq = cli.hq:main
+jsontohcl2 = cli.json_to_hcl:main

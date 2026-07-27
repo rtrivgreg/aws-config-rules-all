@@ -3,9 +3,15 @@ import argparse
 import re
 from pathlib import Path
 
+import hcl2
+
+
+DEFAULT_RULES_LOCALS = "vendor/niaid/managed_rules_locals.tf"
+DEFAULT_RULES_VARIABLES = "vendor/niaid/managed_rules_variables.tf"
+
 
 def existing_file(path_str: str) -> Path:
-    path = Path(path_str)
+    path = Path(path_str).expanduser()
     if not path.is_file():
         raise argparse.ArgumentTypeError(f"File does not exist: {path}")
     return path
@@ -13,102 +19,141 @@ def existing_file(path_str: str) -> Path:
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Generate an AWS Config conformance pack YAML from Terraform rule and parameter definitions."
+        description="Generate an AWS Config conformance pack YAML from Terraform managed rules and variable definitions."
     )
+
     parser.add_argument(
-        "--rules",
-        required=True,
+        "--managed-rules-locals",
         type=existing_file,
-        help="Path to file containing locals.managed_rules",
+        default=Path(DEFAULT_RULES_LOCALS),
+        help=f"Path to managed_rules_locals.tf (default: {DEFAULT_RULES_LOCALS})",
     )
+
     parser.add_argument(
-        "--params",
-        required=True,
+        "--managed-rules-variables",
         type=existing_file,
-        help="Path to file containing variable *_parameters blocks",
+        default=Path(DEFAULT_RULES_VARIABLES),
+        help=f"Path to managed_rules_variables.tf (default: {DEFAULT_RULES_VARIABLES})",
     )
+
     parser.add_argument(
         "--format",
         required=True,
         type=existing_file,
-        help="Path to file containing the exact conformance pack YAML format/header to follow",
+        help="Path to the conformance pack YAML format/header file",
     )
+
     parser.add_argument(
         "--output",
         required=True,
+        type=Path,
         help="Path to write generated YAML",
     )
+
     parser.add_argument(
         "--description",
-        default="Y62 Truth Manifest\n",
+        default="Y62 Truth Manifest",
         help="Top-level template description",
     )
+
+    parser.add_argument(
+        "--rule-limit",
+        type=int,
+        default=0,
+        help="Optional limit for number of rules to render, useful for testing",
+    )
+
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Print debug information about parsed HCL and variable extraction",
+    )
+
     return parser.parse_args()
 
 
-def extract_managed_rules_block(text: str) -> str:
-    match = re.search(
-        r"locals\s*{\s*managed_rules\s*=\s*{(.*)}\s*}\s*$",
-        text,
-        re.S,
-    )
-    if not match:
-        raise ValueError("Could not find locals { managed_rules = { ... } } block")
-    return match.group(1)
+def clean_hcl_string(value):
+    if not isinstance(value, str):
+        return value
+
+    value = value.strip()
+
+    if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
+        return value[1:-1]
+
+    if len(value) >= 2 and value[0] == "'" and value[-1] == "'":
+        return value[1:-1]
+
+    return value
 
 
-def parse_rules(rules_text: str):
-    block = extract_managed_rules_block(rules_text)
+def load_hcl_file(path: Path) -> dict:
+    with path.open("r", encoding="utf-8") as f:
+        return hcl2.load(f)
 
-    rule_pattern = re.compile(r"(?ms)^\s*([a-z0-9-]+)\s*=\s*{(.*?)^\s*}")
-    identifier_pattern = re.compile(r'identifier\s*=\s*"([A-Z0-9_]+)"')
-    input_pattern = re.compile(r"input_parameters\s*=\s*var\.([a-z0-9_]+)")
-    scope_pattern = re.compile(r"resource_types_scope\s*=\s*\[(.*?)\]", re.S)
-    desc_pattern = re.compile(r'description\s*=\s*"([^"]*)"')
-    severity_pattern = re.compile(r'severity\s*=\s*"([^"]+)"')
 
-    rules = []
-    for name, body in rule_pattern.findall(block):
-        ident = identifier_pattern.search(body)
-        if not ident:
-            continue
+def load_managed_rules(locals_path: Path) -> dict:
+    data = load_hcl_file(locals_path)
+    return data["locals"][0]["managed_rules"]
 
-        input_m = input_pattern.search(body)
-        scope_m = scope_pattern.search(body)
-        desc_m = desc_pattern.search(body)
-        sev_m = severity_pattern.search(body)
 
-        scopes = re.findall(r'"([^"]+)"', scope_m.group(1)) if scope_m else []
+def load_parameter_variables_text(variables_path: Path) -> str:
+    return variables_path.read_text(encoding="utf-8")
 
-        rules.append(
+
+def normalize_managed_rules(managed_rules: dict) -> list[dict]:
+    normalized = []
+
+    for rule_name, rule_def in managed_rules.items():
+        input_ref = rule_def.get("input_parameters")
+        input_var = None
+
+        if isinstance(input_ref, str):
+            input_ref = clean_hcl_string(input_ref)
+            if input_ref.startswith("${var.") and input_ref.endswith("}"):
+                input_var = input_ref[6:-1]
+            elif input_ref.startswith("var."):
+                input_var = input_ref[4:]
+
+        normalized.append(
             {
-                "name": name,
-                "identifier": ident.group(1),
-                "input_var": input_m.group(1) if input_m else None,
-                "description": desc_m.group(1) if desc_m else "",
-                "severity": sev_m.group(1) if sev_m else None,
-                "scopes": scopes,
+                "name": clean_hcl_string(rule_name),
+                "identifier": clean_hcl_string(rule_def.get("identifier")),
+                "description": clean_hcl_string(rule_def.get("description", "")),
+                "severity": clean_hcl_string(rule_def.get("severity")),
+                "scopes": [clean_hcl_string(x) for x in rule_def.get("resource_types_scope", [])],
+                "input_var": input_var,
             }
         )
 
-    return rules
+    return normalized
 
 
-def parse_param_variables(params_text: str):
+def normalize_parameter_variables_from_text(params_text: str) -> dict:
     var_pattern = re.compile(
-        r'variable\s+"([a-zA-Z0-9_]+)"\s*{(.*?)^}',
+        r'variable\s+"([A-Za-z0-9_]+)"\s*{(.*?)(?=^variable\s+"|\Z)',
         re.S | re.M,
     )
-    attr_pattern = re.compile(
-        r"([A-Za-z0-9_]+)\s*=\s*optional\((string|number|bool|boolean)(?:,\s*([^)]+))?\)"
+
+    optional_attr_pattern = re.compile(
+        r'([A-Za-z0-9_]+)\s*=\s*optional\((string|number|bool|boolean)(?:,\s*([^)]+))?\)'
     )
 
-    results = {}
+    default_block_pattern = re.compile(
+        r'default\s*=\s*{(.*?)}',
+        re.S,
+    )
+
+    normalized = {}
+
     for var_name, body in var_pattern.findall(params_text):
+        if not var_name.endswith("_parameters"):
+            continue
+
         attrs = []
-        type_block = re.search(r"type\s*=\s*object\(\s*{(.*?)}\s*\)", body, re.S)
+        type_block = re.search(r'type\s*=\s*object\(\s*{(.*?)}\s*\)', body, re.S)
         if type_block:
-            for key, typ, default in attr_pattern.findall(type_block.group(1)):
+            for key, typ, default in optional_attr_pattern.findall(type_block.group(1)):
                 attrs.append(
                     {
                         "name": key,
@@ -116,26 +161,118 @@ def parse_param_variables(params_text: str):
                         "default": default.strip() if default else None,
                     }
                 )
-        results[var_name] = attrs
-    return results
+
+        defaults = {}
+        default_block = default_block_pattern.search(body)
+        if default_block:
+            for line in default_block.group(1).splitlines():
+                line = line.strip().rstrip(",")
+                if not line or "=" not in line:
+                    continue
+                key, value = [x.strip() for x in line.split("=", 1)]
+                defaults[key] = clean_hcl_string(value)
+
+        normalized[var_name] = {
+            "attrs": attrs,
+            "default": defaults,
+        }
+
+    return normalized
 
 
 def logical_name(rule_name: str) -> str:
-    return "".join(part.capitalize() for part in re.split(r"[^a-zA-Z0-9]", rule_name) if part) + "Rule"
+    return "".join(
+        part.capitalize() for part in re.split(r"[^a-zA-Z0-9]", rule_name) if part
+    ) + "Rule"
 
 
-def yaml_scalar(value: str, value_type: str):
-    if value is None or value == "null":
+def yaml_quote(value: str) -> str:
+    escaped = value.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"'
+
+
+def yaml_scalar(value):
+    if value is None:
         return None
-    raw = value.strip().strip('"')
-    if value_type in ("number",):
-        try:
-            return str(int(raw)) if "." not in raw else str(float(raw))
-        except ValueError:
-            return raw
-    if value_type in ("bool", "boolean"):
-        return raw.lower()
-    return raw
+
+    if isinstance(value, bool):
+        return "true" if value else "false"
+
+    if isinstance(value, (int, float)):
+        return str(value)
+
+    if isinstance(value, str):
+        raw = clean_hcl_string(value).strip()
+        lowered = raw.lower()
+
+        if lowered == "null":
+            return None
+        if lowered in ("true", "false"):
+            return lowered
+        if re.fullmatch(r"-?\d+", raw):
+            return yaml_quote(raw)
+        if re.fullmatch(r"-?\d+\.\d+", raw):
+            return yaml_quote(raw)
+
+        return yaml_quote(raw)
+
+    return yaml_quote(str(value))
+
+
+def placeholder_for_key(key: str) -> str:
+    lowered = key.lower()
+
+    if "arn" in lowered:
+        return '"optional_arn"'
+    if "account" in lowered and "id" in lowered:
+        return '"optional_account_id"'
+    if lowered.endswith("ids"):
+        return '"optional_ids_csv"'
+    if lowered.endswith("arns"):
+        return '"optional_arns_csv"'
+    if "tag" in lowered:
+        return '"optional_tag_list"'
+    if "days" in lowered or "age" in lowered or "period" in lowered or "threshold" in lowered:
+        return "0"
+    if "enabled" in lowered or lowered.startswith("is") or lowered.startswith("allow"):
+        return "false"
+
+    return '"optional_string"'
+
+
+def render_input_parameters(rule: dict, param_defs: dict) -> list[str]:
+    input_var = rule.get("input_var")
+    if not input_var:
+        return []
+
+    var_def = param_defs.get(input_var)
+    if not var_def:
+        return ["      InputParameters: {}"]
+
+    defaults = var_def.get("default", {})
+    attrs = var_def.get("attrs", [])
+
+    if defaults:
+        lines = ["      InputParameters:"]
+        for key, value in defaults.items():
+            rendered = yaml_scalar(value)
+            if rendered is None:
+                rendered = placeholder_for_key(key)
+            lines.append(f"        {key}: {rendered}")
+        return lines
+
+    if attrs:
+        lines = ["      InputParameters:"]
+        for attr in attrs:
+            default = attr.get("default")
+            if default is not None and clean_hcl_string(default).lower() != "null":
+                rendered = yaml_scalar(default)
+            else:
+                rendered = placeholder_for_key(attr["name"])
+            lines.append(f"        {attr['name']}: {rendered}")
+        return lines
+
+    return ["      InputParameters: {}"]
 
 
 def render_rule(rule: dict, param_defs: dict) -> list[str]:
@@ -144,7 +281,7 @@ def render_rule(rule: dict, param_defs: dict) -> list[str]:
     lines.append("    Type: AWS::Config::ConfigRule")
     lines.append("    Properties:")
     lines.append(f"      ConfigRuleName: {rule['name']}")
-    lines.append(f"      Description: {rule['description']}")
+    lines.append(f"      Description: {yaml_quote(rule['description'])}")
 
     if rule["scopes"]:
         lines.append("      Scope:")
@@ -156,19 +293,7 @@ def render_rule(rule: dict, param_defs: dict) -> list[str]:
     lines.append("        Owner: AWS")
     lines.append(f"        SourceIdentifier: {rule['identifier']}")
 
-    if rule["input_var"]:
-        attrs = param_defs.get(rule["input_var"], [])
-        lines.append("      InputParameters:")
-        if attrs:
-            for attr in attrs:
-                val = yaml_scalar(attr["default"], attr["type"])
-                if val is None:
-                    lines.append(f"        {attr['name']}: optional_{attr['type']}")
-                else:
-                    lines.append(f"        {attr['name']}: {val}")
-        else:
-            lines.append("        {}")
-
+    lines.extend(render_input_parameters(rule, param_defs))
     return lines
 
 
@@ -176,10 +301,10 @@ def build_template(format_text: str, description: str, rules: list[dict], param_
     output = []
 
     fmt_version = re.search(r"AWSTemplateFormatVersion:\s*'?([^'\n]+)'?", format_text)
-    desc = re.search(r'Description:\s*"?(.*?)"?\s*$', format_text, re.M)
+    template_version = fmt_version.group(1) if fmt_version else "2010-09-09"
 
-    output.append(f"AWSTemplateFormatVersion: '{fmt_version.group(1) if fmt_version else '2010-09-09'}'")
-    output.append(f'Description: "{description}"')
+    output.append(f"AWSTemplateFormatVersion: '{template_version}'")
+    output.append(f"Description: {yaml_quote(description)}")
     output.append("Resources:")
 
     for rule in rules:
@@ -192,15 +317,34 @@ def build_template(format_text: str, description: str, rules: list[dict], param_
 def main():
     args = parse_args()
 
-    rules_text = args.rules.read_text()
-    params_text = args.params.read_text()
-    format_text = args.format.read_text()
+    managed_rules_raw = load_managed_rules(args.managed_rules_locals)
+    params_text = load_parameter_variables_text(args.managed_rules_variables)
+    format_text = args.format.read_text(encoding="utf-8")
 
-    rules = parse_rules(rules_text)
-    param_defs = parse_param_variables(params_text)
-    rendered = build_template(format_text, args.description, rules, param_defs)
+    rules = normalize_managed_rules(managed_rules_raw)
+    param_defs = normalize_parameter_variables_from_text(params_text)
 
-    Path(args.output).write_text(rendered)
+    if args.rule_limit > 0:
+        rules = rules[: args.rule_limit]
+
+    if args.debug:
+        print(f"Loaded {len(managed_rules_raw)} managed rules from {args.managed_rules_locals}")
+        print(f"Loaded {len(param_defs)} parameter variables from {args.managed_rules_variables}")
+        if rules:
+            print("Sample normalized rule:", rules[0])
+        print("access_keys_rotated_parameters =", repr(param_defs.get("access_keys_rotated_parameters")))
+        print("account_part_of_organizations_parameters =", repr(param_defs.get("account_part_of_organizations_parameters")))
+
+    rendered = build_template(
+        format_text=format_text,
+        description=args.description,
+        rules=rules,
+        param_defs=param_defs,
+    )
+
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(rendered, encoding="utf-8")
+
     print(f"Wrote {args.output} with {len(rules)} rules.")
 
 

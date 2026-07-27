@@ -1,0 +1,6013 @@
+locals {
+  managed_rules = {
+    access-keys-rotated = {
+      description          = "Checks if active IAM access keys are rotated (changed) within the number of days specified in maxAccessKeyAge. The rule is NON_COMPLIANT if access keys are not rotated within the specified time period. The default value is 90 days."
+      identifier           = "ACCESS_KEYS_ROTATED"
+      input_parameters     = var.access_keys_rotated_parameters
+      resource_types_scope = ["AWS::IAM::User"]
+      severity             = "Medium"
+    }
+
+    account-part-of-organizations = {
+      description      = "Checks if an AWS account is part of AWS Organizations. The rule is NON_COMPLIANT if an AWS account is not part of AWS Organizations or AWS Organizations master account ID does not match rule parameter MasterAccountId."
+      identifier       = "ACCOUNT_PART_OF_ORGANIZATIONS"
+      input_parameters = var.account_part_of_organizations_parameters
+      severity         = "High"
+    }
+
+    acmpca-certificate-authority-tagged = {
+      description          = "Checks if AWS Private CA certificate authorities have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ACMPCA_CERTIFICATE_AUTHORITY_TAGGED"
+      input_parameters     = var.acmpca_certificate_authority_tagged_parameters
+      resource_types_scope = ["AWS::ACMPCA::CertificateAuthority"]
+      severity             = "Low"
+    }
+
+    acm-certificate-expiration-check = {
+      description          = "Checks if AWS Certificate Manager Certificates in your account are marked for expiration within the specified number of days. Certificates provided by ACM are automatically renewed. ACM does not automatically renew certificates that you import. The rule..."
+      identifier           = "ACM_CERTIFICATE_EXPIRATION_CHECK"
+      input_parameters     = var.acm_certificate_expiration_check_parameters
+      resource_types_scope = ["AWS::ACM::Certificate"]
+      severity             = "Medium"
+    }
+
+    acm-certificate-rsa-check = {
+      description          = "Checks if RSA certificates managed by AWS Certificate Manager (ACM) have a key length of at least 2048 bits.The rule is NON_COMPLIANT if the minimum key length is less than 2048 bits."
+      identifier           = "ACM_CERTIFICATE_RSA_CHECK"
+      resource_types_scope = ["AWS::ACM::Certificate"]
+      severity             = "High"
+    }
+
+    acm-certificate-transparent-logging-enabled = {
+      description          = "Checks if AWS Certificate Manager certificates have certificate transparency logging enabled. The rule is NON_COMPLIANT if CertificateTransparencyLoggingPreference is explicitly set DISABLED."
+      identifier           = "ACM_CERTIFICATE_TRANSPARENT_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::ACM::Certificate"]
+      severity             = "Medium"
+    }
+
+    acm-pca-root-ca-disabled = {
+      description          = "Checks if AWS Private Certificate Authority (AWS Private CA) has a root CA that is disabled. The rule is NON_COMPLIANT for root CAs with status that is not DISABLED."
+      identifier           = "ACM_PCA_ROOT_CA_DISABLED"
+      input_parameters     = var.acm_pca_root_ca_disabled_parameters
+      resource_types_scope = ["AWS::ACMPCA::CertificateAuthority"]
+      severity             = "Low"
+    }
+
+    active-mq-supported-version = {
+      description          = "Checks if an Amazon MQ ActiveMQ broker is running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the ActiveMQ broker is not running on the minimum supported engine version that you specify."
+      identifier           = "ACTIVE_MQ_SUPPORTED_VERSION"
+      input_parameters     = var.active_mq_supported_version_parameters
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    alb-desync-mode-check = {
+      description          = "Checks if an Application Load Balancer (ALB) is configured with a user defined desync mitigation mode. The rule is NON_COMPLIANT if ALB desync mitigation mode does not match with the user defined desync mitigation mode."
+      identifier           = "ALB_DESYNC_MODE_CHECK"
+      input_parameters     = var.alb_desync_mode_check_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    alb-http-drop-invalid-header-enabled = {
+      description          = "Checks if rule evaluates AWS Application Load Balancers (ALB) to ensure they are configured to drop http headers. The rule is NON_COMPLIANT if the value of routing.http.drop_invalid_header_fields.enabled is set to false"
+      identifier           = "ALB_HTTP_DROP_INVALID_HEADER_ENABLED"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    alb-http-to-https-redirection-check = {
+      description          = "Checks if HTTP to HTTPS redirection is configured on all HTTP listeners of Application Load Balancers. The rule is NON_COMPLIANT if one or more HTTP listeners of Application Load Balancer do not have HTTP to HTTPS redirection configured. The rule is..."
+      identifier           = "ALB_HTTP_TO_HTTPS_REDIRECTION_CHECK"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    alb-internal-scheme-check = {
+      description          = "Checks if an Application Load Balancer scheme is internal. The rule is NON_COMPLIANT if configuration.scheme is not set to internal."
+      identifier           = "ALB_INTERNAL_SCHEME_CHECK"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    alb-listener-tagged = {
+      description          = "Checks if Application Load Balancer listeners have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ALB_LISTENER_TAGGED"
+      input_parameters     = var.alb_listener_tagged_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::Listener"]
+      severity             = "Medium"
+    }
+
+    alb-tagged = {
+      description          = "Checks if Application Load Balancers have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ALB_TAGGED"
+      input_parameters     = var.alb_tagged_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    alb-waf-enabled = {
+      description          = "Checks if Web Application Firewall (WAF) is enabled on Application Load Balancers (ALBs). This rule is NON_COMPLIANT if key: waf.enabled is set to false."
+      identifier           = "ALB_WAF_ENABLED"
+      input_parameters     = var.alb_waf_enabled_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    amplify-app-branch-auto-deletion-enabled = {
+      description          = "Checks if AWS Amplify apps automatically disconnect a branch in Amplify Hosting when you delete a branch from your Git repository. The rule is NON_COMPLIANT if configuration.EnableBranchAutoDeletion is false."
+      identifier           = "AMPLIFY_APP_BRANCH_AUTO_DELETION_ENABLED"
+      resource_types_scope = ["AWS::Amplify::App"]
+      severity             = "Medium"
+    }
+
+    amplify-app-build-spec-configured = {
+      description          = "Checks if AWS Amplify apps have a build specification configured. The rule is NON_COMPLIANT if configuration.BuildSpec does not exist."
+      identifier           = "AMPLIFY_APP_BUILD_SPEC_CONFIGURED"
+      resource_types_scope = ["AWS::Amplify::App"]
+      severity             = "Medium"
+    }
+
+    amplify-app-description = {
+      description          = "Checks if AWS Amplify apps have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "AMPLIFY_APP_DESCRIPTION"
+      resource_types_scope = ["AWS::Amplify::App"]
+      severity             = "Medium"
+    }
+
+    amplify-app-no-environment-variables = {
+      description          = "Checks that AWS Amplify apps do not contain environment variables. The rule is NON_COMPLIANT if configuration.EnvironmentVariables is not an empty list."
+      identifier           = "AMPLIFY_APP_NO_ENVIRONMENT_VARIABLES"
+      resource_types_scope = ["AWS::Amplify::App"]
+      severity             = "Medium"
+    }
+
+    amplify-app-platform-check = {
+      description          = "Checks if AWS Amplify apps are configured with the specified platform. The rule is NON_COMPLIANT if configuration.Platform is a value not specified in the required rule parameter."
+      identifier           = "AMPLIFY_APP_PLATFORM_CHECK"
+      input_parameters     = var.amplify_app_platform_check_parameters
+      resource_types_scope = ["AWS::Amplify::App"]
+      severity             = "Medium"
+    }
+
+    amplify-app-tagged = {
+      description          = "Checks if AWS Amplify apps have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "AMPLIFY_APP_TAGGED"
+      input_parameters     = var.amplify_app_tagged_parameters
+      resource_types_scope = ["AWS::Amplify::App"]
+      severity             = "Low"
+    }
+
+    amplify-branch-auto-build-enabled = {
+      description          = "Checks if AWS Amplify branches have auto build enabled. The rule is NON_COMPLIANT if configuration.EnableAutoBuild is false."
+      identifier           = "AMPLIFY_BRANCH_AUTO_BUILD_ENABLED"
+      resource_types_scope = ["AWS::Amplify::Branch"]
+      severity             = "Medium"
+    }
+
+    amplify-branch-build-spec-configured = {
+      description          = "Checks if AWS Amplify branches have a build specification configured. The rule is NON_COMPLIANT if configuration.BuildSpec does not exist."
+      identifier           = "AMPLIFY_BRANCH_BUILD_SPEC_CONFIGURED"
+      resource_types_scope = ["AWS::Amplify::Branch"]
+      severity             = "Medium"
+    }
+
+    amplify-branch-description = {
+      description          = "Checks if AWS Amplify branches have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "AMPLIFY_BRANCH_DESCRIPTION"
+      resource_types_scope = ["AWS::Amplify::Branch"]
+      severity             = "Medium"
+    }
+
+    amplify-branch-framework-configured = {
+      description          = "Checks if AWS Amplify branches have a framework configured. The rule is NON_COMPLIANT if configuration.Framework does not exist."
+      identifier           = "AMPLIFY_BRANCH_FRAMEWORK_CONFIGURED"
+      input_parameters     = var.amplify_branch_framework_configured_parameters
+      resource_types_scope = ["AWS::Amplify::Branch"]
+      severity             = "Medium"
+    }
+
+    amplify-branch-performance-mode-enabled = {
+      description          = "Checks if AWS Amplify branches have performance mode enabled. The rule is NON_COMPLIANT if configuration.EnablePerformanceMode is false."
+      identifier           = "AMPLIFY_BRANCH_PERFORMANCE_MODE_ENABLED"
+      resource_types_scope = ["AWS::Amplify::Branch"]
+      severity             = "Medium"
+    }
+
+    amplify-branch-pull-request-preview-enabled = {
+      description          = "Checks if AWS Amplify branches have pull request preview enabled. The rule is NON_COMPLIANT if configuration.EnablePullRequestPreview is false."
+      identifier           = "AMPLIFY_BRANCH_PULL_REQUEST_PREVIEW_ENABLED"
+      resource_types_scope = ["AWS::Amplify::Branch"]
+      severity             = "Medium"
+    }
+
+    amplify-branch-tagged = {
+      description          = "Checks if AWS Amplify branches have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "AMPLIFY_BRANCH_TAGGED"
+      input_parameters     = var.amplify_branch_tagged_parameters
+      resource_types_scope = ["AWS::Amplify::Branch"]
+      severity             = "Low"
+    }
+
+    apigatewayv2-integration-private-https-enabled = {
+      description          = "Checks if Amazon API Gateway V2 private integration traffic for HTTP APIs uses the HTTPS protocol. The rule is NON_COMPLIANT if configuration.TlsConfig does not exist."
+      identifier           = "APIGATEWAYV2_INTEGRATION_PRIVATE_HTTPS_ENABLED"
+      resource_types_scope = ["AWS::ApiGatewayV2::Integration"]
+      severity             = "Medium"
+    }
+
+    apigatewayv2-stage-description = {
+      description          = "Checks if Amazon API Gateway V2 stages have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "APIGATEWAYV2_STAGE_DESCRIPTION"
+      resource_types_scope = ["AWS::ApiGatewayV2::Stage"]
+      severity             = "Medium"
+    }
+
+    apigateway-domain-name-tls-check = {
+      description          = "Checks if Amazon API Gateway domain names are configured with TLS 1.2 or higher. The rule is NON_COMPLIANT if configuration.SecurityPolicy is TLS_1_0 ."
+      identifier           = "APIGATEWAY_DOMAIN_NAME_TLS_CHECK"
+      input_parameters     = var.apigateway_domain_name_tls_check_parameters
+      resource_types_scope = ["AWS::ApiGateway::DomainName"]
+      severity             = "Medium"
+    }
+
+    apigateway-stage-access-logs-enabled = {
+      description          = "Checks if Amazon API Gateway stages have access logging enabled. The rule is NON_COMPLIANT if accessLogSettings is not present in Stage configuration."
+      identifier           = "APIGATEWAY_STAGE_ACCESS_LOGS_ENABLED"
+      resource_types_scope = ["AWS::ApiGateway::Stage"]
+      severity             = "Medium"
+    }
+
+    apigateway-stage-description = {
+      description          = "Checks if Amazon API Gateway stages have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "APIGATEWAY_STAGE_DESCRIPTION"
+      resource_types_scope = ["AWS::ApiGateway::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gwv2-access-logs-enabled = {
+      description          = "Checks if Amazon API Gateway V2 stages have access logging enabled. The rule is NON_COMPLIANT if accessLogSettings is not present in Stage configuration."
+      identifier           = "API_GWV2_ACCESS_LOGS_ENABLED"
+      resource_types_scope = ["AWS::ApiGatewayV2::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gwv2-authorization-type-configured = {
+      description          = "Checks if Amazon API Gatewayv2 API routes have an authorization type set. This rule is NON_COMPLIANT if the authorization type is NONE."
+      identifier           = "API_GWV2_AUTHORIZATION_TYPE_CONFIGURED"
+      input_parameters     = var.api_gwv2_authorization_type_configured_parameters
+      resource_types_scope = ["AWS::ApiGatewayV2::Route"]
+      severity             = "Medium"
+    }
+
+    api-gwv2-stage-default-route-detailed-metrics-enabled = {
+      description          = "Checks if the default route settings for Amazon API Gateway V2 stages have detailed metrics enabled. The rule is NON_COMPLIANT if configuration.defaultRouteSettings.detailedMetricsEnabled is false."
+      identifier           = "API_GWV2_STAGE_DEFAULT_ROUTE_DETAILED_METRICS_ENABLED"
+      resource_types_scope = ["AWS::ApiGatewayV2::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gw-associated-with-waf = {
+      description          = "Checks if an Amazon API Gateway API stage is using an AWS WAF web access control list (web ACL). The rule is NON_COMPLIANT if an AWS WAF Web ACL is not used or if a used AWS Web ACL does not match what is listed in the rule parameter."
+      identifier           = "API_GW_ASSOCIATED_WITH_WAF"
+      input_parameters     = var.api_gw_associated_with_waf_parameters
+      resource_types_scope = ["AWS::ApiGateway::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gw-cache-enabled-and-encrypted = {
+      description          = "Checks if all methods in Amazon API Gateway stages have cache enabled and cache encrypted. The rule is NON_COMPLIANT if any method in an Amazon API Gateway stage is not configured to cache or the cache is not encrypted."
+      identifier           = "API_GW_CACHE_ENABLED_AND_ENCRYPTED"
+      resource_types_scope = ["AWS::ApiGateway::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gw-endpoint-type-check = {
+      description          = "Checks if Amazon API Gateway APIs are of the type specified in the rule parameter endpointConfigurationType. The rule returns NON_COMPLIANT if the REST API does not match the endpoint type configured in the rule parameter."
+      identifier           = "API_GW_ENDPOINT_TYPE_CHECK"
+      input_parameters     = var.api_gw_endpoint_type_check_parameters
+      resource_types_scope = ["AWS::ApiGateway::RestApi"]
+      severity             = "Medium"
+    }
+
+    api-gw-execution-logging-enabled = {
+      description          = "Checks if all methods in Amazon API Gateway stages have logging enabled. The rule is NON_COMPLIANT if logging is not enabled, or if loggingLevel is neither ERROR nor INFO."
+      identifier           = "API_GW_EXECUTION_LOGGING_ENABLED"
+      input_parameters     = var.api_gw_execution_logging_enabled_parameters
+      resource_types_scope = ["AWS::ApiGateway::Stage", "AWS::ApiGatewayV2::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gw-rest-api-tagged = {
+      description          = "Checks if AWS ApiGateway REST API resources resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "API_GW_REST_API_TAGGED"
+      input_parameters     = var.api_gw_rest_api_tagged_parameters
+      resource_types_scope = ["AWS::ApiGateway::RestApi"]
+      severity             = "Medium"
+    }
+
+    api-gw-ssl-enabled = {
+      description          = "Checks if a REST API stage uses an SSL certificate. The rule is NON_COMPLIANT if the REST API stage does not have an associated SSL certificate."
+      identifier           = "API_GW_SSL_ENABLED"
+      input_parameters     = var.api_gw_ssl_enabled_parameters
+      resource_types_scope = ["AWS::ApiGateway::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gw-stage-tagged = {
+      description          = "Checks if AWS ApiGateway stage resources resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "API_GW_STAGE_TAGGED"
+      input_parameters     = var.api_gw_stage_tagged_parameters
+      resource_types_scope = ["AWS::ApiGateway::Stage"]
+      severity             = "Medium"
+    }
+
+    api-gw-xray-enabled = {
+      description          = "Checks if AWS X-Ray tracing is enabled on Amazon API Gateway REST APIs. The rule is COMPLIANT if X-Ray tracing is enabled and NON_COMPLIANT otherwise."
+      identifier           = "API_GW_XRAY_ENABLED"
+      resource_types_scope = ["AWS::ApiGateway::Stage"]
+      severity             = "Low"
+    }
+
+    appconfig-application-description = {
+      description          = "Checks if AWS AppConfig applications have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "APPCONFIG_APPLICATION_DESCRIPTION"
+      resource_types_scope = ["AWS::AppConfig::Application"]
+      severity             = "Medium"
+    }
+
+    appconfig-application-tagged = {
+      description          = "Checks if AWS AppConfig applications have tags. Optionally, you can specify tag keys for the rule to check. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPCONFIG_APPLICATION_TAGGED"
+      input_parameters     = var.appconfig_application_tagged_parameters
+      resource_types_scope = ["AWS::AppConfig::Application"]
+      severity             = "Low"
+    }
+
+    appconfig-configuration-profile-tagged = {
+      description          = "Checks if AWS AppConfig configuration profiles have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPCONFIG_CONFIGURATION_PROFILE_TAGGED"
+      input_parameters     = var.appconfig_configuration_profile_tagged_parameters
+      resource_types_scope = ["AWS::AppConfig::ConfigurationProfile"]
+      severity             = "Low"
+    }
+
+    appconfig-configuration-profile-validators-not-empty = {
+      description          = "Checks if an AWS AppConfig configuration profile includes at least one validator for syntactic or semantic check to ensure the configuration deploy functions as intended. The rule is NON_COMPLIANT if the Validators property is an empty array."
+      identifier           = "APPCONFIG_CONFIGURATION_PROFILE_VALIDATORS_NOT_EMPTY"
+      resource_types_scope = ["AWS::AppConfig::ConfigurationProfile"]
+      severity             = "Medium"
+    }
+
+    appconfig-deployment-strategy-description = {
+      description          = "Checks if AWS AppConfig deployment strategies have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "APPCONFIG_DEPLOYMENT_STRATEGY_DESCRIPTION"
+      resource_types_scope = ["AWS::AppConfig::DeploymentStrategy"]
+      severity             = "Medium"
+    }
+
+    appconfig-deployment-strategy-minimum-final-bake-time = {
+      description          = "Checks if an AWS AppConfig deployment strategy requires the specified minimum bake time. The rule is NON_COMPLIANT if the deployment strategy has a final bake time less than value specified in the rule parameter. The default value is 30 minutes."
+      identifier           = "APPCONFIG_DEPLOYMENT_STRATEGY_MINIMUM_FINAL_BAKE_TIME"
+      input_parameters     = var.appconfig_deployment_strategy_minimum_final_bake_time_parameters
+      resource_types_scope = ["AWS::AppConfig::DeploymentStrategy"]
+      severity             = "Medium"
+    }
+
+    appconfig-deployment-strategy-replicate-to-ssm = {
+      description          = "Checks if AWS AppConfig deployment strategies save the deployment strategy to an AWS Systems Manager (SSM) document. The rule is NON_COMPLIANT if configuration.ReplicateTo is not SSM_DOCUMENT ."
+      identifier           = "APPCONFIG_DEPLOYMENT_STRATEGY_REPLICATE_TO_SSM"
+      resource_types_scope = ["AWS::AppConfig::DeploymentStrategy"]
+      severity             = "Medium"
+    }
+
+    appconfig-deployment-strategy-tagged = {
+      description          = "Checks if AWS AppConfig deployment strategies have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPCONFIG_DEPLOYMENT_STRATEGY_TAGGED"
+      input_parameters     = var.appconfig_deployment_strategy_tagged_parameters
+      resource_types_scope = ["AWS::AppConfig::DeploymentStrategy"]
+      severity             = "Medium"
+    }
+
+    appconfig-environment-description = {
+      description          = "Checks if AWS AppConfig environments have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "APPCONFIG_ENVIRONMENT_DESCRIPTION"
+      resource_types_scope = ["AWS::AppConfig::Environment"]
+      severity             = "Medium"
+    }
+
+    appconfig-environment-tagged = {
+      description          = "Checks if AWS AppConfig environments have tags. Optionally, you can specify tag keys for the rule to check. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPCONFIG_ENVIRONMENT_TAGGED"
+      input_parameters     = var.appconfig_environment_tagged_parameters
+      resource_types_scope = ["AWS::AppConfig::Environment"]
+      severity             = "Low"
+    }
+
+    appconfig-extension-association-tagged = {
+      description          = "Checks if AWS AppConfig extension associations have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPCONFIG_EXTENSION_ASSOCIATION_TAGGED"
+      input_parameters     = var.appconfig_extension_association_tagged_parameters
+      resource_types_scope = ["AWS::AppConfig::ExtensionAssociation"]
+      severity             = "Low"
+    }
+
+    appconfig-freeform-profile-config-storage = {
+      description          = "Checks if freeform configuration profiles for AWS AppConfig store their configuration data in AWS Secrets Manager or AWS AppConfig hosted configuration store. The rule is NON_COMPLIANT if configuration.LocationUri is not secretsmanager or hosted."
+      identifier           = "APPCONFIG_FREEFORM_PROFILE_CONFIG_STORAGE"
+      resource_types_scope = ["AWS::AppConfig::ConfigurationProfile"]
+      severity             = "Medium"
+    }
+
+    appconfig-hosted-configuration-version-description = {
+      description          = "Checks if AWS AppConfig hosted configuration versions have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "APPCONFIG_HOSTED_CONFIGURATION_VERSION_DESCRIPTION"
+      resource_types_scope = ["AWS::AppConfig::HostedConfigurationVersion"]
+      severity             = "Medium"
+    }
+
+    appflow-flow-tagged = {
+      description          = "Checks if Amazon AppFlow flows have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPFLOW_FLOW_TAGGED"
+      input_parameters     = var.appflow_flow_tagged_parameters
+      resource_types_scope = ["AWS::AppFlow::Flow"]
+      severity             = "Low"
+    }
+
+    appflow-flow-trigger-type-check = {
+      description          = "Checks if an Amazon AppFlow flow runs using the specified trigger type. The rule is NON_COMPLAINT if the flow does not run using the flow type specified in the required rule parameter."
+      identifier           = "APPFLOW_FLOW_TRIGGER_TYPE_CHECK"
+      input_parameters     = var.appflow_flow_trigger_type_check_parameters
+      resource_types_scope = ["AWS::AppFlow::Flow"]
+      severity             = "Medium"
+    }
+
+    appintegrations-application-approved-origins-check = {
+      description          = "Checks that Amazon AppIntegrations applications do not contain approved origins. The rule is NON_COMPLIANT if configuration.ApplicationSourceConfig.ExternalUrlConfig.ApprovedOrigins is not an empty list."
+      identifier           = "APPINTEGRATIONS_APPLICATION_APPROVED_ORIGINS_CHECK"
+      input_parameters     = var.appintegrations_application_approved_origins_check_parameters
+      resource_types_scope = ["AWS::AppIntegrations::Application"]
+      severity             = "Medium"
+    }
+
+    appintegrations-application-tagged = {
+      description          = "Checks if AWS AppIntegrations application resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys aren t present. The rule doesn t check for tags starting with aws: ."
+      identifier           = "APPINTEGRATIONS_APPLICATION_TAGGED"
+      input_parameters     = var.appintegrations_application_tagged_parameters
+      resource_types_scope = ["AWS::AppIntegrations::Application"]
+      severity             = "Medium"
+    }
+
+    appintegrations-event-integration-description = {
+      description          = "Checks if Amazon AppIntegrations event integrations have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "APPINTEGRATIONS_EVENT_INTEGRATION_DESCRIPTION"
+      resource_types_scope = ["AWS::AppIntegrations::EventIntegration"]
+      severity             = "Medium"
+    }
+
+    appintegrations-event-integration-tagged = {
+      description          = "Checks if Amazon AppIntegrations event integrations have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPINTEGRATIONS_EVENT_INTEGRATION_TAGGED"
+      input_parameters     = var.appintegrations_event_integration_tagged_parameters
+      resource_types_scope = ["AWS::AppIntegrations::EventIntegration"]
+      severity             = "Medium"
+    }
+
+    appmesh-gateway-route-tagged = {
+      description          = "Checks if AWS App Mesh gateway routes have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPMESH_GATEWAY_ROUTE_TAGGED"
+      input_parameters     = var.appmesh_gateway_route_tagged_parameters
+      resource_types_scope = ["AWS::AppMesh::GatewayRoute"]
+      severity             = "Medium"
+    }
+
+    appmesh-mesh-deny-tcp-forwarding = {
+      description          = "Checks if proxies for AWS App Mesh service meshes do not forward TCP traffic directly to services that aren t deployed with a proxy that is defined in the mesh. The rule is NON_COMPLIANT if configuration.Spec.EgressFilter.Type is set to ALLOW_ALL ."
+      identifier           = "APPMESH_MESH_DENY_TCP_FORWARDING"
+      resource_types_scope = ["AWS::AppMesh::Mesh"]
+      severity             = "Medium"
+    }
+
+    appmesh-mesh-ip-pref-check = {
+      description          = "Checks if an AWS App Mesh mesh is configured with the specified IP preference for traffic control. The rule is NON_COMPLIANT if the App Mesh mesh is not configured with the IP preference specified in the required rule parameter."
+      identifier           = "APPMESH_MESH_IP_PREF_CHECK"
+      input_parameters     = var.appmesh_mesh_ip_pref_check_parameters
+      resource_types_scope = ["AWS::AppMesh::Mesh"]
+      severity             = "Medium"
+    }
+
+    appmesh-mesh-tagged = {
+      description          = "Checks if AWS App Mesh meshes have tags. Optionally, you can specify tag keys for the rule to check. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPMESH_MESH_TAGGED"
+      input_parameters     = var.appmesh_mesh_tagged_parameters
+      resource_types_scope = ["AWS::AppMesh::Mesh"]
+      severity             = "Medium"
+    }
+
+    appmesh-route-tagged = {
+      description          = "Checks if AWS App Mesh routes have tags. Optionally, you can specify tag keys for the rule to check. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPMESH_ROUTE_TAGGED"
+      input_parameters     = var.appmesh_route_tagged_parameters
+      resource_types_scope = ["AWS::AppMesh::Route"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-gateway-backend-defaults-tls = {
+      description          = "Checks if backend defaults for AWS App Mesh virtual gateways require the virtual gateways to communicate with all ports using TLS. The rule is NON_COMPLIANT if configuration.Spec.BackendDefaults.ClientPolicy.Tls.Enforce is false."
+      identifier           = "APPMESH_VIRTUAL_GATEWAY_BACKEND_DEFAULTS_TLS"
+      resource_types_scope = ["AWS::AppMesh::VirtualGateway"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-gateway-listeners-health-check-enabled = {
+      description          = "Checks if listeners for AWS App Mesh virtual gateways have health check enabled. The rule is NON_COMPLIANT if configuration.Spec.Listeners[].HealthCheck does not exist in one or more listeners."
+      identifier           = "APPMESH_VIRTUAL_GATEWAY_LISTENERS_HEALTH_CHECK_ENABLED"
+      resource_types_scope = ["AWS::AppMesh::VirtualGateway"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-gateway-logging-file-path-exists = {
+      description          = "Checks if AWS App Mesh virtual gateways have a file path to write access logs to. The rule is NON_COMPLIANT if configuration.Spec.Logging.AccessLog.File.Path does not exist."
+      identifier           = "APPMESH_VIRTUAL_GATEWAY_LOGGING_FILE_PATH_EXISTS"
+      resource_types_scope = ["AWS::AppMesh::VirtualGateway"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-gateway-tagged = {
+      description          = "Checks if AWS App Mesh virtual gateways have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPMESH_VIRTUAL_GATEWAY_TAGGED"
+      input_parameters     = var.appmesh_virtual_gateway_tagged_parameters
+      resource_types_scope = ["AWS::AppMesh::VirtualGateway"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-backend-defaults-tls-on = {
+      description          = "Checks if backend defaults for AWS App Mesh virtual nodes require the virtual nodes to communicate with all ports using TLS. The rule is NON_COMPLIANT if configuration.Spec.BackendDefaults.ClientPolicy.Tls.Enforce is false."
+      identifier           = "APPMESH_VIRTUAL_NODE_BACKEND_DEFAULTS_TLS_ON"
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-cloud-map-ip-pref-check = {
+      description          = "Checks if an AWS App Mesh virtual node is configured with the specified IP preference for AWS Cloud Map service discovery. The rule is NON_COMPLIANT if the virtual node is not configured with the IP preference specified in the required rule parameter."
+      identifier           = "APPMESH_VIRTUAL_NODE_CLOUD_MAP_IP_PREF_CHECK"
+      input_parameters     = var.appmesh_virtual_node_cloud_map_ip_pref_check_parameters
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-dns-ip-pref-check = {
+      description          = "Checks if an AWS App Mesh virtual node is configured with the specified IP preference for DNS service discovery. The rule is NON_COMPLIANT if the virtual node is not configured with the IP preference specified in the required rule parameter."
+      identifier           = "APPMESH_VIRTUAL_NODE_DNS_IP_PREF_CHECK"
+      input_parameters     = var.appmesh_virtual_node_dns_ip_pref_check_parameters
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-listeners-health-check-enabled = {
+      description          = "Checks if listeners for AWS App Mesh virtual nodes have health check enabled. The rule is NON_COMPLIANT if configuration.Spec.Listeners[].HealthCheck does not exist in one or more listeners."
+      identifier           = "APPMESH_VIRTUAL_NODE_LISTENERS_HEALTH_CHECK_ENABLED"
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-listeners-outlier-detect-enabled = {
+      description          = "Checks if listeners for AWS App Mesh virtual nodes have outlier detection enabled. The rule is NON_COMPLIANT if configuration.Spec.Listeners[].OutlierDetection does not exist in one or more listeners."
+      identifier           = "APPMESH_VIRTUAL_NODE_LISTENERS_OUTLIER_DETECT_ENABLED"
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-logging-file-path-exists = {
+      description          = "Checks if AWS App Mesh virtual nodes have a file path to write access logs to. The rule is NON_COMPLIANT if configuration.Spec.Logging.AccessLog.File.Path does not exist."
+      identifier           = "APPMESH_VIRTUAL_NODE_LOGGING_FILE_PATH_EXISTS"
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-service-backends-tls-enforced = {
+      description          = "Checks if service backends for AWS App Mesh virtual nodes require the virtual nodes to communicate with all ports using TLS. The rule is NON_COMPLIANT if any configuration.Spec.Backends[].ClientPolicy.Tls.Enforce is false."
+      identifier           = "APPMESH_VIRTUAL_NODE_SERVICE_BACKENDS_TLS_ENFORCED"
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-node-tagged = {
+      description          = "Checks if AWS App Mesh virtual nodes have tags. Optionally, you can specify tag keys for the rule to check. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPMESH_VIRTUAL_NODE_TAGGED"
+      input_parameters     = var.appmesh_virtual_node_tagged_parameters
+      resource_types_scope = ["AWS::AppMesh::VirtualNode"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-router-tagged = {
+      description          = "Checks if AWS App Mesh virtual routers have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPMESH_VIRTUAL_ROUTER_TAGGED"
+      input_parameters     = var.appmesh_virtual_router_tagged_parameters
+      resource_types_scope = ["AWS::AppMesh::VirtualRouter"]
+      severity             = "Medium"
+    }
+
+    appmesh-virtual-service-tagged = {
+      description          = "Checks if AWS App Mesh virtual services have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPMESH_VIRTUAL_SERVICE_TAGGED"
+      input_parameters     = var.appmesh_virtual_service_tagged_parameters
+      resource_types_scope = ["AWS::AppMesh::VirtualService"]
+      severity             = "Medium"
+    }
+
+    approved-amis-by-id = {
+      description          = "Checks if EC2 instances are using specified Amazon Machine Images (AMIs). Specify a list of approved AMI IDs. Running instances with AMIs that are not on this list are NON_COMPLIANT."
+      identifier           = "APPROVED_AMIS_BY_ID"
+      input_parameters     = var.approved_amis_by_id_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    approved-amis-by-tag = {
+      description          = "Checks if EC2 instances are using specified Amazon Machine Images (AMIs). Specify the tags that identify the AMIs. Running instances with AMIs that don t have at least one of the specified tags are NON_COMPLIANT."
+      identifier           = "APPROVED_AMIS_BY_TAG"
+      input_parameters     = var.approved_amis_by_tag_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    apprunner-service-in-vpc = {
+      description          = "Checks if AWS App Runner services route egress traffic through custom VPC. The rule is NON_COMPLIANT if configuration.NetworkConfiguration.EgressConfiguration.EgressType is equal to DEFAULT."
+      identifier           = "APPRUNNER_SERVICE_IN_VPC"
+      resource_types_scope = ["AWS::AppRunner::Service"]
+      severity             = "Medium"
+    }
+
+    apprunner-service-ip-address-type-check = {
+      description          = "Checks if an AWS App Runner service is configured with the specified IP address type for incoming public network configuration. The rule is NON_COMPLIANT if the service is not configured with the IP address type specified in the required rule parameter."
+      identifier           = "APPRUNNER_SERVICE_IP_ADDRESS_TYPE_CHECK"
+      input_parameters     = var.apprunner_service_ip_address_type_check_parameters
+      resource_types_scope = ["AWS::AppRunner::Service"]
+      severity             = "Medium"
+    }
+
+    apprunner-service-max-unhealthy-threshold = {
+      description          = "Checks if an AWS App Runner service is configured to have an unhealthy threshold less than or equal to the specified value. The rule is NON_COMPLIANT if the unhealthy threshold is greater than the value specified in the required rule parameter."
+      identifier           = "APPRUNNER_SERVICE_MAX_UNHEALTHY_THRESHOLD"
+      input_parameters     = var.apprunner_service_max_unhealthy_threshold_parameters
+      resource_types_scope = ["AWS::AppRunner::Service"]
+      severity             = "Medium"
+    }
+
+    apprunner-service-no-public-access = {
+      description          = "Checks if AWS AppRunner Services are not publicly accessible. The rule is NON_COMPLIANT if service.configuration.NetworkConfiguration.IngressConfiguration.IsPubliclyAccessible is False."
+      identifier           = "APPRUNNER_SERVICE_NO_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::AppRunner::Service"]
+      severity             = "Medium"
+    }
+
+    apprunner-service-observability-enabled = {
+      description          = "Checks if AWS App Runner services have observability enabled. The rule is NON_COMPLIANT if configuration.ObservabilityConfiguration.ObservabilityEnabled is false ."
+      identifier           = "APPRUNNER_SERVICE_OBSERVABILITY_ENABLED"
+      resource_types_scope = ["AWS::AppRunner::Service"]
+      severity             = "Medium"
+    }
+
+    apprunner-service-tagged = {
+      description          = "Checks if AWS App Runner services have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPRUNNER_SERVICE_TAGGED"
+      input_parameters     = var.apprunner_service_tagged_parameters
+      resource_types_scope = ["AWS::AppRunner::Service"]
+      severity             = "Low"
+    }
+
+    apprunner-vpc-connector-tagged = {
+      description          = "Checks if AWS App Runner VPC connectors have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APPRUNNER_VPC_CONNECTOR_TAGGED"
+      input_parameters     = var.apprunner_vpc_connector_tagged_parameters
+      resource_types_scope = ["AWS::AppRunner::VpcConnector"]
+      severity             = "Low"
+    }
+
+    appstream-fleet-in-vpc = {
+      description          = "Checks if Amazon AppStream 2.0 fleets use an Amazon Virtual Private Cloud (Amazon VPC). The rule is NON_COMPLIANT if configuration.VpcConfig does not exist. The rule does not check Elastic fleets."
+      identifier           = "APPSTREAM_FLEET_IN_VPC"
+      resource_types_scope = ["AWS::AppStream::Fleet"]
+      severity             = "Medium"
+    }
+
+    appsync-associated-with-waf = {
+      description          = "Checks if AWS AppSync APIs are associated with AWS WAFv2 web access control lists (ACLs). The rule is NON_COMPLIANT for an AWS AppSync API if it is not associated with a web ACL."
+      identifier           = "APPSYNC_ASSOCIATED_WITH_WAF"
+      input_parameters     = var.appsync_associated_with_waf_parameters
+      resource_types_scope = ["AWS::AppSync::GraphQLApi"]
+      severity             = "Medium"
+    }
+
+    appsync-authorization-check = {
+      description          = "Checks if an AWS AppSync API is using allowed authorization mechanisms. The rule is NON_COMPLIANT if an unapproved authorization mechanism is being used."
+      identifier           = "APPSYNC_AUTHORIZATION_CHECK"
+      input_parameters     = var.appsync_authorization_check_parameters
+      resource_types_scope = ["AWS::AppSync::GraphQLApi"]
+      severity             = "High"
+    }
+
+    appsync-cache-ct-encryption-at-rest = {
+      description          = "Checks if an AWS AppSync API cache has encryption at rest enabled. This rule is NON_COMPLIANT if AtRestEncryptionEnabled is false."
+      identifier           = "APPSYNC_CACHE_CT_ENCRYPTION_AT_REST"
+      resource_types_scope = ["AWS::AppSync::ApiCache"]
+      severity             = "Medium"
+    }
+
+    appsync-cache-ct-encryption-in-transit = {
+      description          = "Checks if an AWS AppSync API cache has encryption in transit enabled. The rule is NON_COMPLIANT if TransitEncryptionEnabled is false."
+      identifier           = "APPSYNC_CACHE_CT_ENCRYPTION_IN_TRANSIT"
+      resource_types_scope = ["AWS::AppSync::ApiCache"]
+      severity             = "Medium"
+    }
+
+    appsync-cache-encryption-at-rest = {
+      description          = "Checks if an AWS AppSync API cache has encryption at rest enabled. This rule is NON_COMPLIANT if AtRestEncryptionEnabled is false."
+      identifier           = "APPSYNC_CACHE_ENCRYPTION_AT_REST"
+      resource_types_scope = ["AWS::AppSync::GraphQLApi"]
+      severity             = "Medium"
+    }
+
+    appsync-graphql-api-xray-enabled = {
+      description          = "Checks if AWS AppSync GraphQL APIs have AWS X-Ray tracing enabled. The rule is NON_COMPLIANT if configuration.XrayEnabled is false."
+      identifier           = "APPSYNC_GRAPHQL_API_XRAY_ENABLED"
+      resource_types_scope = ["AWS::AppSync::GraphQLApi"]
+      severity             = "Medium"
+    }
+
+    appsync-logging-enabled = {
+      description          = "Checks if an AWS AppSync API has field level logging enabled. The rule is NON_COMPLIANT if field level logging is not enabled, or if the field logging levels for the AppSync API do not match the values specified in the fieldLoggingLevel parameter."
+      identifier           = "APPSYNC_LOGGING_ENABLED"
+      input_parameters     = var.appsync_logging_enabled_parameters
+      resource_types_scope = ["AWS::AppSync::GraphQLApi"]
+      severity             = "Medium"
+    }
+
+    aps-rule-groups-namespace-tagged = {
+      description          = "Checks if Amazon Managed Service for Prometheus rule groups namepaces have tags. You can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "APS_RULE_GROUPS_NAMESPACE_TAGGED"
+      input_parameters     = var.aps_rule_groups_namespace_tagged_parameters
+      resource_types_scope = ["AWS::APS::RuleGroupsNamespace"]
+      severity             = "Medium"
+    }
+
+    athena-data-catalog-description = {
+      description          = "Checks if Amazon Athena data catalogs have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "ATHENA_DATA_CATALOG_DESCRIPTION"
+      resource_types_scope = ["AWS::Athena::DataCatalog"]
+      severity             = "Medium"
+    }
+
+    athena-prepared-statement-description = {
+      description          = "Checks if Amazon Athena prepared statements have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "ATHENA_PREPARED_STATEMENT_DESCRIPTION"
+      resource_types_scope = ["AWS::Athena::PreparedStatement"]
+      severity             = "Medium"
+    }
+
+    athena-workgroup-description = {
+      description          = "Checks if Amazon Athena workgroups have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "ATHENA_WORKGROUP_DESCRIPTION"
+      resource_types_scope = ["AWS::Athena::WorkGroup"]
+      severity             = "Medium"
+    }
+
+    athena-workgroup-encrypted-at-rest = {
+      description          = "Checks if an Amazon Athena workgroup is encrypted at rest. The rule is NON_COMPLIANT if encryption of data at rest is not enabled for an Athena workgroup."
+      identifier           = "ATHENA_WORKGROUP_ENCRYPTED_AT_REST"
+      resource_types_scope = ["AWS::Athena::WorkGroup"]
+      severity             = "Medium"
+    }
+
+    athena-workgroup-enforce-workgroup-configuration = {
+      description          = "Checks if Amazon Athena workgroups using Athena engine enforce workgroup configuration to override client-side settings. The rule is NON_COMPLIANT if configuration.WorkGroupConfiguration.EnforceWorkGroupConfiguration is false."
+      identifier           = "ATHENA_WORKGROUP_ENFORCE_WORKGROUP_CONFIGURATION"
+      resource_types_scope = ["AWS::Athena::WorkGroup"]
+      severity             = "Medium"
+    }
+
+    athena-workgroup-engine-version-auto-upgrade = {
+      description          = "Checks if Amazon Athena workgroups using Athena engine are configured to auto upgrade. The rule is NON_COMPLIANT if configuration.WorkGroupConfiguration.EngineVersion.SelectedEngineVersion is not AUTO ."
+      identifier           = "ATHENA_WORKGROUP_ENGINE_VERSION_AUTO_UPGRADE"
+      resource_types_scope = ["AWS::Athena::WorkGroup"]
+      severity             = "Medium"
+    }
+
+    athena-workgroup-logging-enabled = {
+      description          = "Checks if Amazon Athena WorkGroup publishes usage metrics to Amazon CloudWatch. The rule is NON_COMPLIANT if an Amazon Athena WorkGroup PublishCloudWatchMetricsEnabled is set to false."
+      identifier           = "ATHENA_WORKGROUP_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::Athena::WorkGroup"]
+      severity             = "Medium"
+    }
+
+    auditmanager-assessment-tagged = {
+      description          = "Checks if AWS Audit Manager assessments have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "AUDITMANAGER_ASSESSMENT_TAGGED"
+      input_parameters     = var.auditmanager_assessment_tagged_parameters
+      resource_types_scope = ["AWS::AuditManager::Assessment"]
+      severity             = "Medium"
+    }
+
+    aurora-global-database-encryption-at-rest = {
+      description          = "Checks if Amazon Aurora Global Databases have storage encryption enabled. This rule is NON_COMPLIANT if an Amazon Aurora Global Database does not have storage encryption enabled."
+      identifier           = "AURORA_GLOBAL_DATABASE_ENCRYPTION_AT_REST"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "Medium"
+    }
+
+    aurora-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon Aurora DB clusters. The rule is NON_COMPLIANT if the Amazon Relational Database Service (Amazon RDS) DB Cluster does not have a corresponding recovery point created within the specified time period."
+      identifier           = "AURORA_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.aurora_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    aurora-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon Aurora DB clusters meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Aurora DB Cluster is greater than maxRestoreTime minutes."
+      identifier           = "AURORA_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.aurora_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    aurora-mysql-backtracking-enabled = {
+      description          = "Checks if an Amazon Aurora MySQL cluster has backtracking enabled. The rule is NON_COMPLIANT if the Aurora cluster uses MySQL and it does not have backtracking enabled."
+      identifier           = "AURORA_MYSQL_BACKTRACKING_ENABLED"
+      input_parameters     = var.aurora_mysql_backtracking_enabled_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    aurora-mysql-cluster-audit-logging = {
+      description          = "Checks if Amazon Aurora MySQL DB clusters have audit logging enabled. The rule is NON_COMPLIANT if a DB cluster does not have audit logging enabled."
+      identifier           = "AURORA_MYSQL_CLUSTER_AUDIT_LOGGING"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    aurora-resources-in-logically-air-gapped-vault = {
+      description          = "Checks if Amazon Aurora DB clusters are in a logically air-gapped vault. The rule is NON_COMPLIANT if an Amazon Aurora DB cluster is not in a logically air-gapped vault within the specified time period."
+      identifier           = "AURORA_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT"
+      input_parameters     = var.aurora_resources_in_logically_air_gapped_vault_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    aurora-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon Aurora DB clusters are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon Relational Database Service (Amazon RDS) Database Cluster is not protected by a backup plan."
+      identifier           = "AURORA_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.aurora_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    autoscaling-capacity-rebalancing = {
+      description          = "Checks if Capacity Rebalancing is enabled for Amazon EC2 Auto Scaling groups that use multiple instance types. The rule is NON_COMPLIANT if capacity Rebalancing is not enabled."
+      identifier           = "AUTOSCALING_CAPACITY_REBALANCING"
+      resource_types_scope = ["AWS::AutoScaling::AutoScalingGroup"]
+      severity             = "Medium"
+    }
+
+    autoscaling-group-elb-healthcheck-required = {
+      description          = "Checks if your Amazon EC2 Auto Scaling groups that are associated with an Elastic Load Balancer use Elastic Load Balancing health checks. The rule is NON_COMPLIANT if the Amazon EC2 Auto Scaling groups are not using Elastic Load Balancing health checks."
+      identifier           = "AUTOSCALING_GROUP_ELB_HEALTHCHECK_REQUIRED"
+      resource_types_scope = ["AWS::AutoScaling::AutoScalingGroup"]
+      severity             = "Low"
+    }
+
+    autoscaling-launchconfig-requires-imdsv2 = {
+      description          = "Checks whether only IMDSv2 is enabled. This rule is NON_COMPLIANT if the Metadata version is not included in the launch configuration or if both Metadata V1 and V2 are enabled."
+      identifier           = "AUTOSCALING_LAUNCHCONFIG_REQUIRES_IMDSV2"
+      resource_types_scope = ["AWS::AutoScaling::LaunchConfiguration"]
+      severity             = "High"
+    }
+
+    autoscaling-launch-config-hop-limit = {
+      description          = "Checks the number of network hops that the metadata token can travel. This rule is NON_COMPLIANT if the Metadata response hop limit is greater than 1."
+      identifier           = "AUTOSCALING_LAUNCH_CONFIG_HOP_LIMIT"
+      resource_types_scope = ["AWS::AutoScaling::LaunchConfiguration"]
+      severity             = "High"
+    }
+
+    autoscaling-launch-config-public-ip-disabled = {
+      description          = "Checks if Amazon EC2 Auto Scaling groups have public IP addresses enabled through Launch Configurations. The rule is NON_COMPLIANT if the Launch Configuration for an Amazon EC2 Auto Scaling group has AssociatePublicIpAddress set to true ."
+      identifier           = "AUTOSCALING_LAUNCH_CONFIG_PUBLIC_IP_DISABLED"
+      resource_types_scope = ["AWS::AutoScaling::LaunchConfiguration"]
+      severity             = "High"
+    }
+
+    autoscaling-launch-template = {
+      description          = "Checks if an Amazon Elastic Compute Cloud (EC2) Auto Scaling group is created from an EC2 launch template. The rule is NON_COMPLIANT if the scaling group is not created from an EC2 launch template."
+      identifier           = "AUTOSCALING_LAUNCH_TEMPLATE"
+      resource_types_scope = ["AWS::AutoScaling::AutoScalingGroup"]
+      severity             = "Medium"
+    }
+
+    autoscaling-multiple-az = {
+      description          = "Checks if the Auto Scaling group spans multiple Availability Zones. The rule is NON_COMPLIANT if the Auto Scaling group does not span multiple Availability Zones."
+      identifier           = "AUTOSCALING_MULTIPLE_AZ"
+      input_parameters     = var.autoscaling_multiple_az_parameters
+      resource_types_scope = ["AWS::AutoScaling::AutoScalingGroup"]
+      severity             = "Medium"
+    }
+
+    autoscaling-multiple-instance-types = {
+      description          = "Checks if an Amazon EC2 Auto Scaling group uses multiple instance types. The rule is NON_COMPLIANT if the Amazon EC2 Auto Scaling group has only one instance type defined. This rule does not evaluate attribute-based instance types."
+      identifier           = "AUTOSCALING_MULTIPLE_INSTANCE_TYPES"
+      resource_types_scope = ["AWS::AutoScaling::AutoScalingGroup"]
+      severity             = "Medium"
+    }
+
+    backup-plan-min-frequency-and-min-retention-check = {
+      description          = "Checks if a backup plan has a backup rule that satisfies the required frequency and retention period. The rule is NON_COMPLIANT if recovery points are not created at least as often as the specified frequency or expire before the specified period."
+      identifier           = "BACKUP_PLAN_MIN_FREQUENCY_AND_MIN_RETENTION_CHECK"
+      input_parameters     = var.backup_plan_min_frequency_and_min_retention_check_parameters
+      resource_types_scope = ["AWS::Backup::BackupPlan"]
+      severity             = "Medium"
+    }
+
+    backup-recovery-point-encrypted = {
+      description          = "Checks if a recovery point is encrypted. The rule is NON_COMPLIANT if the recovery point is not encrypted."
+      identifier           = "BACKUP_RECOVERY_POINT_ENCRYPTED"
+      resource_types_scope = ["AWS::Backup::RecoveryPoint"]
+      severity             = "Medium"
+    }
+
+    backup-recovery-point-manual-deletion-disabled = {
+      description          = "Checks if a backup vault has an attached resource-based policy which prevents deletion of recovery points. The rule is NON_COMPLIANT if the Backup Vault does not have resource-based policies or has policies without a suitable Deny statement (statement..."
+      identifier           = "BACKUP_RECOVERY_POINT_MANUAL_DELETION_DISABLED"
+      input_parameters     = var.backup_recovery_point_manual_deletion_disabled_parameters
+      resource_types_scope = ["AWS::Backup::BackupVault"]
+      severity             = "Medium"
+    }
+
+    backup-recovery-point-minimum-retention-check = {
+      description          = "Checks if a recovery point expires no earlier than after the specified period. The rule is NON_COMPLIANT if the recovery point has a retention point that is less than the required retention period."
+      identifier           = "BACKUP_RECOVERY_POINT_MINIMUM_RETENTION_CHECK"
+      input_parameters     = var.backup_recovery_point_minimum_retention_check_parameters
+      resource_types_scope = ["AWS::Backup::RecoveryPoint"]
+      severity             = "Medium"
+    }
+
+    batch-compute-environment-enabled = {
+      description          = "Checks if AWS Batch compute environments are enabled. The rule is NON_COMPLIANT if configuration.State is DISABLED ."
+      identifier           = "BATCH_COMPUTE_ENVIRONMENT_ENABLED"
+      resource_types_scope = ["AWS::Batch::ComputeEnvironment"]
+      severity             = "Medium"
+    }
+
+    batch-compute-environment-managed = {
+      description          = "Checks if AWS Batch compute environments are managed. The rule is NON_COMPLIANT if configuration.Type is UNMANAGED ."
+      identifier           = "BATCH_COMPUTE_ENVIRONMENT_MANAGED"
+      resource_types_scope = ["AWS::Batch::ComputeEnvironment"]
+      severity             = "Medium"
+    }
+
+    batch-compute-environment-tagged = {
+      description          = "Checks if AWS Batch compute environments have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "BATCH_COMPUTE_ENVIRONMENT_TAGGED"
+      input_parameters     = var.batch_compute_environment_tagged_parameters
+      resource_types_scope = ["AWS::Batch::ComputeEnvironment"]
+      severity             = "Low"
+    }
+
+    batch-job-queue-enabled = {
+      description          = "Checks if AWS Batch job queues are enabled. The rule is NON_COMPLIANT if configuration.State is DISABLED ."
+      identifier           = "BATCH_JOB_QUEUE_ENABLED"
+      resource_types_scope = ["AWS::Batch::JobQueue"]
+      severity             = "Medium"
+    }
+
+    batch-job-queue-tagged = {
+      description          = "Checks if AWS Batch job queues have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "BATCH_JOB_QUEUE_TAGGED"
+      input_parameters     = var.batch_job_queue_tagged_parameters
+      resource_types_scope = ["AWS::Batch::JobQueue"]
+      severity             = "Low"
+    }
+
+    batch-managed-compute-environment-using-launch-template = {
+      description          = "Checks if AWS Batch managed compute environments are configured using a launch template. The rule is NON_COMPLIANT if configuration.ComputeResources.LaunchTemplate does not exist."
+      identifier           = "BATCH_MANAGED_COMPUTE_ENVIRONMENT_USING_LAUNCH_TEMPLATE"
+      resource_types_scope = ["AWS::Batch::ComputeEnvironment"]
+      severity             = "Medium"
+    }
+
+    batch-managed-compute-env-allocation-strategy-check = {
+      description          = "Checks if an AWS Batch managed compute environment is configured with a specified allocation strategy. The rule is NON_COMPLIANT if the compute environment is not configured with an allocation strategy specified in the required rule parameter."
+      identifier           = "BATCH_MANAGED_COMPUTE_ENV_ALLOCATION_STRATEGY_CHECK"
+      input_parameters     = var.batch_managed_compute_env_allocation_strategy_check_parameters
+      resource_types_scope = ["AWS::Batch::ComputeEnvironment"]
+      severity             = "Medium"
+    }
+
+    batch-managed-compute-env-compute-resources-tagged = {
+      description          = "Checks if AWS Batch managed compute environments compute resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. Tags starting with aws: are not checked."
+      identifier           = "BATCH_MANAGED_COMPUTE_ENV_COMPUTE_RESOURCES_TAGGED"
+      input_parameters     = var.batch_managed_compute_env_compute_resources_tagged_parameters
+      resource_types_scope = ["AWS::Batch::ComputeEnvironment"]
+      severity             = "Low"
+    }
+
+    batch-managed-spot-compute-environment-max-bid = {
+      description          = "Checks if an AWS Batch managed Spot compute environment is configured to have a bid percentage less than or equal to the specified value. The rule is NON_COMPLIANT if the bid percentage is greater than the value specified in the required rule parameter."
+      identifier           = "BATCH_MANAGED_SPOT_COMPUTE_ENVIRONMENT_MAX_BID"
+      input_parameters     = var.batch_managed_spot_compute_environment_max_bid_parameters
+      resource_types_scope = ["AWS::Batch::ComputeEnvironment"]
+      severity             = "Medium"
+    }
+
+    batch-scheduling-policy-tagged = {
+      description          = "Checks if AWS Batch scheduling policies have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "BATCH_SCHEDULING_POLICY_TAGGED"
+      input_parameters     = var.batch_scheduling_policy_tagged_parameters
+      resource_types_scope = ["AWS::Batch::SchedulingPolicy"]
+      severity             = "Low"
+    }
+
+    beanstalk-enhanced-health-reporting-enabled = {
+      description          = "Checks if an AWS Elastic Beanstalk environment is configured for enhanced health reporting. The rule is COMPLIANT if the environment is configured for enhanced health reporting. The rule is NON_COMPLIANT if the environment is configured for basic health..."
+      identifier           = "BEANSTALK_ENHANCED_HEALTH_REPORTING_ENABLED"
+      resource_types_scope = ["AWS::ElasticBeanstalk::Environment"]
+      severity             = "Low"
+    }
+
+    cassandra-keyspace-tagged = {
+      description          = "Checks if Amazon Keyspaces (for Apache Cassandra) keyspaces have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CASSANDRA_KEYSPACE_TAGGED"
+      input_parameters     = var.cassandra_keyspace_tagged_parameters
+      resource_types_scope = ["AWS::Cassandra::Keyspace"]
+      severity             = "Low"
+    }
+
+    clb-desync-mode-check = {
+      description          = "Checks if Classic Load Balancers (CLB) are configured with a user defined Desync mitigation mode. The rule is NON_COMPLIANT if CLB Desync mitigation mode does not match with user defined Desync mitigation mode."
+      identifier           = "CLB_DESYNC_MODE_CHECK"
+      input_parameters     = var.clb_desync_mode_check_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    clb-multiple-az = {
+      description          = "Checks if a Classic Load Balancer spans multiple Availability Zones (AZs). The rule is NON_COMPLIANT if a Classic Load Balancer spans less than 2 AZs or does not span number of AZs mentioned in the minAvailabilityZones parameter (if provided)."
+      identifier           = "CLB_MULTIPLE_AZ"
+      input_parameters     = var.clb_multiple_az_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    cloudformation-stack-drift-detection-check = {
+      description          = "Checks if the actual configuration of a AWS CloudFormation (CloudFormation) stack differs, or has drifted, from the expected configuration. A stack is considered to have drifted if one or more of its resources differ from their expected configuration...."
+      identifier           = "CLOUDFORMATION_STACK_DRIFT_DETECTION_CHECK"
+      input_parameters     = var.cloudformation_stack_drift_detection_check_parameters
+      resource_types_scope = ["AWS::CloudFormation::Stack"]
+      severity             = "Low"
+    }
+
+    cloudformation-stack-notification-check = {
+      description          = "Checks if your CloudFormation stacks send event notifications to an Amazon SNS topic. Optionally checks if specified Amazon SNS topics are used. The rule is NON_COMPLIANT if CloudFormation stacks do not send notifications."
+      identifier           = "CLOUDFORMATION_STACK_NOTIFICATION_CHECK"
+      input_parameters     = var.cloudformation_stack_notification_check_parameters
+      resource_types_scope = ["AWS::CloudFormation::Stack"]
+      severity             = "Low"
+    }
+
+    cloudformation-stack-service-role-check = {
+      description          = "Checks if AWS CloudFormation stacks are using service roles. The rule is NON_COMPLIANT if a CloudFormation stack does not have service role associated with it."
+      identifier           = "CLOUDFORMATION_STACK_SERVICE_ROLE_CHECK"
+      resource_types_scope = ["AWS::CloudFormation::Stack"]
+      severity             = "Medium"
+    }
+
+    cloudformation-termination-protection-check = {
+      description          = "Checks if an AWS CloudFormation stack has termination protection enabled. This rule is NON_COMPLIANT if termination protection is not enabled on a CloudFormation stack."
+      identifier           = "CLOUDFORMATION_TERMINATION_PROTECTION_CHECK"
+      resource_types_scope = ["AWS::CloudFormation::Stack"]
+      severity             = "Medium"
+    }
+
+    cloudfront-accesslogs-enabled = {
+      description          = "Checks if Amazon CloudFront distributions are configured to deliver access logs to an Amazon S3 bucket using standard logging (legacy). The rule is NON_COMPLIANT if a CloudFront distribution does not have legacy logging configured."
+      identifier           = "CLOUDFRONT_ACCESSLOGS_ENABLED"
+      input_parameters     = var.cloudfront_accesslogs_enabled_parameters
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-associated-with-waf = {
+      description          = "Checks if Amazon CloudFront distributions are associated with either web application firewall (WAF) or WAFv2 web access control lists (ACLs). The rule is NON_COMPLIANT if a CloudFront distribution is not associated with a WAF web ACL."
+      identifier           = "CLOUDFRONT_ASSOCIATED_WITH_WAF"
+      input_parameters     = var.cloudfront_associated_with_waf_parameters
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-custom-ssl-certificate = {
+      description          = "Checks if the certificate associated with an Amazon CloudFront distribution is the default SSL certificate. The rule is NON_COMPLIANT if a CloudFront distribution uses the default SSL certificate."
+      identifier           = "CLOUDFRONT_CUSTOM_SSL_CERTIFICATE"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Low"
+    }
+
+    cloudfront-default-root-object-configured = {
+      description          = "Checks if an Amazon CloudFront distribution is configured to return a specific object that is the default root object. The rule is NON_COMPLIANT if Amazon CloudFront distribution does not have a default root object configured."
+      identifier           = "CLOUDFRONT_DEFAULT_ROOT_OBJECT_CONFIGURED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "High"
+    }
+
+    cloudfront-distribution-key-group-enabled = {
+      description          = "Checks if Amazon CloudFront distributions are configured to use only trusted key groups for signed URL or signed cookie authentication for all cache behaviors. The rule is NON_COMPLIANT if any cache behavior in the distribution is using trusted signers."
+      identifier           = "CLOUDFRONT_DISTRIBUTION_KEY_GROUP_ENABLED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-no-deprecated-ssl-protocols = {
+      description          = "Checks if CloudFront distributions are using deprecated SSL protocols for HTTPS communication between CloudFront edge locations and custom origins. This rule is NON_COMPLIANT for a CloudFront distribution if any OriginSslProtocols includes SSLv3 ."
+      identifier           = "CLOUDFRONT_NO_DEPRECATED_SSL_PROTOCOLS"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-origin-access-identity-enabled = {
+      description          = "Checks if CloudFront distribution with Amazon S3 Origin type has origin access identity configured. The rule is NON_COMPLIANT if the CloudFront distribution is backed by S3 and any origin type is not OAI configured, or the origin is not an S3 bucket."
+      identifier           = "CLOUDFRONT_ORIGIN_ACCESS_IDENTITY_ENABLED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-origin-failover-enabled = {
+      description          = "Checks if an origin group is configured for the distribution of at least two origins in the origin group for Amazon CloudFront. The rule is NON_COMPLIANT if there are no origin groups for the distribution."
+      identifier           = "CLOUDFRONT_ORIGIN_FAILOVER_ENABLED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Low"
+    }
+
+    cloudfront-origin-lambda-url-oac-enabled = {
+      description          = "Checks if Amazon CloudFront distributions with Amazon Lambda Function URL origins have origin access control (OAC) enabled. The rule is NON_COMPLIANT if any Lambda Function URL origin in a CloudFront distribution does not have OAC enabled."
+      identifier           = "CLOUDFRONT_ORIGIN_LAMBDA_URL_OAC_ENABLED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-s3-origin-access-control-enabled = {
+      description          = "Checks if an Amazon CloudFront distribution with an Amazon Simple Storage Service (Amazon S3) Origin type has origin access control (OAC) enabled. The rule is NON_COMPLIANT for CloudFront distributions with Amazon S3 origins that don t have OAC enabled."
+      identifier           = "CLOUDFRONT_S3_ORIGIN_ACCESS_CONTROL_ENABLED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-s3-origin-non-existent-bucket = {
+      description          = "Checks if Amazon CloudFront distributions point to a non-existent S3 bucket. The rule is NON_COMPLIANT if S3OriginConfig for a CloudFront distribution points to a non-existent S3 bucket. The rule does not evaluate S3 buckets with static website hosting."
+      identifier           = "CLOUDFRONT_S3_ORIGIN_NON_EXISTENT_BUCKET"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "High"
+    }
+
+    cloudfront-security-policy-check = {
+      description          = "Checks if Amazon CloudFront distributions are using a minimum security policy and cipher suite of TLSv1.2 or greater for viewer connections. This rule is NON_COMPLIANT for a CloudFront distribution if the minimumProtocolVersion is below TLSv1.2_2018."
+      identifier           = "CLOUDFRONT_SECURITY_POLICY_CHECK"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-sni-enabled = {
+      description          = "Checks if Amazon CloudFront distributions are using a custom SSL certificate and are configured to use SNI to serve HTTPS requests. The rule is NON_COMPLIANT if a custom SSL certificate is associated but the SSL support method is a dedicated IP address."
+      identifier           = "CLOUDFRONT_SNI_ENABLED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Low"
+    }
+
+    cloudfront-ssl-policy-check = {
+      description          = "Checks if Amazon CloudFront distributions are configured with the specified security policies.The rule is NON_COMPLIANT if a CloudFront Distribution is not configured with security policies that you specify."
+      identifier           = "CLOUDFRONT_SSL_POLICY_CHECK"
+      input_parameters     = var.cloudfront_ssl_policy_check_parameters
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-traffic-to-origin-encrypted = {
+      description          = "Checks if Amazon CloudFront distributions are encrypting traffic to custom origins. The rule is NON_COMPLIANT if OriginProtocolPolicy is http-only or if OriginProtocolPolicy is match-viewer and ViewerProtocolPolicy is allow-all ."
+      identifier           = "CLOUDFRONT_TRAFFIC_TO_ORIGIN_ENCRYPTED"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudfront-viewer-policy-https = {
+      description          = "Checks whether your Amazon CloudFront distributions use HTTPS (directly or via a redirection). The rule is NON_COMPLIANT if the value of ViewerProtocolPolicy is set to allow-all for the defaultCacheBehavior or for the CacheBehaviors."
+      identifier           = "CLOUDFRONT_VIEWER_POLICY_HTTPS"
+      resource_types_scope = ["AWS::CloudFront::Distribution"]
+      severity             = "Medium"
+    }
+
+    cloudtrail-all-read-s3-data-event-check = {
+      description          = "Checks if an AWS CloudTrail multi-Region trail is enabled and logs all read S3 data events for your buckets. The rule is NON_COMPLIANT if no multi-Region trail logs all read S3 data event types for all current and future S3 buckets."
+      identifier           = "CLOUDTRAIL_ALL_READ_S3_DATA_EVENT_CHECK"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Medium"
+    }
+
+    cloudtrail-all-write-s3-data-event-check = {
+      description          = "Checks if an AWS CloudTrail multi-Region trail is enabled and logs all write S3 data events for your buckets. The rule is NON_COMPLIANT if no multi-Region trail logs all write S3 data event types for all current and future S3 buckets."
+      identifier           = "CLOUDTRAIL_ALL_WRITE_S3_DATA_EVENT_CHECK"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Medium"
+    }
+
+    cloudtrail-event-data-store-multi-region = {
+      description          = "Checks if AWS CloudTrail event data stores have multi-region enabled when ingesting live events. The rule is NON_COMPLIANT if configuration.MultiRegionEnabled is false."
+      identifier           = "CLOUDTRAIL_EVENT_DATA_STORE_MULTI_REGION"
+      resource_types_scope = ["AWS::CloudTrail::EventDataStore"]
+      severity             = "Medium"
+    }
+
+    cloudtrail-s3-bucket-access-logging = {
+      description          = "Checks if the S3 bucket configurations for your AWS CloudTrail logs have Amazon S3 server access logging enabled. The rule is NON_COMPLIANT if at least one S3 bucket for a CloudTrail trail does not have S3 server access logging enabled."
+      identifier           = "CLOUDTRAIL_S3_BUCKET_ACCESS_LOGGING"
+      resource_types_scope = ["AWS::CloudTrail::Trail"]
+      severity             = "Medium"
+    }
+
+    cloudtrail-s3-bucket-public-access-prohibited = {
+      description          = "Checks if the S3 bucket configurations for your AWS CloudTrail logs block public access. The rule is NON_COMPLIANT if at least one S3 bucket for a CloudTrail trail is publicly accessible."
+      identifier           = "CLOUDTRAIL_S3_BUCKET_PUBLIC_ACCESS_PROHIBITED"
+      resource_types_scope = ["AWS::CloudTrail::Trail"]
+      severity             = "High"
+    }
+
+    cloudtrail-s3-dataevents-enabled = {
+      description      = "Checks if at least one AWS CloudTrail trail is logging Amazon Simple Storage Service (Amazon S3) data events for all S3 buckets. The rule is NON_COMPLIANT if there are trails or if no trails record S3 data events."
+      identifier       = "CLOUDTRAIL_S3_DATAEVENTS_ENABLED"
+      input_parameters = var.cloudtrail_s3_dataevents_enabled_parameters
+      severity         = "Medium"
+    }
+
+    cloudtrail-security-trail-enabled = {
+      description = "Checks that there is at least one AWS CloudTrail trail defined with security best practices. This rule is COMPLIANT if there is at least one trail that meets all of the following:"
+      identifier  = "CLOUDTRAIL_SECURITY_TRAIL_ENABLED"
+      severity    = "Medium"
+    }
+
+    cloudwatch-alarm-action-check = {
+      description          = "Checks if CloudWatch alarms have an action configured for the ALARM, INSUFFICIENT_DATA, or OK state. Optionally checks if any actions match a named ARN. The rule is NON_COMPLIANT if there is no action specified for the alarm or optional parameter."
+      identifier           = "CLOUDWATCH_ALARM_ACTION_CHECK"
+      input_parameters     = var.cloudwatch_alarm_action_check_parameters
+      resource_types_scope = ["AWS::CloudWatch::Alarm"]
+      severity             = "Low"
+    }
+
+    cloudwatch-alarm-action-enabled-check = {
+      description          = "Checks if Amazon CloudWatch alarms actions are in enabled state. The rule is NON_COMPLIANT if the CloudWatch alarms actions are not in enabled state."
+      identifier           = "CLOUDWATCH_ALARM_ACTION_ENABLED_CHECK"
+      resource_types_scope = ["AWS::CloudWatch::Alarm"]
+      severity             = "High"
+    }
+
+    cloudwatch-alarm-description = {
+      description          = "Checks if AWS CloudWatch Alarm resources contain an alarm description. The rule is NON_COMPLIANT if the CloudWatch Alarm resource does not contain an AlarmDescription field or the AlarmDescription is empty."
+      identifier           = "CLOUDWATCH_ALARM_DESCRIPTION"
+      resource_types_scope = ["AWS::CloudWatch::Alarm"]
+      severity             = "Medium"
+    }
+
+    cloudwatch-alarm-resource-check = {
+      description          = "Checks if a resource type has a CloudWatch alarm for the named metric. For resource type, you can specify EBS volumes, EC2 instances, Amazon RDS clusters, or S3 buckets. The rule is COMPLIANT if the named metric has a resource ID and CloudWatch alarm."
+      identifier           = "CLOUDWATCH_ALARM_RESOURCE_CHECK"
+      input_parameters     = var.cloudwatch_alarm_resource_check_parameters
+      resource_types_scope = ["AWS::EC2::Instance", "AWS::RDS::DBCluster", "AWS::S3::Bucket", "AWS::EC2::Volume"]
+      severity             = "Medium"
+    }
+
+    cloudwatch-alarm-settings-check = {
+      description          = "Checks whether CloudWatch alarms with the given metric name have the specified settings."
+      identifier           = "CLOUDWATCH_ALARM_SETTINGS_CHECK"
+      input_parameters     = var.cloudwatch_alarm_settings_check_parameters
+      resource_types_scope = ["AWS::CloudWatch::Alarm"]
+      severity             = "Medium"
+    }
+
+    cloudwatch-log-group-encrypted = {
+      description          = "Checks if Amazon CloudWatch Log Groups are encrypted with any AWS KMS key or a specified AWS KMS key Id. The rule is NON_COMPLIANT if a CloudWatch Log Group is not encrypted with a KMS key or is encrypted with a KMS key not supplied in the rule parameter."
+      identifier           = "CLOUDWATCH_LOG_GROUP_ENCRYPTED"
+      input_parameters     = var.cloudwatch_log_group_encrypted_parameters
+      resource_types_scope = ["AWS::Logs::LogGroup"]
+      severity             = "Medium"
+    }
+
+    cloudwatch-metric-stream-tagged = {
+      description          = "Checks if Amazon CloudWatch metric streams have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CLOUDWATCH_METRIC_STREAM_TAGGED"
+      input_parameters     = var.cloudwatch_metric_stream_tagged_parameters
+      resource_types_scope = ["AWS::CloudWatch::MetricStream"]
+      severity             = "Medium"
+    }
+
+    cloud-trail-cloud-watch-logs-enabled = {
+      description          = "Checks if AWS CloudTrail trails are configured to send logs to CloudWatch logs. The trail is NON_COMPLIANT if the CloudWatchLogsLogGroupArn property of the trail is empty."
+      identifier           = "CLOUD_TRAIL_CLOUD_WATCH_LOGS_ENABLED"
+      input_parameters     = var.cloud_trail_cloud_watch_logs_enabled_parameters
+      resource_types_scope = ["AWS::CloudTrail::Trail"]
+      severity             = "Medium"
+    }
+
+    cloudtrail-enabled = {
+      description      = "Checks if an AWS CloudTrail trail is enabled in your AWS account. The rule is NON_COMPLIANT if a trail is not enabled. Optionally, the rule checks a specific S3 bucket, Amazon Simple Notification Service (Amazon SNS) topic, and CloudWatch log group."
+      identifier       = "CLOUD_TRAIL_ENABLED"
+      input_parameters = var.cloudtrail_enabled_parameters
+      severity         = "High"
+    }
+
+    cloud-trail-encryption-enabled = {
+      description          = "Checks if AWS CloudTrail is configured to use the server side encryption (SSE) AWS Key Management Service (AWS KMS) encryption. The rule is COMPLIANT if the KmsKeyId is defined."
+      identifier           = "CLOUD_TRAIL_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::CloudTrail::Trail"]
+      severity             = "Medium"
+    }
+
+    cloud-trail-log-file-validation-enabled = {
+      description          = "Checks if AWS CloudTrail creates a signed digest file with logs. AWS recommends that the file validation must be enabled on all trails. The rule is NON_COMPLIANT if the validation is not enabled."
+      identifier           = "CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED"
+      resource_types_scope = ["AWS::CloudTrail::Trail"]
+      severity             = "Low"
+    }
+
+    cmk-backing-key-rotation-enabled = {
+      description          = "Checks if automatic key rotation is enabled for each key and matches to the key ID of the customer created AWS KMS key. The rule is NON_COMPLIANT if the AWS Config recorder role for a resource does not have the kms:DescribeKey permission."
+      identifier           = "CMK_BACKING_KEY_ROTATION_ENABLED"
+      resource_types_scope = ["AWS::KMS::Key"]
+      severity             = "Medium"
+    }
+
+    codeartifact-repository-tagged = {
+      description          = "Checks if AWS CodeArtifact repository resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CODEARTIFACT_REPOSITORY_TAGGED"
+      input_parameters     = var.codeartifact_repository_tagged_parameters
+      resource_types_scope = ["AWS::CodeArtifact::Repository"]
+      severity             = "Medium"
+    }
+
+    codebuild-project-artifact-encryption = {
+      description          = "Checks if an AWS CodeBuild project has encryption enabled for all of its artifacts. The rule is NON_COMPLIANT if encryptionDisabled is set to true for any primary or secondary (if present) artifact configurations."
+      identifier           = "CODEBUILD_PROJECT_ARTIFACT_ENCRYPTION"
+      resource_types_scope = ["AWS::CodeBuild::Project"]
+      severity             = "Medium"
+    }
+
+    codebuild-project-environment-privileged-check = {
+      description          = "Checks if an AWS CodeBuild project environment has privileged mode enabled. The rule is NON_COMPLIANT for a CodeBuild project if privilegedMode is set to true ."
+      identifier           = "CODEBUILD_PROJECT_ENVIRONMENT_PRIVILEGED_CHECK"
+      input_parameters     = var.codebuild_project_environment_privileged_check_parameters
+      resource_types_scope = ["AWS::CodeBuild::Project"]
+      severity             = "High"
+    }
+
+    codebuild-project-envvar-awscred-check = {
+      description          = "Checks if the project contains environment variables AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY. The rule is NON_COMPLIANT when the project environment variables contains plaintext credentials."
+      identifier           = "CODEBUILD_PROJECT_ENVVAR_AWSCRED_CHECK"
+      resource_types_scope = ["AWS::CodeBuild::Project"]
+      severity             = "Critical"
+    }
+
+    codebuild-project-logging-enabled = {
+      description          = "Checks if an AWS CodeBuild project environment has at least one log option enabled. The rule is NON_COMPLIANT if the status of all present log configurations is set to DISABLED ."
+      identifier           = "CODEBUILD_PROJECT_LOGGING_ENABLED"
+      input_parameters     = var.codebuild_project_logging_enabled_parameters
+      resource_types_scope = ["AWS::CodeBuild::Project"]
+      severity             = "Medium"
+    }
+
+    codebuild-project-s3-logs-encrypted = {
+      description          = "Checks if a AWS CodeBuild project configured with Amazon S3 Logs has encryption enabled for its logs. The rule is NON_COMPLIANT if encryptionDisabled is set to true in a S3LogsConfig of a CodeBuild project."
+      identifier           = "CODEBUILD_PROJECT_S3_LOGS_ENCRYPTED"
+      input_parameters     = var.codebuild_project_s3_logs_encrypted_parameters
+      resource_types_scope = ["AWS::CodeBuild::Project"]
+      severity             = "Low"
+    }
+
+    codebuild-project-source-repo-url-check = {
+      description          = "Checks if the Bitbucket source repository URL contains sign-in credentials or not. The rule is NON_COMPLIANT if the URL contains any sign-in information and COMPLIANT if it doesn t."
+      identifier           = "CODEBUILD_PROJECT_SOURCE_REPO_URL_CHECK"
+      resource_types_scope = ["AWS::CodeBuild::Project"]
+      severity             = "Critical"
+    }
+
+    codebuild-project-tagged = {
+      description          = "Checks if AWS CodeBuild projects have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CODEBUILD_PROJECT_TAGGED"
+      input_parameters     = var.codebuild_project_tagged_parameters
+      resource_types_scope = ["AWS::CodeBuild::Project"]
+      severity             = "Medium"
+    }
+
+    codebuild-report-group-encrypted-at-rest = {
+      description          = "Checks if an AWS CodeBuild report group has encryption at rest setting enabled. The rule is NON_COMPLIANT if EncryptionDisabled is true ."
+      identifier           = "CODEBUILD_REPORT_GROUP_ENCRYPTED_AT_REST"
+      resource_types_scope = ["AWS::CodeBuild::ReportGroup"]
+      severity             = "Medium"
+    }
+
+    codebuild-report-group-tagged = {
+      description          = "Checks if AWS CodeBuild report groups have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CODEBUILD_REPORT_GROUP_TAGGED"
+      input_parameters     = var.codebuild_report_group_tagged_parameters
+      resource_types_scope = ["AWS::CodeBuild::ReportGroup"]
+      severity             = "Medium"
+    }
+
+    codedeploy-auto-rollback-monitor-enabled = {
+      description          = "Checks if the deployment group is configured with automatic deployment rollback and deployment monitoring with alarms attached. The rule is NON_COMPLIANT if AutoRollbackConfiguration or AlarmConfiguration has not been configured or is not enabled."
+      identifier           = "CODEDEPLOY_AUTO_ROLLBACK_MONITOR_ENABLED"
+      resource_types_scope = ["AWS::CodeDeploy::DeploymentGroup"]
+      severity             = "Medium"
+    }
+
+    codedeploy-deployment-group-auto-rollback-enabled = {
+      description          = "Checks if AWS CodeDeploy deployment groups have auto rollback configuration enabled. The rule is NON_COMPLIANT if configuration.autoRollbackConfiguration.enabled is false or does not exist."
+      identifier           = "CODEDEPLOY_DEPLOYMENT_GROUP_AUTO_ROLLBACK_ENABLED"
+      resource_types_scope = ["AWS::CodeDeploy::DeploymentGroup"]
+      severity             = "Medium"
+    }
+
+    codedeploy-deployment-group-outdated-instances-update = {
+      description          = "Checks if AWS CodeDeploy deployment groups automatically update outdated instances. The rule is NON_COMPLIANT if configuration.outdatedInstancesStrategy is IGNORE ."
+      identifier           = "CODEDEPLOY_DEPLOYMENT_GROUP_OUTDATED_INSTANCES_UPDATE"
+      resource_types_scope = ["AWS::CodeDeploy::DeploymentGroup"]
+      severity             = "Medium"
+    }
+
+    codedeploy-ec2-minimum-healthy-hosts-configured = {
+      description          = "Checks if the deployment group for EC2/On-Premises Compute Platform is configured with a minimum healthy hosts fleet percentage or host count greater than or equal to the input threshold. The rule is NON_COMPLIANT if either is below the threshold."
+      identifier           = "CODEDEPLOY_EC2_MINIMUM_HEALTHY_HOSTS_CONFIGURED"
+      input_parameters     = var.codedeploy_ec2_minimum_healthy_hosts_configured_parameters
+      resource_types_scope = ["AWS::CodeDeploy::DeploymentGroup"]
+      severity             = "Medium"
+    }
+
+    codedeploy-lambda-allatonce-traffic-shift-disabled = {
+      description          = "Checks if the deployment group for Lambda Compute Platform is not using the default deployment configuration. The rule is NON_COMPLIANT if the deployment group is using the deployment configuration CodeDeployDefault.LambdaAllAtOnce ."
+      identifier           = "CODEDEPLOY_LAMBDA_ALLATONCE_TRAFFIC_SHIFT_DISABLED"
+      resource_types_scope = ["AWS::CodeDeploy::DeploymentGroup"]
+      severity             = "Medium"
+    }
+
+    codeguruprofiler-profiling-group-tagged = {
+      description          = "Checks if Amazon CodeGuru Profiler profiling groups have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CODEGURUPROFILER_PROFILING_GROUP_TAGGED"
+      input_parameters     = var.codeguruprofiler_profiling_group_tagged_parameters
+      resource_types_scope = ["AWS::CodeGuruProfiler::ProfilingGroup"]
+      severity             = "Low"
+    }
+
+    codegurureviewer-repository-association-tagged = {
+      description          = "Checks if Amazon CodeGuru Reviewer repository associations have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CODEGURUREVIEWER_REPOSITORY_ASSOCIATION_TAGGED"
+      input_parameters     = var.codegurureviewer_repository_association_tagged_parameters
+      resource_types_scope = ["AWS::CodeGuruReviewer::RepositoryAssociation"]
+      severity             = "Low"
+    }
+
+    codepipeline-deployment-count-check = {
+      description          = "Checks if the first deployment stage of AWS CodePipeline performs more than one deployment. Optionally checks if each of the subsequent remaining stages deploy to more than the specified number of deployments (deploymentLimit)."
+      identifier           = "CODEPIPELINE_DEPLOYMENT_COUNT_CHECK"
+      input_parameters     = var.codepipeline_deployment_count_check_parameters
+      resource_types_scope = ["AWS::CodePipeline::Pipeline"]
+      severity             = "Low"
+    }
+
+    codepipeline-region-fanout-check = {
+      description          = "Checks if each stage in the AWS CodePipeline deploys to more than N times the number of the regions the AWS CodePipeline has deployed in all the previous combined stages, where N is the region fanout number. The first deployment stage can deploy to a..."
+      identifier           = "CODEPIPELINE_REGION_FANOUT_CHECK"
+      input_parameters     = var.codepipeline_region_fanout_check_parameters
+      resource_types_scope = ["AWS::CodePipeline::Pipeline"]
+      severity             = "Low"
+    }
+
+    cognito-identity-pool-unauthenticated-logins = {
+      description          = "Checks if Amazon Cognito identity pools disallow unauthenticated logins. The rule is NON_COMPLIANT if configuration.AllowUnauthenticatedIdentities is true."
+      identifier           = "COGNITO_IDENTITY_POOL_UNAUTHENTICATED_LOGINS"
+      resource_types_scope = ["AWS::Cognito::IdentityPool"]
+      severity             = "Medium"
+    }
+
+    cognito-identity-pool-unauth-access-check = {
+      description          = "Checks if Amazon Cognito Identity Pool allows unauthenticated identities. The rule is NON_COMPLIANT if the Identity Pool is configured to allow unauthenticated identities."
+      identifier           = "COGNITO_IDENTITY_POOL_UNAUTH_ACCESS_CHECK"
+      resource_types_scope = ["AWS::Cognito::IdentityPool"]
+      severity             = "Medium"
+    }
+
+    cognito-userpool-cust-auth-threat-full-check = {
+      description          = "Checks if Amazon Cognito user pools have threat protection enabled with full-function enforcement mode for custom authentication. This rule is NON_COMPLIANT if threat protection for custom authentication is not set to full-function enforcement mode."
+      identifier           = "COGNITO_USERPOOL_CUST_AUTH_THREAT_FULL_CHECK"
+      resource_types_scope = ["AWS::Cognito::UserPool"]
+      severity             = "Medium"
+    }
+
+    cognito-user-pool-advanced-security-enabled = {
+      description          = "Checks if an Amazon Cognito user pool has advanced security enabled for standard authentication. The rule is NON_COMPLIANT if advanced security is not enabled. Optionally, you can specify an advanced security mode for the rule to check."
+      identifier           = "COGNITO_USER_POOL_ADVANCED_SECURITY_ENABLED"
+      input_parameters     = var.cognito_user_pool_advanced_security_enabled_parameters
+      resource_types_scope = ["AWS::Cognito::UserPool"]
+      severity             = "Medium"
+    }
+
+    cognito-user-pool-deletion-protection-enabled = {
+      description          = "Checks whether Amazon Cognito user pools has deletion protection enabled. This rule is NON_COMPLIANT if a user pool has deletion protection disabled."
+      identifier           = "COGNITO_USER_POOL_DELETION_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::Cognito::UserPool"]
+      severity             = "Medium"
+    }
+
+    cognito-user-pool-mfa-enabled = {
+      description          = "Checks if Amazon Cognito user pools configured with a PASSWORD-only sign-in policy have Multi-Factor Authentication (MFA) enabled. This rule is NON_COMPLIANT if the Cognito user pool configured with PASSWORD only sign in policy does not have MFA enabled."
+      identifier           = "COGNITO_USER_POOL_MFA_ENABLED"
+      resource_types_scope = ["AWS::Cognito::UserPool"]
+      severity             = "Medium"
+    }
+
+    cognito-user-pool-password-policy-check = {
+      description          = "Checks if the password policy for Amazon cognito user pool meets the specified requirements indicated in the parameters. The rule is NON_COMPLIANT if the user pool password policy does not meet the specified requirements."
+      identifier           = "COGNITO_USER_POOL_PASSWORD_POLICY_CHECK"
+      input_parameters     = var.cognito_user_pool_password_policy_check_parameters
+      resource_types_scope = ["AWS::Cognito::UserPool"]
+      severity             = "Medium"
+    }
+
+    cognito-user-pool-tagged = {
+      description          = "Checks if Amazon Cognito user pools have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "COGNITO_USER_POOL_TAGGED"
+      input_parameters     = var.cognito_user_pool_tagged_parameters
+      resource_types_scope = ["AWS::Cognito::UserPool"]
+      severity             = "Medium"
+    }
+
+    connect-instance-logging-enabled = {
+      description          = "Checks if Amazon Connect instances have flow logs enabled in an Amazon CloudWatch log group. The rule is NON_COMPLIANT if an Amazon Connect instance does not have flow logs enabled."
+      identifier           = "CONNECT_INSTANCE_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::Connect::Instance"]
+      severity             = "Medium"
+    }
+
+    customerprofiles-domain-tagged = {
+      description          = "Checks if Amazon Connect Customer Profiles domains have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CUSTOMERPROFILES_DOMAIN_TAGGED"
+      input_parameters     = var.customerprofiles_domain_tagged_parameters
+      resource_types_scope = ["AWS::CustomerProfiles::Domain"]
+      severity             = "Medium"
+    }
+
+    customerprofiles-object-type-allow-profile-creation = {
+      description          = "Checks if Amazon Connect Customer Profiles object types allow the creation of a new standard profile if one does not exist. The rule is NON_COMPLIANT if configuration.AllowProfileCreation is false."
+      identifier           = "CUSTOMERPROFILES_OBJECT_TYPE_ALLOW_PROFILE_CREATION"
+      resource_types_scope = ["AWS::CustomerProfiles::ObjectType"]
+      severity             = "Medium"
+    }
+
+    customerprofiles-object-type-tagged = {
+      description          = "Checks if Amazon Connect Customer Profiles object types have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "CUSTOMERPROFILES_OBJECT_TYPE_TAGGED"
+      input_parameters     = var.customerprofiles_object_type_tagged_parameters
+      resource_types_scope = ["AWS::CustomerProfiles::ObjectType"]
+      severity             = "Low"
+    }
+
+    custom-eventbus-policy-attached = {
+      description          = "Checks if Amazon EventBridge custom event buses have a resource-based policy attached. The rule is NON_COMPLIANT if a custom event bus policy does not have an attached resource-based policy."
+      identifier           = "CUSTOM_EVENTBUS_POLICY_ATTACHED"
+      resource_types_scope = ["AWS::Events::EventBus"]
+      severity             = "Low"
+    }
+
+    custom-schema-registry-policy-attached = {
+      description          = "Checks if custom Amazon EventBridge schema registries have a resource policy attached. The rule is NON_COMPLIANT for custom schema registries without a resource policy attached."
+      identifier           = "CUSTOM_SCHEMA_REGISTRY_POLICY_ATTACHED"
+      resource_types_scope = ["AWS::EventSchemas::Registry"]
+      severity             = "Medium"
+    }
+
+    cw-loggroup-retention-period-check = {
+      description          = "Checks if an Amazon CloudWatch LogGroup retention period is set to greater than 365 days or else a specified retention period. The rule is NON_COMPLIANT if the retention period is less than MinRetentionTime, if specified, or else 365 days."
+      identifier           = "CW_LOGGROUP_RETENTION_PERIOD_CHECK"
+      input_parameters     = var.cw_loggroup_retention_period_check_parameters
+      resource_types_scope = ["AWS::Logs::LogGroup"]
+      severity             = "Medium"
+    }
+
+    datasync-location-object-storage-using-https = {
+      description          = "Checks if AWS DataSync location object storage servers use the HTTPS protocol to communicate. The rule is NON_COMPLIANT if configuration.ServerProtocol is not HTTPS ."
+      identifier           = "DATASYNC_LOCATION_OBJECT_STORAGE_USING_HTTPS"
+      resource_types_scope = ["AWS::DataSync::LocationObjectStorage"]
+      severity             = "Medium"
+    }
+
+    datasync-task-data-verification-enabled = {
+      description          = "Checks if AWS DataSync tasks have data verification enabled to perform additional verification at the end of your transfer. The rule is NON_COMPLIANT if configuration.Options.VerifyMode is NONE ."
+      identifier           = "DATASYNC_TASK_DATA_VERIFICATION_ENABLED"
+      resource_types_scope = ["AWS::DataSync::Task"]
+      severity             = "Medium"
+    }
+
+    datasync-task-logging-enabled = {
+      description          = "Checks if an AWS DataSync task has Amazon CloudWatch logging enabled. The rule is NON_COMPLIANT if an AWS DataSync task does not have Amazon CloudWatch logging enabled or if the logging level is not equivalent to the logging level that you specify."
+      identifier           = "DATASYNC_TASK_LOGGING_ENABLED"
+      input_parameters     = var.datasync_task_logging_enabled_parameters
+      resource_types_scope = ["AWS::DataSync::Task"]
+      severity             = "Medium"
+    }
+
+    datasync-task-tagged = {
+      description          = "Checks if AWS DataSync tasks have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "DATASYNC_TASK_TAGGED"
+      input_parameters     = var.datasync_task_tagged_parameters
+      resource_types_scope = ["AWS::DataSync::Task"]
+      severity             = "Low"
+    }
+
+    dax-encryption-enabled = {
+      description          = "Checks if Amazon DynamoDB Accelerator (DAX) clusters are encrypted. The rule is NON_COMPLIANT if a DAX cluster is not encrypted."
+      identifier           = "DAX_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::DAX::Cluster"]
+      severity             = "Medium"
+    }
+
+    dax-tls-endpoint-encryption = {
+      description          = "Checks if your Amazon DynamoDB Accelerator (DAX) cluster has ClusterEndpointEncryptionType set to TLS. The rule is NON_COMPLIANT if a DAX cluster is not encrypted by transport layer security (TLS)."
+      identifier           = "DAX_TLS_ENDPOINT_ENCRYPTION"
+      resource_types_scope = ["AWS::DAX::Cluster"]
+      severity             = "Medium"
+    }
+
+    db-instance-backup-enabled = {
+      description          = "Checks if RDS DB instances have backups enabled. Optionally, the rule checks the backup retention period and the backup window."
+      identifier           = "DB_INSTANCE_BACKUP_ENABLED"
+      input_parameters     = var.db_instance_backup_enabled_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    desired-instance-tenancy = {
+      description          = "Checks EC2 instances for a tenancy value. Also checks if AMI IDs are specified to be launched from those AMIs or if Host IDs are launched on those Dedicated Hosts. The rule is COMPLIANT if the instance matches a host and an AMI, if specified, in a list."
+      identifier           = "DESIRED_INSTANCE_TENANCY"
+      input_parameters     = var.desired_instance_tenancy_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    desired-instance-type = {
+      description          = "Checks if your EC2 instances are of a specific instance type. The rule is NON_COMPLIANT if an EC2 instance is not specified in the parameter list. For a list of supported EC2 instance types, see Instance types in the EC2 User Guide for Linux Instances."
+      identifier           = "DESIRED_INSTANCE_TYPE"
+      input_parameters     = var.desired_instance_type_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    devicefarm-instance-profile-tagged = {
+      description          = "Checks if AWS Device Farm instance profiles have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "DEVICEFARM_INSTANCE_PROFILE_TAGGED"
+      input_parameters     = var.devicefarm_instance_profile_tagged_parameters
+      resource_types_scope = ["AWS::DeviceFarm::InstanceProfile"]
+      severity             = "Medium"
+    }
+
+    devicefarm-project-tagged = {
+      description          = "Checks if AWS Device Farm projects have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "DEVICEFARM_PROJECT_TAGGED"
+      input_parameters     = var.devicefarm_project_tagged_parameters
+      resource_types_scope = ["AWS::DeviceFarm::Project"]
+      severity             = "Medium"
+    }
+
+    devicefarm-test-grid-project-tagged = {
+      description          = "Checks if AWS Device Farm test grid projects have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "DEVICEFARM_TEST_GRID_PROJECT_TAGGED"
+      input_parameters     = var.devicefarm_test_grid_project_tagged_parameters
+      resource_types_scope = ["AWS::DeviceFarm::TestGridProject"]
+      severity             = "Medium"
+    }
+
+    dms-auto-minor-version-upgrade-check = {
+      description          = "Checks if an AWS Database Migration Service (AWS DMS) replication instance has automatic minor version upgrades enabled. The rule is NON_COMPLIANT if an AWS DMS replication instance is not configured with automatic minor version upgrades."
+      identifier           = "DMS_AUTO_MINOR_VERSION_UPGRADE_CHECK"
+      resource_types_scope = ["AWS::DMS::ReplicationInstance"]
+      severity             = "Medium"
+    }
+
+    dms-endpoint-ssl-configured = {
+      description          = "Checks if AWS Database Migration Service (AWS DMS) endpoints are configured with an SSL connection. The rule is NON_COMPLIANT if AWS DMS does not have an SSL connection configured."
+      identifier           = "DMS_ENDPOINT_SSL_CONFIGURED"
+      resource_types_scope = ["AWS::DMS::Endpoint"]
+      severity             = "Medium"
+    }
+
+    dms-endpoint-tagged = {
+      description          = "Checks if AWS DMS endpoints have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "DMS_ENDPOINT_TAGGED"
+      input_parameters     = var.dms_endpoint_tagged_parameters
+      resource_types_scope = ["AWS::DMS::Endpoint"]
+      severity             = "Medium"
+    }
+
+    dms-mongo-db-authentication-enabled = {
+      description          = "Checks if AWS Database Migration Service (AWS DMS) endpoints for MongoDb data stores are enabled for password-based authentication and access control. The rule is NON_COMPLIANT if password-based authentication and access control is not enabled."
+      identifier           = "DMS_MONGO_DB_AUTHENTICATION_ENABLED"
+      resource_types_scope = ["AWS::DMS::Endpoint"]
+      severity             = "Medium"
+    }
+
+    dms-neptune-iam-authorization-enabled = {
+      description          = "Checks if an AWS Database Migration Service (AWS DMS) endpoint for Amazon Neptune databases is configured with IAM authorization. The rule is NON_COMPLIANT if an AWS DMS endpoint where Neptune is the target has IamAuthEnabled set to false."
+      identifier           = "DMS_NEPTUNE_IAM_AUTHORIZATION_ENABLED"
+      resource_types_scope = ["AWS::DMS::Endpoint"]
+      severity             = "Medium"
+    }
+
+    dms-redis-tls-enabled = {
+      description          = "Checks if AWS Database Migration Service (AWS DMS) endpoints for Redis data stores are enabled for TLS/SSL encryption of data communicated with other endpoints. The rule is NON_COMPLIANT if TLS/SSL encryption is not enabled."
+      identifier           = "DMS_REDIS_TLS_ENABLED"
+      resource_types_scope = ["AWS::DMS::Endpoint"]
+      severity             = "Medium"
+    }
+
+    dms-replication-instance-multi-az-enabled = {
+      description          = "Checks if AWS Database Migration Service (DMS) replication instances are configured with multiple Availability Zones. The rule is NON_COMPLIANT if a DMS replication instance is not configured to use multiple Availability Zones."
+      identifier           = "DMS_REPLICATION_INSTANCE_MULTI_AZ_ENABLED"
+      resource_types_scope = ["AWS::DMS::ReplicationInstance"]
+      severity             = "Medium"
+    }
+
+    dms-replication-not-public = {
+      description          = "Checks if AWS Database Migration Service (AWS DMS) replication instances are public. The rule is NON_COMPLIANT if PubliclyAccessible field is set to true."
+      identifier           = "DMS_REPLICATION_NOT_PUBLIC"
+      resource_types_scope = ["AWS::DMS::ReplicationInstance"]
+      severity             = "Critical"
+    }
+
+    dms-replication-task-sourcedb-logging = {
+      description          = "Checks if logging is enabled with a valid severity level for AWS DMS replication tasks of a source database. The rule is NON_COMPLIANT if logging is not enabled or logs for DMS replication tasks of a source database have a severity level that is not valid."
+      identifier           = "DMS_REPLICATION_TASK_SOURCEDB_LOGGING"
+      resource_types_scope = ["AWS::DMS::ReplicationTask"]
+      severity             = "Medium"
+    }
+
+    dms-replication-task-tagged = {
+      description          = "Checks if AWS DMS replication tasks have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "DMS_REPLICATION_TASK_TAGGED"
+      input_parameters     = var.dms_replication_task_tagged_parameters
+      resource_types_scope = ["AWS::DMS::ReplicationTask"]
+      severity             = "Medium"
+    }
+
+    dms-replication-task-targetdb-logging = {
+      description          = "Checks if logging is enabled with a valid severity level for AWS DMS replication task events of a target database. The rule is NON_COMPLIANT if logging is not enabled or replication task logging of a target database has a severity level that is not valid."
+      identifier           = "DMS_REPLICATION_TASK_TARGETDB_LOGGING"
+      resource_types_scope = ["AWS::DMS::ReplicationTask"]
+      severity             = "Medium"
+    }
+
+    docdb-cluster-audit-logging-enabled = {
+      description          = "Checks if an Amazon DocumentDB (with MongoDB compatibility) instance cluster has CloudWatch log export enabled for audit logs. The rule is NON_COMPLIANT if an Amazon DocumentDB instance cluster does not have CloudWatch log export enabled for audit logs."
+      identifier           = "DOCDB_CLUSTER_AUDIT_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    docdb-cluster-backup-retention-check = {
+      description          = "Checks if an Amazon Document DB cluster retention period is set to specific number of days. The rule is NON_COMPLIANT if the retention period is less than the value specified by the parameter."
+      identifier           = "DOCDB_CLUSTER_BACKUP_RETENTION_CHECK"
+      input_parameters     = var.docdb_cluster_backup_retention_check_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    docdb-cluster-deletion-protection-enabled = {
+      description          = "Checks if an Amazon DocumentDB (with MongoDB compatibility) cluster has deletion protection enabled. The rule is NON_COMPLIANT if an Amazon DocumentDB cluster has the deletionProtection field set to false."
+      identifier           = "DOCDB_CLUSTER_DELETION_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    docdb-cluster-encrypted = {
+      description          = "Checks if storage encryption is enabled for your Amazon DocumentDB (with MongoDB compatibility) clusters. The rule is NON_COMPLIANT if storage encryption is not enabled."
+      identifier           = "DOCDB_CLUSTER_ENCRYPTED"
+      input_parameters     = var.docdb_cluster_encrypted_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    docdb-cluster-encrypted-in-transit = {
+      description          = "Checks if connections to Amazon DocumentDB clusters are configured to use encryption in transit. The rule is NON_COMPLIANT if the parameter group is not in-sync , or the TLS parameter is set to either disabled or a value in excludeTlsParameters."
+      identifier           = "DOCDB_CLUSTER_ENCRYPTED_IN_TRANSIT"
+      input_parameters     = var.docdb_cluster_encrypted_in_transit_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    docdb-cluster-snapshot-public-prohibited = {
+      description          = "Checks if Amazon DocumentDB manual cluster snapshots are public. The rule is NON_COMPLIANT if any Amazon DocumentDB manual cluster snapshots are public."
+      identifier           = "DOCDB_CLUSTER_SNAPSHOT_PUBLIC_PROHIBITED"
+      resource_types_scope = ["AWS::RDS::DBClusterSnapshot"]
+      severity             = "Critical"
+    }
+
+    dynamodb-autoscaling-enabled = {
+      description          = "Checks if Amazon DynamoDB tables or global secondary indexes can process read/write capacity using on-demand mode or provisioned mode with auto scaling enabled. The rule is NON_COMPLIANT if either mode is used without auto scaling enabled"
+      identifier           = "DYNAMODB_AUTOSCALING_ENABLED"
+      input_parameters     = var.dynamodb_autoscaling_enabled_parameters
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-in-backup-plan = {
+      description          = "Checks if an Amazon DynamoDB table is present in AWS Backup plans. The rule is NON_COMPLIANT if DynamoDB tables are not present in any AWS Backup plan."
+      identifier           = "DYNAMODB_IN_BACKUP_PLAN"
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon DynamoDB Tables within the specified period. The rule is NON_COMPLIANT if the DynamoDB Table does not have a corresponding recovery point created within the specified time period."
+      identifier           = "DYNAMODB_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.dynamodb_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon DynamoDB Tables meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of a DynamoDB Table is greater than maxRestoreTime minutes."
+      identifier           = "DYNAMODB_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.dynamodb_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-pitr-enabled = {
+      description          = "Checks if point-in-time recovery (PITR) is enabled for Amazon DynamoDB tables. The rule is NON_COMPLIANT if PITR is not enabled for DynamoDB tables."
+      identifier           = "DYNAMODB_PITR_ENABLED"
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon DynamoDB tables are protected by a backup plan. The rule is NON_COMPLIANT if the DynamoDB Table is not covered by a backup plan."
+      identifier           = "DYNAMODB_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.dynamodb_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-table-deletion-protection-enabled = {
+      description          = "Checks if an Amazon DynamoDB table have deletion protection set to enabled. The rule is NON_COMPLIANT if the table have deletion protection set to disabled."
+      identifier           = "DYNAMODB_TABLE_DELETION_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-table-encrypted-kms = {
+      description          = "Checks if Amazon DynamoDB table is encrypted with AWS Key Management Service (KMS). The rule is NON_COMPLIANT if Amazon DynamoDB table is not encrypted with AWS KMS. The rule is also NON_COMPLIANT if the encrypted AWS KMS key is not present in..."
+      identifier           = "DYNAMODB_TABLE_ENCRYPTED_KMS"
+      input_parameters     = var.dynamodb_table_encrypted_kms_parameters
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-table-encryption-enabled = {
+      description          = "Checks if the Amazon DynamoDB tables are encrypted and checks their status. The rule is COMPLIANT if the status is enabled or enabling."
+      identifier           = "DYNAMODB_TABLE_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::DynamoDB::Table"]
+      severity             = "Medium"
+    }
+
+    dynamodb-throughput-limit-check = {
+      description      = "Checks if provisioned DynamoDB throughput is approaching the maximum limit for your account. By default, the rule checks if provisioned throughput exceeds a threshold of 80 percent of your account limits."
+      identifier       = "DYNAMODB_THROUGHPUT_LIMIT_CHECK"
+      input_parameters = var.dynamodb_throughput_limit_check_parameters
+      severity         = "Medium"
+    }
+
+    ebs-in-backup-plan = {
+      description          = "Check if Amazon Elastic Block Store (Amazon EBS) volumes are added in backup plans of AWS Backup. The rule is NON_COMPLIANT if Amazon EBS volumes are not included in backup plans."
+      identifier           = "EBS_IN_BACKUP_PLAN"
+      resource_types_scope = ["AWS::EC2::Volume"]
+      severity             = "Medium"
+    }
+
+    ebs-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon Elastic Block Store (Amazon EBS). The rule is NON_COMPLIANT if the Amazon EBS volume does not have a corresponding recovery point created within the specified time period."
+      identifier           = "EBS_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.ebs_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::EC2::Volume"]
+      severity             = "Medium"
+    }
+
+    ebs-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon Elastic Block Store (Amazon EBS) volumes meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Amazon EBS volume is greater than maxRestoreTime minutes."
+      identifier           = "EBS_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.ebs_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::EC2::Volume"]
+      severity             = "Medium"
+    }
+
+    ebs-optimized-instance = {
+      description          = "Checks if Amazon EBS optimization is enabled for your Amazon Elastic Compute Cloud (Amazon EC2) instances that can be Amazon EBS-optimized. The rule is NON_COMPLIANT if EBS optimization is not enabled for an Amazon EC2 instance that can be EBS-optimized."
+      identifier           = "EBS_OPTIMIZED_INSTANCE"
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    ebs-resources-in-logically-air-gapped-vault = {
+      description          = "Checks if Amazon Elastic Block Store (Amazon EBS) volumes are in a logically air-gapped vault. The rule is NON_COMPLIANT if an Amazon EBS volume is not in a logically air-gapped vault within the specified time period."
+      identifier           = "EBS_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT"
+      input_parameters     = var.ebs_resources_in_logically_air_gapped_vault_parameters
+      resource_types_scope = ["AWS::EC2::Volume"]
+      severity             = "Medium"
+    }
+
+    ebs-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon Elastic Block Store (Amazon EBS) volumes are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon EBS volume is not covered by a backup plan."
+      identifier           = "EBS_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.ebs_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::EC2::Volume"]
+      severity             = "Low"
+    }
+
+    ebs-snapshot-block-public-access = {
+      description          = "Checks if block public access is enabled for Amazon EBS snapshots in an AWS Region. The rule is NON_COMPLIANT if block public access is not enabled for all public sharing of EBS snapshots in an AWS Region."
+      identifier           = "EBS_SNAPSHOT_BLOCK_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::EC2::SnapshotBlockPublicAccess"]
+      severity             = "High"
+    }
+
+    ebs-snapshot-public-restorable-check = {
+      description = "Checks if Amazon Elastic Block Store (Amazon EBS) snapshots are not publicly restorable. The rule is NON_COMPLIANT if one or more individual snapshots with RestorableByUserIds field are set to all."
+      identifier  = "EBS_SNAPSHOT_PUBLIC_RESTORABLE_CHECK"
+      severity    = "Critical"
+    }
+
+    ec2-capacity-reservation-tagged = {
+      description          = "Checks if Amazon EC2 capacity reservations have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_CAPACITY_RESERVATION_TAGGED"
+      input_parameters     = var.ec2_capacity_reservation_tagged_parameters
+      resource_types_scope = ["AWS::EC2::CapacityReservation"]
+      severity             = "Medium"
+    }
+
+    ec2-carrier-gateway-tagged = {
+      description          = "Checks if Amazon EC2 carrier gateways have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_CARRIER_GATEWAY_TAGGED"
+      input_parameters     = var.ec2_carrier_gateway_tagged_parameters
+      resource_types_scope = ["AWS::EC2::CarrierGateway"]
+      severity             = "Medium"
+    }
+
+    ec2-client-vpn-connection-log-enabled = {
+      description          = "Checks if AWS Client VPN endpoint has client connection logging enabled. The rule is NON_COMPLIANT if Configuration.ConnectionLogOptions.Enabled is set to false."
+      identifier           = "EC2_CLIENT_VPN_CONNECTION_LOG_ENABLED"
+      resource_types_scope = ["AWS::EC2::ClientVpnEndpoint"]
+      severity             = "Low"
+    }
+
+    ec2-client-vpn-endpoint-tagged = {
+      description          = "Checks if Amazon EC2 client VPN endpoints have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_CLIENT_VPN_ENDPOINT_TAGGED"
+      input_parameters     = var.ec2_client_vpn_endpoint_tagged_parameters
+      resource_types_scope = ["AWS::EC2::ClientVpnEndpoint"]
+      severity             = "Medium"
+    }
+
+    ec2-client-vpn-not-authorize-all = {
+      description          = "Checks if the AWS Client VPN authorization rules authorizes connection access for all clients. The rule is NON_COMPLIANT if AccessAll is present and set to true."
+      identifier           = "EC2_CLIENT_VPN_NOT_AUTHORIZE_ALL"
+      resource_types_scope = ["AWS::EC2::ClientVpnEndpoint"]
+      severity             = "Medium"
+    }
+
+    ec2-dhcp-options-tagged = {
+      description          = "Checks if Amazon EC2 DHCP options have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_DHCP_OPTIONS_TAGGED"
+      input_parameters     = var.ec2_dhcp_options_tagged_parameters
+      resource_types_scope = ["AWS::EC2::DHCPOptions"]
+      severity             = "Low"
+    }
+
+    ec2-ebs-encryption-by-default = {
+      description = "Checks if Amazon Elastic Block Store (EBS) encryption is enabled by default. The rule is NON_COMPLIANT if the encryption is not enabled."
+      identifier  = "EC2_EBS_ENCRYPTION_BY_DEFAULT"
+      severity    = "Medium"
+    }
+
+    ec2-enis-source-destination-check-enabled = {
+      description          = "Checks if EC2 ENIs managed by users have source/destination check enabled. The rule is NON_COMPLIANT if source/destination check is disabled on these ENIs for lambda , aws_codestar_connections_managed , branch , efa , interface , and quicksight ."
+      identifier           = "EC2_ENIS_SOURCE_DESTINATION_CHECK_ENABLED"
+      resource_types_scope = ["AWS::EC2::NetworkInterface"]
+      severity             = "Medium"
+    }
+
+    ec2-fleet-tagged = {
+      description          = "Checks if Amazon EC2 fleets have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_FLEET_TAGGED"
+      input_parameters     = var.ec2_fleet_tagged_parameters
+      resource_types_scope = ["AWS::EC2::EC2Fleet"]
+      severity             = "Medium"
+    }
+
+    ec2-imdsv2-check = {
+      description          = "Checks whether your Amazon Elastic Compute Cloud (Amazon EC2) instance metadata version is configured with Instance Metadata Service Version 2 (IMDSv2). The rule is NON_COMPLIANT if the HttpTokens is set to optional."
+      identifier           = "EC2_IMDSV2_CHECK"
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "High"
+    }
+
+    ec2-instance-detailed-monitoring-enabled = {
+      description          = "Checks if detailed monitoring is enabled for EC2 instances. The rule is NON_COMPLIANT if detailed monitoring is not enabled."
+      identifier           = "EC2_INSTANCE_DETAILED_MONITORING_ENABLED"
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    ec2-instance-launched-with-allowed-ami = {
+      description          = "Checks if running or stopped EC2 instances were launched with Amazon Machine Images (AMIs) that meet your Allowed AMIs criteria. The rule is NON_COMPLIANT if an AMI doesn t meet the Allowed AMIs criteria and the Allowed AMIs settings isn t disabled."
+      identifier           = "EC2_INSTANCE_LAUNCHED_WITH_ALLOWED_AMI"
+      input_parameters     = var.ec2_instance_launched_with_allowed_ami_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    ec2-instance-managed-by-systems-manager = {
+      description          = "Checks if your Amazon EC2 instances are managed by AWS Systems Manager Agent (SSM Agent). The rule is NON_COMPLIANT if an EC2 instance is running and the SSM Agent is stopped, or if an EC2 instance is running and the SSM Agent is terminated."
+      identifier           = "EC2_INSTANCE_MANAGED_BY_SSM"
+      resource_types_scope = ["AWS::EC2::Instance", "AWS::SSM::ManagedInstanceInventory"]
+      severity             = "Medium"
+    }
+
+    ec2-instance-multiple-eni-check = {
+      description          = "Checks if Amazon Elastic Compute Cloud (Amazon EC2) uses multiple Elastic Network Interfaces (ENIs) or Elastic Fabric Adapters (EFAs). The rule is NON_COMPLIANT an Amazon EC2 instance use multiple network interfaces."
+      identifier           = "EC2_INSTANCE_MULTIPLE_ENI_CHECK"
+      input_parameters     = var.ec2_instance_multiple_eni_check_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    ec2-instance-no-public-ip = {
+      description          = "Checks whether Amazon Elastic Compute Cloud (Amazon EC2) instances have a public IP association. The rule is NON_COMPLIANT if the publicIp field is present in the Amazon EC2 instance configuration item. This rule applies only to IPv4."
+      identifier           = "EC2_INSTANCE_NO_PUBLIC_IP"
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "High"
+    }
+
+    ec2-instance-profile-attached = {
+      description          = "Checks if an EC2 instance has an AWS Identity and Access Management (IAM) profile attached to it. The rule is NON_COMPLIANT if no IAM profile is attached to the EC2 instance."
+      identifier           = "EC2_INSTANCE_PROFILE_ATTACHED"
+      input_parameters     = var.ec2_instance_profile_attached_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    ec2-ipamscope-tagged = {
+      description          = "Checks if Amazon EC2 IPAM Scopes have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_IPAMSCOPE_TAGGED"
+      input_parameters     = var.ec2_ipamscope_tagged_parameters
+      resource_types_scope = ["AWS::EC2::IPAMScope"]
+      severity             = "Medium"
+    }
+
+    ec2-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon Elastic Compute Cloud (Amazon EC2) instances. The rule is NON_COMPLIANT if the Amazon EC2 instance does not have a corresponding recovery point created within the specified time period."
+      identifier           = "EC2_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.ec2_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    ec2-launchtemplate-ebs-encrypted = {
+      description          = "Checks if Amazon EC2 launch template resources have encrypted EBS volumes. The rule is NON_COMPLIANT if any EBS volumes are not encrypted. The rule will only check the default version of the LaunchTemplate."
+      identifier           = "EC2_LAUNCHTEMPLATE_EBS_ENCRYPTED"
+      resource_types_scope = ["AWS::EC2::LaunchTemplate"]
+      severity             = "Medium"
+    }
+
+    ec2-launch-templates-ebs-volume-encrypted = {
+      description          = "Checks whether Amazon EC2 launch templates have encryption enabled for all attached EBS volumes.The rule is NON_COMPLIANT if encryption is set to False for any EBS volume configured in the launch template."
+      identifier           = "EC2_LAUNCH_TEMPLATES_EBS_VOLUME_ENCRYPTED"
+      resource_types_scope = ["AWS::EC2::LaunchTemplate"]
+      severity             = "Medium"
+    }
+
+    ec2-launch-template-imdsv2-check = {
+      description          = "Checks if the currently set default version of an Amazon EC2 Launch Template requires new launched instances to use V2 of the Amazon EC2 Instance Metadata Service (IMDSv2). The rule is NON_COMPLIANT if Metadata version is not specified as V2 (IMDSv2)."
+      identifier           = "EC2_LAUNCH_TEMPLATE_IMDSV2_CHECK"
+      resource_types_scope = ["AWS::EC2::LaunchTemplate"]
+      severity             = "Low"
+    }
+
+    ec2-launch-template-public-ip-disabled = {
+      description          = "Checks if Amazon EC2 Launch Templates are set to assign public IP addresses to Network Interfaces. The rule is NON_COMPLIANT if the default version of an EC2 Launch Template has at least 1 Network Interface with AssociatePublicIpAddress set to true ."
+      identifier           = "EC2_LAUNCH_TEMPLATE_PUBLIC_IP_DISABLED"
+      input_parameters     = var.ec2_launch_template_public_ip_disabled_parameters
+      resource_types_scope = ["AWS::EC2::LaunchTemplate"]
+      severity             = "High"
+    }
+
+    ec2-launch-template-tagged = {
+      description          = "Checks if Amazon EC2 launch templates have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_LAUNCH_TEMPLATE_TAGGED"
+      input_parameters     = var.ec2_launch_template_tagged_parameters
+      resource_types_scope = ["AWS::EC2::LaunchTemplate"]
+      severity             = "Low"
+    }
+
+    ec2-managedinstance-applications-blacklisted = {
+      description          = "Checks if none of the specified applications are installed on the instance. Optionally, specify the version. Newer versions will not be denylisted. Optionally, specify the platform to apply the rule only to instances running that platform."
+      identifier           = "EC2_MANAGEDINSTANCE_APPLICATIONS_BLACKLISTED"
+      input_parameters     = var.ec2_managedinstance_applications_blacklisted_parameters
+      resource_types_scope = ["AWS::SSM::ManagedInstanceInventory"]
+      severity             = "Medium"
+    }
+
+    ec2-managedinstance-applications-required = {
+      description          = "Checks if all of the specified applications are installed on the instance. Optionally, specify the minimum acceptable version. You can also specify the platform to apply the rule only to instances running that platform."
+      identifier           = "EC2_MANAGEDINSTANCE_APPLICATIONS_REQUIRED"
+      input_parameters     = var.ec2_managedinstance_applications_required_parameters
+      resource_types_scope = ["AWS::SSM::ManagedInstanceInventory"]
+      severity             = "Medium"
+    }
+
+    ec2-managedinstance-association-compliance-status-check = {
+      description          = "Checks if the status of the AWS Systems Manager association compliance is COMPLIANT or NON_COMPLIANT after the association execution on the instance. The rule is compliant if the field status is COMPLIANT. For more information about associations, see..."
+      identifier           = "EC2_MANAGEDINSTANCE_ASSOCIATION_COMPLIANCE_STATUS_CHECK"
+      resource_types_scope = ["AWS::SSM::AssociationCompliance"]
+      severity             = "Low"
+    }
+
+    ec2-managedinstance-inventory-blacklisted = {
+      description          = "Checks whether instances managed by Amazon EC2 Systems Manager are configured to collect blacklisted inventory types."
+      identifier           = "EC2_MANAGEDINSTANCE_INVENTORY_BLACKLISTED"
+      input_parameters     = var.ec2_managedinstance_inventory_blacklisted_parameters
+      resource_types_scope = ["AWS::SSM::ManagedInstanceInventory"]
+      severity             = "Medium"
+    }
+
+    ec2-managedinstance-patch-compliance-status-check = {
+      description          = "Checks if the compliance status of the AWS Systems Manager patch compliance is COMPLIANT or NON_COMPLIANT after the patch installation on the instance. The rule is compliant if the field status is COMPLIANT."
+      identifier           = "EC2_MANAGEDINSTANCE_PATCH_COMPLIANCE_STATUS_CHECK"
+      resource_types_scope = ["AWS::SSM::PatchCompliance"]
+      severity             = "High"
+    }
+
+    ec2-managedinstance-platform-check = {
+      description          = "Checks whether EC2 managed instances have the desired configurations."
+      identifier           = "EC2_MANAGEDINSTANCE_PLATFORM_CHECK"
+      input_parameters     = var.ec2_managedinstance_platform_check_parameters
+      resource_types_scope = ["AWS::SSM::ManagedInstanceInventory"]
+      severity             = "Medium"
+    }
+
+    ec2-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon Elastic Compute Cloud (Amazon EC2) instances meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Amazon EC2 instance is greater than maxRestoreTime minutes."
+      identifier           = "EC2_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.ec2_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    ec2-network-insights-access-scope-analysis-tagged = {
+      description          = "Checks if Amazon EC2 network insights access scope analyses have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_NETWORK_INSIGHTS_ACCESS_SCOPE_ANALYSIS_TAGGED"
+      input_parameters     = var.ec2_network_insights_access_scope_analysis_tagged_parameters
+      resource_types_scope = ["AWS::EC2::NetworkInsightsAccessScopeAnalysis"]
+      severity             = "Medium"
+    }
+
+    ec2-network-insights-access-scope-tagged = {
+      description          = "Checks if Amazon EC2 network insights access scopes have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_NETWORK_INSIGHTS_ACCESS_SCOPE_TAGGED"
+      input_parameters     = var.ec2_network_insights_access_scope_tagged_parameters
+      resource_types_scope = ["AWS::EC2::NetworkInsightsAccessScope"]
+      severity             = "Medium"
+    }
+
+    ec2-network-insights-analysis-tagged = {
+      description          = "Checks if Amazon EC2 network insights analyses have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_NETWORK_INSIGHTS_ANALYSIS_TAGGED"
+      input_parameters     = var.ec2_network_insights_analysis_tagged_parameters
+      resource_types_scope = ["AWS::EC2::NetworkInsightsAnalysis"]
+      severity             = "Medium"
+    }
+
+    ec2-network-insights-path-tagged = {
+      description          = "Checks if Amazon EC2 network insights paths have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_NETWORK_INSIGHTS_PATH_TAGGED"
+      input_parameters     = var.ec2_network_insights_path_tagged_parameters
+      resource_types_scope = ["AWS::EC2::NetworkInsightsPath"]
+      severity             = "Medium"
+    }
+
+    ec2-no-amazon-key-pair = {
+      description          = "Checks if running Amazon Elastic Compute Cloud (EC2) instances are launched using amazon key pairs. The rule is NON_COMPLIANT if a running EC2 instance is launched with a key pair."
+      identifier           = "EC2_NO_AMAZON_KEY_PAIR"
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    ec2-paravirtual-instance-check = {
+      description          = "Checks if the virtualization type of an EC2 instance is paravirtual. This rule is NON_COMPLIANT for an EC2 instance if virtualizationType is set to paravirtual ."
+      identifier           = "EC2_PARAVIRTUAL_INSTANCE_CHECK"
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    ec2-prefix-list-tagged = {
+      description          = "Checks if Amazon EC2 managed prefix lists have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_PREFIX_LIST_TAGGED"
+      input_parameters     = var.ec2_prefix_list_tagged_parameters
+      resource_types_scope = ["AWS::EC2::PrefixList"]
+      severity             = "Low"
+    }
+
+    ec2-resources-in-logically-air-gapped-vault = {
+      description          = "Checks if Amazon Elastic Compute Cloud (Amazon EC2) instances are in a logically air-gapped vault. The rule is NON_COMPLIANT if an Amazon EC2 instance is not in a logically air-gapped vault within the specified time period."
+      identifier           = "EC2_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT"
+      input_parameters     = var.ec2_resources_in_logically_air_gapped_vault_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    ec2-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon Elastic Compute Cloud (Amazon EC2) instances are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon EC2 instance is not covered by a backup plan."
+      identifier           = "EC2_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.ec2_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    ec2-security-group-attached-to-eni = {
+      description          = "Checks if non-default security groups are attached to elastic network interfaces. The rule is NON_COMPLIANT if the security group is not associated with a network interface."
+      identifier           = "EC2_SECURITY_GROUP_ATTACHED_TO_ENI"
+      resource_types_scope = ["AWS::EC2::SecurityGroup"]
+      severity             = "Medium"
+    }
+
+    ec2-security-group-attached-to-eni-periodic = {
+      description          = "Checks if non-default security groups are attached to Elastic network interfaces (ENIs). The rule is NON_COMPLIANT if the security group is not associated with an ENI. Security groups not owned by the calling account evaluate as NOT_APPLICABLE."
+      identifier           = "EC2_SECURITY_GROUP_ATTACHED_TO_ENI_PERIODIC"
+      resource_types_scope = ["AWS::EC2::SecurityGroup"]
+      severity             = "Medium"
+    }
+
+    ec2-spot-fleet-request-ct-encryption-at-rest = {
+      description          = "Checks if Amazon EC2 Spot Fleet request launch parameters set encrypted to True for attached EBS volumes. The rule is NON_COMPLIANT if any EBS volumes has encrypted set to False. The rule does not evaluate spot fleet requests using launch templates."
+      identifier           = "EC2_SPOT_FLEET_REQUEST_CT_ENCRYPTION_AT_REST"
+      resource_types_scope = ["AWS::EC2::SpotFleet"]
+      severity             = "Medium"
+    }
+
+    ec2-stopped-instance = {
+      description          = "Checks if there are Amazon Elastic Compute Cloud (Amazon EC2) instances stopped for more than the allowed number of days. The rule is NON_COMPLIANT if the state of an Amazon EC2 instance has been stopped for longer than the allowed number of days, or if..."
+      identifier           = "EC2_STOPPED_INSTANCE"
+      input_parameters     = var.ec2_stopped_instance_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    ec2-token-hop-limit-check = {
+      description          = "Checks if an Amazon Elastic Compute Cloud (EC2) instance metadata has a specified token hop limit that is below the desired limit. The rule is NON_COMPLIANT for an instance if it has a hop limit value above the intended limit."
+      identifier           = "EC2_TOKEN_HOP_LIMIT_CHECK"
+      input_parameters     = var.ec2_token_hop_limit_check_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Low"
+    }
+
+    ec2-traffic-mirror-filter-description = {
+      description          = "Checks if Amazon EC2 traffic mirror filters have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "EC2_TRAFFIC_MIRROR_FILTER_DESCRIPTION"
+      resource_types_scope = ["AWS::EC2::TrafficMirrorFilter"]
+      severity             = "Medium"
+    }
+
+    ec2-traffic-mirror-filter-tagged = {
+      description          = "Checks if Amazon EC2 traffic mirror filters have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_TRAFFIC_MIRROR_FILTER_TAGGED"
+      input_parameters     = var.ec2_traffic_mirror_filter_tagged_parameters
+      resource_types_scope = ["AWS::EC2::TrafficMirrorFilter"]
+      severity             = "Low"
+    }
+
+    ec2-traffic-mirror-session-description = {
+      description          = "Checks if Amazon EC2 traffic mirror sessions have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "EC2_TRAFFIC_MIRROR_SESSION_DESCRIPTION"
+      resource_types_scope = ["AWS::EC2::TrafficMirrorSession"]
+      severity             = "Medium"
+    }
+
+    ec2-traffic-mirror-session-tagged = {
+      description          = "Checks if Amazon EC2 traffic mirror sessions have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_TRAFFIC_MIRROR_SESSION_TAGGED"
+      input_parameters     = var.ec2_traffic_mirror_session_tagged_parameters
+      resource_types_scope = ["AWS::EC2::TrafficMirrorSession"]
+      severity             = "Low"
+    }
+
+    ec2-traffic-mirror-target-description = {
+      description          = "Checks if Amazon EC2 traffic mirror targets have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "EC2_TRAFFIC_MIRROR_TARGET_DESCRIPTION"
+      resource_types_scope = ["AWS::EC2::TrafficMirrorTarget"]
+      severity             = "Medium"
+    }
+
+    ec2-traffic-mirror-target-tagged = {
+      description          = "Checks if Amazon EC2 traffic mirror targets have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_TRAFFIC_MIRROR_TARGET_TAGGED"
+      input_parameters     = var.ec2_traffic_mirror_target_tagged_parameters
+      resource_types_scope = ["AWS::EC2::TrafficMirrorTarget"]
+      severity             = "Low"
+    }
+
+    ec2-transit-gateway-auto-vpc-attach-disabled = {
+      description          = "Checks if Amazon Elastic Compute Cloud (Amazon EC2) Transit Gateways have AutoAcceptSharedAttachments enabled. The rule is NON_COMPLIANT for a Transit Gateway if AutoAcceptSharedAttachments is set to enable ."
+      identifier           = "EC2_TRANSIT_GATEWAY_AUTO_VPC_ATTACH_DISABLED"
+      resource_types_scope = ["AWS::EC2::TransitGateway"]
+      severity             = "High"
+    }
+
+    ec2-transit-gateway-multicast-domain-tagged = {
+      description          = "Checks if Amazon EC2 transit gateway multicast domains have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_TRANSIT_GATEWAY_MULTICAST_DOMAIN_TAGGED"
+      input_parameters     = var.ec2_transit_gateway_multicast_domain_tagged_parameters
+      resource_types_scope = ["AWS::EC2::TransitGatewayMulticastDomain"]
+      severity             = "Medium"
+    }
+
+    ec2-volume-inuse-check = {
+      description          = "Checks if EBS volumes are attached to EC2 instances. Optionally checks if EBS volumes are marked for deletion when an instance is terminated."
+      identifier           = "EC2_VOLUME_INUSE_CHECK"
+      input_parameters     = var.ec2_volume_inuse_check_parameters
+      resource_types_scope = ["AWS::EC2::Volume"]
+      severity             = "Low"
+    }
+
+    ec2-vpn-connection-logging-enabled = {
+      description          = "Checks if AWS Site-to-Site VPN connections have Amazon CloudWatch logging enabled for both tunnels. The rule is NON_COMPLIANT if a Site-to-Site VPN connection does not have CloudWatch logging enabled for either or both tunnels."
+      identifier           = "EC2_VPN_CONNECTION_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::EC2::VPNConnection"]
+      severity             = "Medium"
+    }
+
+    ec2-vpn-connection-tagged = {
+      description          = "Checks if Amazon EC2 VPN connections have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EC2_VPN_CONNECTION_TAGGED"
+      input_parameters     = var.ec2_vpn_connection_tagged_parameters
+      resource_types_scope = ["AWS::EC2::VPNConnection"]
+      severity             = "Medium"
+    }
+
+    ecr-private-image-scanning-enabled = {
+      description          = "Checks if a private Amazon Elastic Container Registry (Amazon ECR) repository has image scanning enabled. The rule is NON_COMPLIANT if the private Amazon ECR repository's scan frequency is not on scan on push or continuous scan. For more information on..."
+      identifier           = "ECR_PRIVATE_IMAGE_SCANNING_ENABLED"
+      resource_types_scope = ["AWS::ECR::Repository"]
+      severity             = "High"
+    }
+
+    ecr-private-lifecycle-policy-configured = {
+      description          = "Checks if a private Amazon Elastic Container Registry (ECR) repository has at least one lifecycle policy configured. The rule is NON_COMPLIANT if no lifecycle policy is configured for the ECR private repository."
+      identifier           = "ECR_PRIVATE_LIFECYCLE_POLICY_CONFIGURED"
+      resource_types_scope = ["AWS::ECR::Repository"]
+      severity             = "Medium"
+    }
+
+    ecr-private-tag-immutability-enabled = {
+      description          = "Checks if a private Amazon Elastic Container Registry (ECR) repository has tag immutability enabled. This rule is NON_COMPLIANT if tag immutability is not enabled for the private ECR repository."
+      identifier           = "ECR_PRIVATE_TAG_IMMUTABILITY_ENABLED"
+      resource_types_scope = ["AWS::ECR::Repository"]
+      severity             = "Medium"
+    }
+
+    ecr-repository-cmk-encryption-enabled = {
+      description          = "Checks if ECR repository is encrypted at rest using customer-managed KMS key. This rule is NON_COMPLIANT if the repository is encrypted using AES256 or the default KMS key ( aws/ecr )."
+      identifier           = "ECR_REPOSITORY_CMK_ENCRYPTION_ENABLED"
+      input_parameters     = var.ecr_repository_cmk_encryption_enabled_parameters
+      resource_types_scope = ["AWS::ECR::Repository"]
+      severity             = "Medium"
+    }
+
+    ecr-repository-tagged = {
+      description          = "Checks if Amazon ECR repositories have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ECR_REPOSITORY_TAGGED"
+      input_parameters     = var.ecr_repository_tagged_parameters
+      resource_types_scope = ["AWS::ECR::Repository"]
+      severity             = "Medium"
+    }
+
+    ecs-awsvpc-networking-enabled = {
+      description          = "Checks if the networking mode for active ECSTaskDefinitions is set to awsvpc . This rule is NON_COMPLIANT if active ECSTaskDefinitions is not set to awsvpc ."
+      identifier           = "ECS_AWSVPC_NETWORKING_ENABLED"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "Medium"
+    }
+
+    ecs-capacity-provider-tagged = {
+      description          = "Checks if Amazon ECS capacity providers have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ECS_CAPACITY_PROVIDER_TAGGED"
+      input_parameters     = var.ecs_capacity_provider_tagged_parameters
+      resource_types_scope = ["AWS::ECS::CapacityProvider"]
+      severity             = "Medium"
+    }
+
+    ecs-capacity-provider-termination-check = {
+      description          = "Checks if an Amazon ECS Capacity provider containing Auto Scaling groups has managed termination protection enabled. This rule is NON_COMPLIANT if managed termination protection is disabled on the ECS Capacity Provider."
+      identifier           = "ECS_CAPACITY_PROVIDER_TERMINATION_CHECK"
+      resource_types_scope = ["AWS::ECS::CapacityProvider"]
+      severity             = "Medium"
+    }
+
+    ecs-containers-nonprivileged = {
+      description          = "Checks if the privileged parameter in the container definition of ECSTaskDefinitions is set to true . The rule is NON_COMPLIANT if the privileged parameter is true ."
+      identifier           = "ECS_CONTAINERS_NONPRIVILEGED"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "High"
+    }
+
+    ecs-containers-readonly-access = {
+      description          = "Checks if Amazon Elastic Container Service (Amazon ECS) Containers only have read-only access to its root filesystems. The rule is NON_COMPLIANT if the readonlyRootFilesystem parameter in the container definition of ECSTaskDefinitions is set to false ."
+      identifier           = "ECS_CONTAINERS_READONLY_ACCESS"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "High"
+    }
+
+    ecs-container-insights-enabled = {
+      description          = "Checks if Amazon Elastic Container Service clusters have container insights enabled. The rule is NON_COMPLIANT if container insights are not enabled."
+      identifier           = "ECS_CONTAINER_INSIGHTS_ENABLED"
+      resource_types_scope = ["AWS::ECS::Cluster"]
+      severity             = "Medium"
+    }
+
+    ecs-fargate-latest-platform-version = {
+      description          = "Checks if ECS Fargate services is set to the latest platform version. The rule is NON_COMPLIANT if PlatformVersion for the Fargate launch type is not set to LATEST, or if neither latestLinuxVersion nor latestWindowsVersion are provided as parameters."
+      identifier           = "ECS_FARGATE_LATEST_PLATFORM_VERSION"
+      input_parameters     = var.ecs_fargate_latest_platform_version_parameters
+      resource_types_scope = ["AWS::ECS::Service"]
+      severity             = "Medium"
+    }
+
+    ecs-no-environment-secrets = {
+      description          = "Checks if secrets are passed as container environment variables. The rule is NON_COMPLIANT if 1 or more environment variable key matches a key listed in the secretKeys parameter (excluding environmental variables from other locations such as Amazon S3)."
+      identifier           = "ECS_NO_ENVIRONMENT_SECRETS"
+      input_parameters     = var.ecs_no_environment_secrets_parameters
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "High"
+    }
+
+    ecs-service-propagate-tags-enabled = {
+      description          = "Checks if AWS ECS Service has property PropagateTags with value of either SERVICE or TASK_DEFINITION. The rule is NON_COMPLIANT if the property does not exist or is NONE."
+      identifier           = "ECS_SERVICE_PROPAGATE_TAGS_ENABLED"
+      resource_types_scope = ["AWS::ECS::Service"]
+      severity             = "Medium"
+    }
+
+    ecs-task-definition-efs-encryption-enabled = {
+      description          = "Checks if Amazon ECS Task Definitions with EFS volumes have in-transit encryption enabled. The rule is NON_COMPLIANT if an ECS Task Definition contains an EFS volume without transit encryption enabled."
+      identifier           = "ECS_TASK_DEFINITION_EFS_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "Medium"
+    }
+
+    ecs-task-definition-linux-user-non-root = {
+      description          = "Checks if the latest active revision of an Amazon ECS task definition configures Linux containers to run as non-root users.The rule is NON_COMPLIANT if root user is specified or user configuration is absent for any container."
+      identifier           = "ECS_TASK_DEFINITION_LINUX_USER_NON_ROOT"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "Medium"
+    }
+
+    ecs-task-definition-log-configuration = {
+      description          = "Checks if logConfiguration is set on active ECS Task Definitions. This rule is NON_COMPLIANT if an active ECSTaskDefinition does not have the logConfiguration resource defined or the value for logConfiguration is null in at least one container definition."
+      identifier           = "ECS_TASK_DEFINITION_LOG_CONFIGURATION"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "High"
+    }
+
+    ecs-task-definition-memory-hard-limit = {
+      description          = "Checks if Amazon Elastic Container Service (ECS) task definitions have a set memory limit for its container definitions. The rule is NON_COMPLIANT for a task definition if the memory parameter is absent for one container definition."
+      identifier           = "ECS_TASK_DEFINITION_MEMORY_HARD_LIMIT"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "Medium"
+    }
+
+    ecs-task-definition-network-mode-not-host = {
+      description          = "Checks if the latest active revision of Amazon ECS task definitions use host network mode. The rule is NON_COMPLIANT if the latest active revision of the ECS task definition uses host network mode."
+      identifier           = "ECS_TASK_DEFINITION_NETWORK_MODE_NOT_HOST"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "Medium"
+    }
+
+    ecs-task-definition-nonroot-user = {
+      description          = "Checks if ECSTaskDefinitions specify a user for Amazon Elastic Container Service (Amazon ECS) EC2 launch type containers to run on. The rule is NON_COMPLIANT if the user parameter is not present or set to root ."
+      identifier           = "ECS_TASK_DEFINITION_NONROOT_USER"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "Medium"
+    }
+
+    ecs-task-definition-pid-mode-check = {
+      description          = "Checks if ECSTaskDefinitions are configured to share a host's process namespace with its Amazon Elastic Container Service (Amazon ECS) containers. The rule is NON_COMPLIANT if the pidMode parameter is set to host ."
+      identifier           = "ECS_TASK_DEFINITION_PID_MODE_CHECK"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "High"
+    }
+
+    ecs-task-definition-user-for-host-mode-check = {
+      description          = "Checks if Amazon ECS task definitions with host network mode have privileged OR nonroot in the container definition. The rule is NON_COMPLIANT if the latest active revision of a task definition has privileged=false (or is null) AND user=root (or is null)."
+      identifier           = "ECS_TASK_DEFINITION_USER_FOR_HOST_MODE_CHECK"
+      input_parameters     = var.ecs_task_definition_user_for_host_mode_check_parameters
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "High"
+    }
+
+    ecs-task-definition-windows-user-non-admin = {
+      description          = "Checks if the latest active revision of an Amazon ECS task definition configures Windows containers to run as non-administrator users. The rule is NON_COMPLIANT if default administrator user is specified or user configuration is absent for any container."
+      identifier           = "ECS_TASK_DEFINITION_WINDOWS_USER_NON_ADMIN"
+      resource_types_scope = ["AWS::ECS::TaskDefinition"]
+      severity             = "Medium"
+    }
+
+    efs-access-point-enforce-root-directory = {
+      description          = "Checks if Amazon Elastic File System (Amazon EFS) access points are configured to enforce a root directory. The rule is NON_COMPLIANT if the value of Path is set to / (default root directory of the file system)."
+      identifier           = "EFS_ACCESS_POINT_ENFORCE_ROOT_DIRECTORY"
+      input_parameters     = var.efs_access_point_enforce_root_directory_parameters
+      resource_types_scope = ["AWS::EFS::AccessPoint"]
+      severity             = "Medium"
+    }
+
+    efs-access-point-enforce-user-identity = {
+      description          = "Checks if Amazon Elastic File System (Amazon EFS) access points are configured to enforce a user identity. The rule is NON_COMPLIANT if PosixUser is not defined or if parameters are provided and there is no match in the corresponding parameter."
+      identifier           = "EFS_ACCESS_POINT_ENFORCE_USER_IDENTITY"
+      input_parameters     = var.efs_access_point_enforce_user_identity_parameters
+      resource_types_scope = ["AWS::EFS::AccessPoint"]
+      severity             = "Medium"
+    }
+
+    efs-automatic-backups-enabled = {
+      description          = "Checks if an Amazon Elastic File System (Amazon EFS) file system has automatic backups enabled. The rule is NON_COMPLIANT if BackupPolicy.Status is set to DISABLED."
+      identifier           = "EFS_AUTOMATIC_BACKUPS_ENABLED"
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-encrypted-check = {
+      description          = "Checks if Amazon Elastic File System (Amazon EFS) is configured to encrypt the file data using AWS Key Management Service (AWS KMS). The rule is NON_COMPLIANT if the encrypted key is set to false on DescribeFileSystems or if the KmsKeyId key on..."
+      identifier           = "EFS_ENCRYPTED_CHECK"
+      input_parameters     = var.efs_encrypted_check_parameters
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-filesystem-ct-encrypted = {
+      description          = "Checks if Amazon Elastic File System (Amazon EFS) encrypts data with AWS Key Management Service (AWS KMS). The rule is NON_COMPLIANT if a file system is not encrypted. Optionally, you can check if a file system is not encrypted with specified KMS keys."
+      identifier           = "EFS_FILESYSTEM_CT_ENCRYPTED"
+      input_parameters     = var.efs_filesystem_ct_encrypted_parameters
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-file-system-tagged = {
+      description          = "Checks if Amazon Elastic File System file systems have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EFS_FILE_SYSTEM_TAGGED"
+      input_parameters     = var.efs_file_system_tagged_parameters
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-in-backup-plan = {
+      description          = "Checks if Amazon Elastic File System (Amazon EFS) file systems are added in the backup plans of AWS Backup. The rule is NON_COMPLIANT if EFS file systems are not included in the backup plans."
+      identifier           = "EFS_IN_BACKUP_PLAN"
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon Elastic File System (Amazon EFS) File Systems. The rule is NON_COMPLIANT if the Amazon EFS File System does not have a corresponding Recovery Point created within the specified time period."
+      identifier           = "EFS_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.efs_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon Elastic File System (Amazon EFS) File Systems meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Amazon EFS File System is greater than maxRestoreTime minutes."
+      identifier           = "EFS_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.efs_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-mount-target-public-accessible = {
+      description          = "Checks if an Amazon Elastic File System (Amazon EFS) is associated with subnets that assign public IP addresses on launch. The rule is NON_COMPLIANT if the Amazon EFS mount target is associated with subnets that assign public IP addresses on launch."
+      identifier           = "EFS_MOUNT_TARGET_PUBLIC_ACCESSIBLE"
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-resources-in-logically-air-gapped-vault = {
+      description          = "Checks if Amazon Elastic File System (Amazon EFS) File Systems are in a logically air-gapped vault. The rule is NON_COMPLIANT if an Amazon EFS File System is not in a logically air-gapped vault within the specified time period."
+      identifier           = "EFS_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT"
+      input_parameters     = var.efs_resources_in_logically_air_gapped_vault_parameters
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    efs-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon Elastic File System (Amazon EFS) File Systems are protected by a backup plan. The rule is NON_COMPLIANT if the EFS File System is not covered by a backup plan."
+      identifier           = "EFS_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.efs_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::EFS::FileSystem"]
+      severity             = "Medium"
+    }
+
+    eip-attached = {
+      description          = "Checks if all Elastic IP addresses that are allocated to an AWS account are attached to EC2 instances or in-use elastic network interfaces. The rule is NON_COMPLIANT if the AssociationId is null for the Elastic IP address."
+      identifier           = "EIP_ATTACHED"
+      resource_types_scope = ["AWS::EC2::EIP"]
+      severity             = "Low"
+    }
+
+    eks-addon-tagged = {
+      description          = "Checks if Amazon EKS add-ons have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EKS_ADDON_TAGGED"
+      input_parameters     = var.eks_addon_tagged_parameters
+      resource_types_scope = ["AWS::EKS::Addon"]
+      severity             = "Medium"
+    }
+
+    eks-cluster-logging-enabled = {
+      description          = "Checks if an Amazon Elastic Kubernetes Service (Amazon EKS) cluster is configured with logging enabled. The rule is NON_COMPLIANT if logging for Amazon EKS clusters is not enabled for all log types."
+      identifier           = "EKS_CLUSTER_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::EKS::Cluster"]
+      severity             = "Medium"
+    }
+
+    eks-cluster-log-enabled = {
+      description          = "Checks if an Amazon Elastic Kubernetes Service (Amazon EKS) cluster is configured with logging enabled. The rule is NON_COMPLIANT if logging for Amazon EKS clusters is not enabled or if logging is not enabled with the log type mentioned."
+      identifier           = "EKS_CLUSTER_LOG_ENABLED"
+      input_parameters     = var.eks_cluster_log_enabled_parameters
+      resource_types_scope = ["AWS::EKS::Cluster"]
+      severity             = "Medium"
+    }
+
+    eks-cluster-oldest-supported-version = {
+      description          = "Checks if an Amazon Elastic Kubernetes Service (EKS) cluster is running the oldest supported version. The rule is NON_COMPLIANT if an EKS cluster is running oldest supported version (equal to the parameter oldestVersionSupported )."
+      identifier           = "EKS_CLUSTER_OLDEST_SUPPORTED_VERSION"
+      input_parameters     = var.eks_cluster_oldest_supported_version_parameters
+      resource_types_scope = ["AWS::EKS::Cluster"]
+      severity             = "Medium"
+    }
+
+    eks-cluster-secrets-encrypted = {
+      description          = "Checks if Amazon EKS clusters are configured to have Kubernetes secrets encrypted using AWS KMS. The rule is NON_COMPLIANT if an EKS cluster does not have an encryptionConfig resource or if encryptionConfig does not name secrets as a resource."
+      identifier           = "EKS_CLUSTER_SECRETS_ENCRYPTED"
+      input_parameters     = var.eks_cluster_secrets_encrypted_parameters
+      resource_types_scope = ["AWS::EKS::Cluster"]
+      severity             = "Medium"
+    }
+
+    eks-cluster-supported-version = {
+      description          = "Checks if an Amazon Elastic Kubernetes Service (EKS) cluster is running a supported Kubernetes version. This rule is NON_COMPLIANT if an EKS cluster is running an unsupported version (less than the parameter oldestVersionSupported )."
+      identifier           = "EKS_CLUSTER_SUPPORTED_VERSION"
+      input_parameters     = var.eks_cluster_supported_version_parameters
+      resource_types_scope = ["AWS::EKS::Cluster"]
+      severity             = "High"
+    }
+
+    eks-endpoint-no-public-access = {
+      description          = "Checks if the Amazon Elastic Kubernetes Service (Amazon EKS) endpoint is not publicly accessible. The rule is NON_COMPLIANT if the endpoint is publicly accessible."
+      identifier           = "EKS_ENDPOINT_NO_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::EKS::Cluster"]
+      severity             = "High"
+    }
+
+    eks-fargate-profile-tagged = {
+      description          = "Checks if Amazon EKS fargate profiles have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EKS_FARGATE_PROFILE_TAGGED"
+      input_parameters     = var.eks_fargate_profile_tagged_parameters
+      resource_types_scope = ["AWS::EKS::FargateProfile"]
+      severity             = "Medium"
+    }
+
+    eks-secrets-encrypted = {
+      description          = "Checks if Amazon Elastic Kubernetes Service clusters are configured to have Kubernetes secrets encrypted using AWS Key Management Service (KMS) keys."
+      identifier           = "EKS_SECRETS_ENCRYPTED"
+      input_parameters     = var.eks_secrets_encrypted_parameters
+      resource_types_scope = ["AWS::EKS::Cluster"]
+      severity             = "Medium"
+    }
+
+    elasticache-automatic-backup-check-enabled = {
+      description          = "Checks if Amazon ElastiCache clusters (Valkey or Redis OSS) have automatic backup turned on. The rule is NON_COMPLIANT if automated backup is not enabled or the SnapshotRetentionLimit for a cluster is less than the specified snapshotRetentionPeriod."
+      identifier           = "ELASTICACHE_AUTOMATIC_BACKUP_CHECK_ENABLED"
+      input_parameters     = var.elasticache_automatic_backup_check_enabled_parameters
+      resource_types_scope = ["AWS::ElastiCache::CacheCluster"]
+      severity             = "Medium"
+    }
+
+    elasticache-auto-minor-version-upgrade-check = {
+      description          = "Checks if Amazon ElastiCache clusters have auto minor version upgrades enabled. The rule is NON_COMPLIANT for an ElastiCache cluster if it is using the Redis or Valkey engine and AutoMinorVersionUpgrade is not set to true ."
+      identifier           = "ELASTICACHE_AUTO_MINOR_VERSION_UPGRADE_CHECK"
+      resource_types_scope = ["AWS::ElastiCache::CacheCluster"]
+      severity             = "High"
+    }
+
+    elasticache-rbac-auth-enabled = {
+      description          = "Checks if Amazon ElastiCache replication groups have RBAC authentication enabled. The rule is NON_COMPLIANT if the Redis version is 6 or above and UserGroupIds is missing, empty, or does not match an entry provided by the allowedUserGroupIDs parameter."
+      identifier           = "ELASTICACHE_RBAC_AUTH_ENABLED"
+      input_parameters     = var.elasticache_rbac_auth_enabled_parameters
+      resource_types_scope = ["AWS::ElastiCache::ReplicationGroup"]
+      severity             = "Medium"
+    }
+
+    elasticache-redis-cluster-automatic-backup-check = {
+      description          = "Check if the Amazon ElastiCache Redis clusters have automatic backup turned on. The rule is NON_COMPLIANT if the SnapshotRetentionLimit for Redis cluster is less than the SnapshotRetentionPeriod parameter. For example: If the parameter is 15 then the..."
+      identifier           = "ELASTICACHE_REDIS_CLUSTER_AUTOMATIC_BACKUP_CHECK"
+      input_parameters     = var.elasticache_redis_cluster_automatic_backup_check_parameters
+      resource_types_scope = ["AWS::ElastiCache::CacheCluster", "AWS::ElastiCache::ReplicationGroup"]
+      severity             = "High"
+    }
+
+    elasticache-repl-grp-auto-failover-enabled = {
+      description          = "Checks if Amazon ElastiCache Redis replication groups have automatic failover enabled. The rule is NON_COMPLIANT for an ElastiCache replication group if AutomaticFailover is not set to enabled ."
+      identifier           = "ELASTICACHE_REPL_GRP_AUTO_FAILOVER_ENABLED"
+      resource_types_scope = ["AWS::ElastiCache::ReplicationGroup"]
+      severity             = "Medium"
+    }
+
+    elasticache-repl-grp-encrypted-at-rest = {
+      description          = "Checks if Amazon ElastiCache replication groups have encryption-at-rest enabled. The rule is NON_COMPLIANT for an ElastiCache replication group if AtRestEncryptionEnabled is disabled or if the KMS key ARN does not match the approvedKMSKeyArns parameter."
+      identifier           = "ELASTICACHE_REPL_GRP_ENCRYPTED_AT_REST"
+      input_parameters     = var.elasticache_repl_grp_encrypted_at_rest_parameters
+      resource_types_scope = ["AWS::ElastiCache::ReplicationGroup"]
+      severity             = "Medium"
+    }
+
+    elasticache-repl-grp-encrypted-in-transit = {
+      description          = "Checks if Amazon ElastiCache replication groups have encryption-in-transit enabled. The rule is NON_COMPLIANT for an ElastiCache replication group if TransitEncryptionEnabled is set to false ."
+      identifier           = "ELASTICACHE_REPL_GRP_ENCRYPTED_IN_TRANSIT"
+      resource_types_scope = ["AWS::ElastiCache::ReplicationGroup"]
+      severity             = "Medium"
+    }
+
+    elasticache-repl-grp-redis-auth-enabled = {
+      description          = "Checks if Amazon ElastiCache replication groups have Redis AUTH enabled. The rule is NON_COMPLIANT for an ElastiCache replication group if the Redis version of its nodes is below 6 (Version 6+ use Redis ACLs) and AuthToken is missing or is empty/null."
+      identifier           = "ELASTICACHE_REPL_GRP_REDIS_AUTH_ENABLED"
+      resource_types_scope = ["AWS::ElastiCache::ReplicationGroup"]
+      severity             = "Medium"
+    }
+
+    elasticache-subnet-group-check = {
+      description          = "Checks if Amazon ElastiCache clusters are configured with a custom subnet group. The rule is NON_COMPLIANT for an ElastiCache cluster if it is using a default subnet group."
+      identifier           = "ELASTICACHE_SUBNET_GROUP_CHECK"
+      resource_types_scope = ["AWS::ElastiCache::CacheCluster"]
+      severity             = "High"
+    }
+
+    elasticache-supported-engine-version = {
+      description          = "Checks if ElastiCache clusters are running a version greater or equal to the recommended engine version. The rule is NON_COMPLIANT if the EngineVersion for an ElastiCache cluster is less than the specified recommended version for its given engine."
+      identifier           = "ELASTICACHE_SUPPORTED_ENGINE_VERSION"
+      input_parameters     = var.elasticache_supported_engine_version_parameters
+      resource_types_scope = ["AWS::ElastiCache::CacheCluster"]
+      severity             = "Medium"
+    }
+
+    elasticbeanstalk-application-description = {
+      description          = "Checks if AWS Elastic Beanstalk applications have a description. The rule is NON_COMPLIANT if configuration.description does not exist or is an empty string."
+      identifier           = "ELASTICBEANSTALK_APPLICATION_DESCRIPTION"
+      resource_types_scope = ["AWS::ElasticBeanstalk::Application"]
+      severity             = "Medium"
+    }
+
+    elasticbeanstalk-application-version-description = {
+      description          = "Checks if AWS Elastic Beanstalk application versions have a description. The rule is NON_COMPLIANT if configuration.description does not exist or is an empty string."
+      identifier           = "ELASTICBEANSTALK_APPLICATION_VERSION_DESCRIPTION"
+      resource_types_scope = ["AWS::ElasticBeanstalk::ApplicationVersion"]
+      severity             = "Medium"
+    }
+
+    elasticbeanstalk-environment-description = {
+      description          = "Checks if AWS Elastic Beanstalk environments have a description. The rule is NON_COMPLIANT if configuration.description does not exist or is an empty string."
+      identifier           = "ELASTICBEANSTALK_ENVIRONMENT_DESCRIPTION"
+      resource_types_scope = ["AWS::ElasticBeanstalk::Environment"]
+      severity             = "Medium"
+    }
+
+    elasticsearch-encrypted-at-rest = {
+      description          = "Checks if Amazon OpenSearch Service (previously called Elasticsearch) domains have encryption at rest configuration enabled. The rule is NON_COMPLIANT if the EncryptionAtRestOptions field is not enabled."
+      identifier           = "ELASTICSEARCH_ENCRYPTED_AT_REST"
+      resource_types_scope = ["AWS::Elasticsearch::Domain"]
+      severity             = "Medium"
+    }
+
+    elasticsearch-in-vpc-only = {
+      description          = "Checks if Amazon OpenSearch Service (previously called Elasticsearch) domains are in Amazon Virtual Private Cloud (Amazon VPC). The rule is NON_COMPLIANT if an OpenSearch Service domain endpoint is public."
+      identifier           = "ELASTICSEARCH_IN_VPC_ONLY"
+      resource_types_scope = ["AWS::Elasticsearch::Domain"]
+      severity             = "Critical"
+    }
+
+    elasticsearch-logs-to-cloudwatch = {
+      description          = "Checks if OpenSearch Service (previously called Elasticsearch) domains are configured to send logs to CloudWatch Logs. The rule is COMPLIANT if a log is enabled for an OpenSearch Service domain. The rule is NON_COMPLIANT if logging is not configured."
+      identifier           = "ELASTICSEARCH_LOGS_TO_CLOUDWATCH"
+      input_parameters     = var.elasticsearch_logs_to_cloudwatch_parameters
+      resource_types_scope = ["AWS::Elasticsearch::Domain"]
+      severity             = "Medium"
+    }
+
+    elasticsearch-node-to-node-encryption-check = {
+      description          = "Check that Amazon OpenSearch Service nodes are encrypted end to end. The rule is NON_COMPLIANT if the node-to-node encryption is disabled on the domain."
+      identifier           = "ELASTICSEARCH_NODE_TO_NODE_ENCRYPTION_CHECK"
+      resource_types_scope = ["AWS::Elasticsearch::Domain"]
+      severity             = "Medium"
+    }
+
+    elastic-beanstalk-logs-to-cloudwatch = {
+      description          = "Checks if AWS Elastic Beanstalk environments are configured to send logs to Amazon CloudWatch Logs. The rule is NON_COMPLIANT if the value of StreamLogs is false."
+      identifier           = "ELASTIC_BEANSTALK_LOGS_TO_CLOUDWATCH"
+      input_parameters     = var.elastic_beanstalk_logs_to_cloudwatch_parameters
+      resource_types_scope = ["AWS::ElasticBeanstalk::Environment"]
+      severity             = "High"
+    }
+
+    elastic-beanstalk-managed-updates-enabled = {
+      description          = "Checks if managed platform updates in an AWS Elastic Beanstalk environment is enabled. The rule is COMPLIANT if the value for ManagedActionsEnabled is set to true. The rule is NON_COMPLIANT if the value for ManagedActionsEnabled is set to false, or if a..."
+      identifier           = "ELASTIC_BEANSTALK_MANAGED_UPDATES_ENABLED"
+      input_parameters     = var.elastic_beanstalk_managed_updates_enabled_parameters
+      resource_types_scope = ["AWS::ElasticBeanstalk::Environment"]
+      severity             = "High"
+    }
+
+    elbv2-acm-certificate-required = {
+      description          = "Checks if Application Load Balancers and Network Load Balancers have listeners that are configured to use certificates from AWS Certificate Manager (ACM). This rule is NON_COMPLIANT if at least 1 load balancer has at least 1 listener that is configured..."
+      identifier           = "ELBV2_ACM_CERTIFICATE_REQUIRED"
+      input_parameters     = var.elbv2_acm_certificate_required_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elbv2-listener-encryption-in-transit = {
+      description          = "Checks if listeners for the load balancers are configured with HTTPS or TLS termination. The rule is NON_COMPLIANT if listeners are not configured with HTTPS or TLS termination."
+      identifier           = "ELBV2_LISTENER_ENCRYPTION_IN_TRANSIT"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::Listener"]
+      severity             = "Medium"
+    }
+
+    elbv2-multiple-az = {
+      description          = "Checks if an Elastic Load Balancer V2 (Application, Network, or Gateway Load Balancer) is mapped to multiple Availability Zones (AZs). The rule is NON_COMPLIANT if an Elastic Load Balancer V2 is mapped to less than 2 AZs. For more information, see..."
+      identifier           = "ELBV2_MULTIPLE_AZ"
+      input_parameters     = var.elbv2_multiple_az_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elbv2-predefined-security-policy-ssl-check = {
+      description          = "Checks if listeners for Application Load Balancers (ALBs) or Network Load Balancers (NLBs) use certain security policies. The rule is NON_COMPLIANT if an HTTPS listener for an ALB or a TLS listener for a NLB does not use the security policies you specify."
+      identifier           = "ELBV2_PREDEFINED_SECURITY_POLICY_SSL_CHECK"
+      input_parameters     = var.elbv2_predefined_security_policy_ssl_check_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::Listener"]
+      severity             = "Medium"
+    }
+
+    elbv2-targetgroup-healthcheck-protocol-encrypted = {
+      description          = "Checks the target groups for load balancers healthchecks use an encrypted transport protocol. The rule is NON_COMPLIANT if configuration.healthCheckProtocol is not HTTPS. Lambda target types are not applicable."
+      identifier           = "ELBV2_TARGETGROUP_HEALTHCHECK_PROTOCOL_ENCRYPTED"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::TargetGroup"]
+      severity             = "Medium"
+    }
+
+    elbv2-targetgroup-protocol-encrypted = {
+      description          = "Checks the target groups for application and network load balancers use an encrypted transport protocol. The rule is NON_COMPLIANT if configuration.protocol is not HTTPS, TLS, or QUIC. Lambda and ALB target types are not applicable."
+      identifier           = "ELBV2_TARGETGROUP_PROTOCOL_ENCRYPTED"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::TargetGroup"]
+      severity             = "Medium"
+    }
+
+    elb-acm-certificate-required = {
+      description          = "Checks if the Classic Load Balancers use SSL certificates provided by AWS Certificate Manager. To use this rule, use an SSL or HTTPS listener with your Classic Load Balancer. This rule is only applicable to Classic Load Balancers. This rule does not..."
+      identifier           = "ELB_ACM_CERTIFICATE_REQUIRED"
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-cross-zone-load-balancing-enabled = {
+      description          = "Checks if cross-zone load balancing is enabled for Classic Load Balancers. The rule is NON_COMPLIANT if cross-zone load balancing is not enabled for Classic Load Balancers."
+      identifier           = "ELB_CROSS_ZONE_LOAD_BALANCING_ENABLED"
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-custom-security-policy-ssl-check = {
+      description          = "Checks whether your Classic Load Balancer SSL listeners are using a custom policy. The rule is only applicable if there are SSL listeners for the Classic Load Balancer."
+      identifier           = "ELB_CUSTOM_SECURITY_POLICY_SSL_CHECK"
+      input_parameters     = var.elb_custom_security_policy_ssl_check_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-deletion-protection-enabled = {
+      description          = "Checks whether an Elastic Load Balancer has deletion protection enabled. The rule is NON_COMPLIANT if deletion_protection.enabled is false."
+      identifier           = "ELB_DELETION_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-internal-scheme-check = {
+      description          = "Checks if a Classic Load Balancer scheme is internal. The rule is NON_COMPLIANT if configuration.scheme is not set to internal."
+      identifier           = "ELB_INTERNAL_SCHEME_CHECK"
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-logging-enabled = {
+      description          = "Checks if the Application Load Balancer and the Classic Load Balancer have logging enabled. The rule is NON_COMPLIANT if the access_logs.s3.enabled is false or access_logs.S3.bucket is not equal to the s3BucketName that you provided."
+      identifier           = "ELB_LOGGING_ENABLED"
+      input_parameters     = var.elb_logging_enabled_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer", "AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-predefined-security-policy-ssl-check = {
+      description          = "Checks if your Classic Load Balancer SSL listeners use a predefined policy. The rule is NON_COMPLIANT if the Classic Load Balancer HTTPS/SSL listener's policy does not equal the value of the parameter predefinedPolicyName ."
+      identifier           = "ELB_PREDEFINED_SECURITY_POLICY_SSL_CHECK"
+      input_parameters     = var.elb_predefined_security_policy_ssl_check_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-tagged = {
+      description          = "Checks if Classic Load Balancers have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ELB_TAGGED"
+      input_parameters     = var.elb_tagged_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    elb-tls-https-listeners-only = {
+      description          = "Checks if your Classic Load Balancer is configured with SSL or HTTPS listeners. The rule is NON_COMPLIANT if a listener is not configured with SSL or HTTPS."
+      identifier           = "ELB_TLS_HTTPS_LISTENERS_ONLY"
+      resource_types_scope = ["AWS::ElasticLoadBalancing::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    emr-block-public-access = {
+      description          = "Checks if an account with Amazon EMR has block public access settings enabled. The rule is NON_COMPLIANT if BlockPublicSecurityGroupRules is false, or if true, ports other than Port 22 are listed in PermittedPublicSecurityGroupRuleRanges."
+      identifier           = "EMR_BLOCK_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Critical"
+    }
+
+    emr-kerberos-enabled = {
+      description          = "Checks if Amazon EMR clusters have Kerberos enabled. The rule is NON_COMPLIANT if a security configuration is not attached to the cluster or the security configuration does not satisfy the specified rule parameters."
+      identifier           = "EMR_KERBEROS_ENABLED"
+      input_parameters     = var.emr_kerberos_enabled_parameters
+      resource_types_scope = ["AWS::EMR::Cluster"]
+      severity             = "Medium"
+    }
+
+    emr-master-no-public-ip = {
+      description          = "Checks if Amazon EMR clusters master nodes have public IPs. The rule is NON_COMPLIANT if the master node has a public IP."
+      identifier           = "EMR_MASTER_NO_PUBLIC_IP"
+      resource_types_scope = ["AWS::EMR::Cluster", "AWS::EC2::Instance"]
+      severity             = "High"
+    }
+
+    emr-security-configuration-encryption-rest = {
+      description          = "Checks if an Amazon EMR security configuration has encryption at rest enabled. The rule is NON_COMPLIANT if configuration.SecurityConfiguration.EncryptionConfiguration.EnableAtRestEncryption is false."
+      identifier           = "EMR_SECURITY_CONFIGURATION_ENCRYPTION_REST"
+      resource_types_scope = ["AWS::EMR::SecurityConfiguration"]
+      severity             = "Medium"
+    }
+
+    emr-security-configuration-encryption-transit = {
+      description          = "Checks if an Amazon EMR security configuration has encryption in transit enabled. The rule is NON_COMPLIANT if configuration.SecurityConfiguration.EncryptionConfiguration.EnableInTransitEncryption is false."
+      identifier           = "EMR_SECURITY_CONFIGURATION_ENCRYPTION_TRANSIT"
+      resource_types_scope = ["AWS::EMR::SecurityConfiguration"]
+      severity             = "Medium"
+    }
+
+    encrypted-volumes = {
+      description          = "Checks if attached Amazon EBS volumes are encrypted and optionally are encrypted with a specified KMS key. The rule is NON_COMPLIANT if attached EBS volumes are unencrypted or are encrypted with a KMS key not in the supplied parameters."
+      identifier           = "ENCRYPTED_VOLUMES"
+      input_parameters     = var.encrypted_volumes_parameters
+      resource_types_scope = ["AWS::EC2::Volume"]
+      severity             = "Medium"
+    }
+
+    eventschemas-discoverer-tagged = {
+      description          = "Checks if AWS EventSchemas discoverer resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not consider tags starting with aws: ."
+      identifier           = "EVENTSCHEMAS_DISCOVERER_TAGGED"
+      input_parameters     = var.eventschemas_discoverer_tagged_parameters
+      resource_types_scope = ["AWS::EventSchemas::Discoverer"]
+      severity             = "Medium"
+    }
+
+    eventschemas-registry-tagged = {
+      description          = "Checks if Amazon EventBridge Schema Registry resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EVENTSCHEMAS_REGISTRY_TAGGED"
+      input_parameters     = var.eventschemas_registry_tagged_parameters
+      resource_types_scope = ["AWS::EventSchemas::Registry"]
+      severity             = "Medium"
+    }
+
+    event-data-store-cmk-encryption-enabled = {
+      description          = "Checks if AWS Cloud Trail event data stores have customer managed AWS KMS keys enabled. The rule is NON_COMPLIANT if an event data store has disabled customer managed KMS keys. Optionally, you can specify a list of KMS keys for the rule to check."
+      identifier           = "EVENT_DATA_STORE_CMK_ENCRYPTION_ENABLED"
+      input_parameters     = var.event_data_store_cmk_encryption_enabled_parameters
+      resource_types_scope = ["AWS::CloudTrail::EventDataStore"]
+      severity             = "Medium"
+    }
+
+    evidently-launch-description = {
+      description          = "Checks if Amazon CloudWatch Evidently launches have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "EVIDENTLY_LAUNCH_DESCRIPTION"
+      resource_types_scope = ["AWS::Evidently::Launch"]
+      severity             = "Medium"
+    }
+
+    evidently-launch-tagged = {
+      description          = "Checks if Amazon CloudWatch Evidently launches have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EVIDENTLY_LAUNCH_TAGGED"
+      input_parameters     = var.evidently_launch_tagged_parameters
+      resource_types_scope = ["AWS::Evidently::Launch"]
+      severity             = "Medium"
+    }
+
+    evidently-project-description = {
+      description          = "Checks if Amazon CloudWatch Evidently projects have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "EVIDENTLY_PROJECT_DESCRIPTION"
+      resource_types_scope = ["AWS::Evidently::Project"]
+      severity             = "Medium"
+    }
+
+    evidently-project-tagged = {
+      description          = "Checks if Amazon CloudWatch Evidently projects have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EVIDENTLY_PROJECT_TAGGED"
+      input_parameters     = var.evidently_project_tagged_parameters
+      resource_types_scope = ["AWS::Evidently::Project"]
+      severity             = "Medium"
+    }
+
+    evidently-segment-description = {
+      description          = "Checks if Amazon CloudWatch Evidently segments have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "EVIDENTLY_SEGMENT_DESCRIPTION"
+      resource_types_scope = ["AWS::Evidently::Segment"]
+      severity             = "Medium"
+    }
+
+    evidently-segment-tagged = {
+      description          = "Checks if Amazon CloudWatch Evidently segments have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "EVIDENTLY_SEGMENT_TAGGED"
+      input_parameters     = var.evidently_segment_tagged_parameters
+      resource_types_scope = ["AWS::Evidently::Segment"]
+      severity             = "Medium"
+    }
+
+    fis-experiment-template-log-configuration-exists = {
+      description          = "Checks if AWS FIS experiment templates have experiment logging configured. The rule is NON_COMPLIANT if configuration.LogConfiguration does not exist."
+      identifier           = "FIS_EXPERIMENT_TEMPLATE_LOG_CONFIGURATION_EXISTS"
+      resource_types_scope = ["AWS::FIS::ExperimentTemplate"]
+      severity             = "Medium"
+    }
+
+    fis-experiment-template-tagged = {
+      description          = "Checks if AWS FIS experiment templates have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "FIS_EXPERIMENT_TEMPLATE_TAGGED"
+      input_parameters     = var.fis_experiment_template_tagged_parameters
+      resource_types_scope = ["AWS::FIS::ExperimentTemplate"]
+      severity             = "Medium"
+    }
+
+    fms-shield-resource-policy-check = {
+      description          = "Checks if resources that AWS Shield Advanced can protect are protected by Shield Advanced. The rule is NON_COMPLIANT if a specified resource is not protected."
+      identifier           = "FMS_SHIELD_RESOURCE_POLICY_CHECK"
+      input_parameters     = var.fms_shield_resource_policy_check_parameters
+      resource_types_scope = ["AWS::CloudFront::Distribution", "AWS::ElasticLoadBalancingV2::LoadBalancer", "AWS::WAFRegional::WebACL", "AWS::EC2::EIP", "AWS::ElasticLoadBalancing::LoadBalancer", "AWS::ShieldRegional::Protection", "AWS::Shield::Protection"]
+      severity             = "Medium"
+    }
+
+    fms-webacl-resource-policy-check = {
+      description          = "Checks if the web ACL is associated with an Application Load Balancer, API Gateway stage, or Amazon CloudFront distributions. When AWS Firewall Manager creates this rule, the FMS policy owner specifies the WebACLId in the FMS policy and can optionally..."
+      identifier           = "FMS_WEBACL_RESOURCE_POLICY_CHECK"
+      input_parameters     = var.fms_webacl_resource_policy_check_parameters
+      resource_types_scope = ["AWS::CloudFront::Distribution", "AWS::ApiGateway::Stage", "AWS::ElasticLoadBalancingV2::LoadBalancer", "AWS::WAFRegional::WebACL"]
+      severity             = "Medium"
+    }
+
+    fms-webacl-rulegroup-association-check = {
+      description          = "Checks if the rule groups associate with the web ACL at the correct priority. The correct priority is decided by the rank of the rule groups in the ruleGroups parameter. When AWS Firewall Manager creates this rule, it assigns the highest priority 0..."
+      identifier           = "FMS_WEBACL_RULEGROUP_ASSOCIATION_CHECK"
+      input_parameters     = var.fms_webacl_rulegroup_association_check_parameters
+      resource_types_scope = ["AWS::WAF::WebACL", "AWS::WAFRegional::WebACL"]
+      severity             = "Medium"
+    }
+
+    frauddetector-entity-type-tagged = {
+      description          = "Checks if Amazon Fraud Detector entity types have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "FRAUDDETECTOR_ENTITY_TYPE_TAGGED"
+      input_parameters     = var.frauddetector_entity_type_tagged_parameters
+      resource_types_scope = ["AWS::FraudDetector::EntityType"]
+      severity             = "Low"
+    }
+
+    frauddetector-label-tagged = {
+      description          = "Checks if Amazon Fraud Detector labels have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "FRAUDDETECTOR_LABEL_TAGGED"
+      input_parameters     = var.frauddetector_label_tagged_parameters
+      resource_types_scope = ["AWS::FraudDetector::Label"]
+      severity             = "Low"
+    }
+
+    frauddetector-outcome-tagged = {
+      description          = "Checks if Amazon Fraud Detector outcomes have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "FRAUDDETECTOR_OUTCOME_TAGGED"
+      input_parameters     = var.frauddetector_outcome_tagged_parameters
+      resource_types_scope = ["AWS::FraudDetector::Outcome"]
+      severity             = "Low"
+    }
+
+    frauddetector-variable-tagged = {
+      description          = "Checks if Amazon Fraud Detector variables have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "FRAUDDETECTOR_VARIABLE_TAGGED"
+      input_parameters     = var.frauddetector_variable_tagged_parameters
+      resource_types_scope = ["AWS::FraudDetector::Variable"]
+      severity             = "Low"
+    }
+
+    fsx-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon FSx File Systems. The rule is NON_COMPLIANT if the Amazon FSx File System does not have a corresponding recovery point created within the specified time period."
+      identifier           = "FSX_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.fsx_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Medium"
+    }
+
+    fsx-lustre-copy-tags-to-backups = {
+      description          = "Checks if the Amazon FSx for Lustre file systems are configured to copy tags to backups. The rule is NON_COMPLIANT if Lustre file systems are not configured to copy tags to backups."
+      identifier           = "FSX_LUSTRE_COPY_TAGS_TO_BACKUPS"
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Low"
+    }
+
+    fsx-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon FSx File Systems meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Amazon FSx File System is greater than maxRestoreTime minutes."
+      identifier           = "FSX_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.fsx_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Medium"
+    }
+
+    fsx-ontap-deployment-type-check = {
+      description          = "Checks if Amazon FSx for NetApp ONTAP file systems are configured with certain deployment types. The rule is NON_COMPLIANT if the Amazon FSx for NetApp ONTAP file systems are not configured with the deployment types you specify."
+      identifier           = "FSX_ONTAP_DEPLOYMENT_TYPE_CHECK"
+      input_parameters     = var.fsx_ontap_deployment_type_check_parameters
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Medium"
+    }
+
+    fsx-openzfs-copy-tags-enabled = {
+      description          = "Checks if the Amazon FSx for OpenZFS file systems are configured to copy tags to backups and volumes. The rule is NON_COMPLIANT if FSx for OpenZFS file systems are not configured to copy tags to backups and volumes."
+      identifier           = "FSX_OPENZFS_COPY_TAGS_ENABLED"
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Low"
+    }
+
+    fsx-openzfs-deployment-type-check = {
+      description          = "Checks if the Amazon FSx for OpenZFS file systems are configured with certain deployment types. The rule is NON_COMPLIANT if FSx for OpenZFS file systems are not configured with the deployment types you specify."
+      identifier           = "FSX_OPENZFS_DEPLOYMENT_TYPE_CHECK"
+      input_parameters     = var.fsx_openzfs_deployment_type_check_parameters
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Medium"
+    }
+
+    fsx-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon FSx File Systems are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon FSx File System is not covered by a backup plan."
+      identifier           = "FSX_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.fsx_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Medium"
+    }
+
+    fsx-windows-audit-log-configured = {
+      description          = "Checks if the Amazon FSx for Windows File Server file systems have file access auditing enabled. The rule is NON_COMPLIANT if the FSx for Windows File Server file systems do not have file access auditing enabled."
+      identifier           = "FSX_WINDOWS_AUDIT_LOG_CONFIGURED"
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Medium"
+    }
+
+    fsx-windows-deployment-type-check = {
+      description          = "Checks if the Amazon FSx for WINDOWS file systems are configured with certain deployment types. The rule is NON_COMPLIANT if FSx for WINDOWS file systems are not configured with the deployment types you specify."
+      identifier           = "FSX_WINDOWS_DEPLOYMENT_TYPE_CHECK"
+      input_parameters     = var.fsx_windows_deployment_type_check_parameters
+      resource_types_scope = ["AWS::FSx::FileSystem"]
+      severity             = "Medium"
+    }
+
+    glb-listener-tagged = {
+      description          = "Checks if Gateway Load Balancer listeners have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "GLB_LISTENER_TAGGED"
+      input_parameters     = var.glb_listener_tagged_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::Listener"]
+      severity             = "Medium"
+    }
+
+    glb-tagged = {
+      description          = "Checks if Gateway Load Balancers have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "GLB_TAGGED"
+      input_parameters     = var.glb_tagged_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    global-endpoint-event-replication-enabled = {
+      description          = "Checks if event replication is enabled for Amazon EventBridge global endpoints. The rule is NON_COMPLIANT if event replication is not enabled."
+      identifier           = "GLOBAL_ENDPOINT_EVENT_REPLICATION_ENABLED"
+      resource_types_scope = ["AWS::Events::Endpoint"]
+      severity             = "Medium"
+    }
+
+    glue-job-logging-enabled = {
+      description          = "Checks if an AWS Glue job has logging enabled. The rule is NON_COMPLIANT if an AWS Glue job does not have Amazon CloudWatch logs enabled."
+      identifier           = "GLUE_JOB_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::Glue::Job"]
+      severity             = "Medium"
+    }
+
+    glue-ml-transform-encrypted-at-rest = {
+      description          = "Checks if an AWS Glue ML Transform has encryption at rest enabled. The rule is NON_COMPLIANT if MLUserDataEncryptionMode is set to DISABLED ."
+      identifier           = "GLUE_ML_TRANSFORM_ENCRYPTED_AT_REST"
+      resource_types_scope = ["AWS::Glue::MLTransform"]
+      severity             = "Medium"
+    }
+
+    glue-ml-transform-tagged = {
+      description          = "Checks if AWS Glue machine learning transforms have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "GLUE_ML_TRANSFORM_TAGGED"
+      input_parameters     = var.glue_ml_transform_tagged_parameters
+      resource_types_scope = ["AWS::Glue::MLTransform"]
+      severity             = "Medium"
+    }
+
+    glue-spark-job-supported-version = {
+      description          = "Checks if an AWS Glue Spark job is running on the specified minimum supported AWS Glue version. The rule is NON_COMPLIANT if the AWS Glue Spark job is not running on the minimum supported AWS Glue version that you specify."
+      identifier           = "GLUE_SPARK_JOB_SUPPORTED_VERSION"
+      input_parameters     = var.glue_spark_job_supported_version_parameters
+      resource_types_scope = ["AWS::Glue::Job"]
+      severity             = "Medium"
+    }
+
+    groundstation-config-tagged = {
+      description          = "Checks if AWS GroundStation config resources resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "GROUNDSTATION_CONFIG_TAGGED"
+      input_parameters     = var.groundstation_config_tagged_parameters
+      resource_types_scope = ["AWS::GroundStation::Config"]
+      severity             = "Medium"
+    }
+
+    groundstation-dataflowendpointgroup-tagged = {
+      description          = "Checks if AWS GroundStation dataflow endpoint group resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule doesn t check tags starting with aws: ."
+      identifier           = "GROUNDSTATION_DATAFLOWENDPOINTGROUP_TAGGED"
+      input_parameters     = var.groundstation_dataflowendpointgroup_tagged_parameters
+      resource_types_scope = ["AWS::GroundStation::DataflowEndpointGroup"]
+      severity             = "Medium"
+    }
+
+    groundstation-missionprofile-tagged = {
+      description          = "Checks if AWS GroundStation mission profile resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "GROUNDSTATION_MISSIONPROFILE_TAGGED"
+      input_parameters     = var.groundstation_missionprofile_tagged_parameters
+      resource_types_scope = ["AWS::GroundStation::MissionProfile"]
+      severity             = "Medium"
+    }
+
+    guardduty-ec2-protection-runtime-enabled = {
+      description          = "Checks if ECS Runtime Monitoring with automated agent management is enabled for Amazon GuardDuty detector. The rule is NON_COMPLIANT if the feature is not enabled for your account or at least one member account in your organization."
+      identifier           = "GUARDDUTY_EC2_PROTECTION_RUNTIME_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "Medium"
+    }
+
+    guardduty-ecs-protection-runtime-enabled = {
+      description          = "Checks if ECS Runtime Monitoring with automated agent management is enabled for Amazon GuardDuty detector. The rule is NON_COMPLIANT if the feature is not enabled for your account or at least one member account in your organization."
+      identifier           = "GUARDDUTY_ECS_PROTECTION_RUNTIME_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "Medium"
+    }
+
+    guardduty-eks-protection-audit-enabled = {
+      description          = "Checks if Audit Log Monitoring for Amazon Elastic Kubernetes Service (Amazon EKS) is enabled for an Amazon GuardDuty detector in your account. The rule is NON_COMPLIANT if the EKS Audit Log Monitoring feature is not enabled for your account."
+      identifier           = "GUARDDUTY_EKS_PROTECTION_AUDIT_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "High"
+    }
+
+    guardduty-eks-protection-runtime-enabled = {
+      description          = "Checks if Amazon EKS Runtime Monitoring with automated agent management is enabled for GuardDuty detector in your account. The rule is NON_COMPLIANT if EKS Runtime Monitoring with automated agent management in GuardDuty is not enabled for your account."
+      identifier           = "GUARDDUTY_EKS_PROTECTION_RUNTIME_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "High"
+    }
+
+    guardduty-enabled-centralized = {
+      description      = "Checks if Amazon GuardDuty is enabled in your AWS account and AWS Region. If you provide an AWS account for centralization, the rule evaluates the GuardDuty results in the centralized account. The rule is COMPLIANT when GuardDuty is enabled."
+      identifier       = "GUARDDUTY_ENABLED_CENTRALIZED"
+      input_parameters = var.guardduty_enabled_centralized_parameters
+      severity         = "High"
+    }
+
+    guardduty-lambda-protection-enabled = {
+      description          = "Checks if Lambda Protection is enabled for an Amazon GuardDuty detector in your account. The rule is NON_COMPLIANT if the Lambda Protection feature in Amazon GuardDuty is not enabled for your account."
+      identifier           = "GUARDDUTY_LAMBDA_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "High"
+    }
+
+    guardduty-malware-protection-enabled = {
+      description          = "Checks if Malware Protection is enabled for an Amazon GuardDuty detector in your account. The rule is NON_COMPLIANT if the Malware Protection feature in Amazon GuardDuty is not enabled for your account."
+      identifier           = "GUARDDUTY_MALWARE_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "High"
+    }
+
+    guardduty-non-archived-findings = {
+      description      = "Checks if Amazon GuardDuty has findings that are non-archived. The rule is NON_COMPLIANT if GuardDuty has non-archived low/medium/high severity findings older than the specified number in the daysLowSev/daysMediumSev/daysHighSev parameter."
+      identifier       = "GUARDDUTY_NON_ARCHIVED_FINDINGS"
+      input_parameters = var.guardduty_non_archived_findings_parameters
+      severity         = "Medium"
+    }
+
+    guardduty-rds-protection-enabled = {
+      description          = "Checks if Amazon Relational Database Service (Amazon RDS) protection is enabled for an Amazon GuardDuty detector in your account. The rule is NON_COMPLIANT if the Amazon RDS protection feature in Amazon GuardDuty is not enabled for you account."
+      identifier           = "GUARDDUTY_RDS_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "High"
+    }
+
+    guardduty-runtime-monitoring-enabled = {
+      description          = "Checks if Runtime Monitoring is enabled for Amazon GuardDuty detector in your account or organization. The rule is NON_COMPLIANT if Runtime Monitoring in GuardDuty is not enabled for your account or at least one member account in your organization."
+      identifier           = "GUARDDUTY_RUNTIME_MONITORING_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "High"
+    }
+
+    guardduty-s3-protection-enabled = {
+      description          = "Checks if S3 Protection is enabled for an Amazon GuardDuty Detector in your account. The rule is NON_COMPLIANT if the S3 Protection feature in Amazon GuardDuty is not enabled for your account."
+      identifier           = "GUARDDUTY_S3_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::GuardDuty::Detector"]
+      severity             = "High"
+    }
+
+    healthlake-fhirdatastore-tagged = {
+      description          = "Checks if Amazon HealthLake FHIRDatastores have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not consider tags starting with aws: ."
+      identifier           = "HEALTHLAKE_FHIRDATASTORE_TAGGED"
+      input_parameters     = var.healthlake_fhirdatastore_tagged_parameters
+      resource_types_scope = ["AWS::HealthLake::FHIRDatastore"]
+      severity             = "Medium"
+    }
+
+    iam-customer-policy-blocked-kms-actions = {
+      description          = "Checks if the managed AWS Identity and Access Management (IAM) policies that you create do not allow blocked KMS actions on all AWS KMS key resources. The rule is NON_COMPLIANT if any blocked action is allowed on all AWS KMS keys by the managed IAM policy."
+      identifier           = "IAM_CUSTOMER_POLICY_BLOCKED_KMS_ACTIONS"
+      input_parameters     = var.iam_customer_policy_blocked_kms_actions_parameters
+      resource_types_scope = ["AWS::IAM::Policy"]
+      severity             = "Medium"
+    }
+
+    iam-external-access-analyzer-enabled = {
+      description          = "Checks if an IAM Access Analyzer for external access is activated in your account per region. The rule is NON_COMPLIANT if there are no analyzers for external access in the region or if the status attribute is not set to ACTIVE ."
+      identifier           = "IAM_EXTERNAL_ACCESS_ANALYZER_ENABLED"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "High"
+    }
+
+    iam-group-has-users-check = {
+      description          = "Checks whether IAM groups have at least one IAM user."
+      identifier           = "IAM_GROUP_HAS_USERS_CHECK"
+      resource_types_scope = ["AWS::IAM::Group"]
+      severity             = "Medium"
+    }
+
+    iam-inline-policy-blocked-kms-actions = {
+      description          = "Checks if the inline policies attached to your IAM users, roles, and groups do not allow blocked actions on all AWS KMS keys. The rule is NON_COMPLIANT if any blocked action is allowed on all AWS KMS keys in an inline policy."
+      identifier           = "IAM_INLINE_POLICY_BLOCKED_KMS_ACTIONS"
+      input_parameters     = var.iam_inline_policy_blocked_kms_actions_parameters
+      resource_types_scope = ["AWS::IAM::Group", "AWS::IAM::Role", "AWS::IAM::User"]
+      severity             = "Medium"
+    }
+
+    iam-no-inline-policy-check = {
+      description          = "Checks if the inline policy feature is not in use. The rule is NON_COMPLIANT if an AWS Identity and Access Management (IAM) user, IAM role or IAM group has any inline policy."
+      identifier           = "IAM_NO_INLINE_POLICY_CHECK"
+      resource_types_scope = ["AWS::IAM::Group", "AWS::IAM::Role", "AWS::IAM::User"]
+      severity             = "Medium"
+    }
+
+    iam-oidc-provider-client-id-list-check = {
+      description          = "Checks if AWS IAM OIDC providers are configured with approved client IDs. The rule is NON_COMPLIANT if configuration.ClientIdList contains IDs not specified in the required rule parameter."
+      identifier           = "IAM_OIDC_PROVIDER_CLIENT_ID_LIST_CHECK"
+      input_parameters     = var.iam_oidc_provider_client_id_list_check_parameters
+      resource_types_scope = ["AWS::IAM::OIDCProvider"]
+      severity             = "Medium"
+    }
+
+    iam-oidc-provider-tagged = {
+      description          = "Checks if AWS IAM OIDC providers have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IAM_OIDC_PROVIDER_TAGGED"
+      input_parameters     = var.iam_oidc_provider_tagged_parameters
+      resource_types_scope = ["AWS::IAM::OIDCProvider"]
+      severity             = "Medium"
+    }
+
+    iam-password-policy = {
+      description      = "Checks if the account password policy for AWS Identity and Access Management (IAM) users meets the specified requirements indicated in the parameters. The rule is NON_COMPLIANT if the account password policy does not meet the specified requirements."
+      identifier       = "IAM_PASSWORD_POLICY"
+      input_parameters = var.iam_password_policy_parameters
+      severity         = "Medium"
+    }
+
+    iam-policy-blacklisted-check = {
+      description          = "Checks in each AWS Identity and Access Management (IAM) resource, if a policy Amazon Resource Name (ARN) in the input parameter is attached to the IAM resource. The rule is NON_COMPLIANT if the policy ARN is attached to the IAM resource."
+      identifier           = "IAM_POLICY_BLACKLISTED_CHECK"
+      input_parameters     = var.iam_policy_blacklisted_check_parameters
+      resource_types_scope = ["AWS::IAM::User", "AWS::IAM::Group", "AWS::IAM::Role"]
+      severity             = "Medium"
+    }
+
+    iam-policy-description = {
+      description          = "Checks if AWS Identity and Access Management (IAM) Policy description field exists. The rule is NON_COMPLIANT if the description field does not exist or is an empty string."
+      identifier           = "IAM_POLICY_DESCRIPTION"
+      resource_types_scope = ["AWS::IAM::Policy"]
+      severity             = "Medium"
+    }
+
+    iam-policy-in-use = {
+      description          = "Checks whether the IAM policy ARN is attached to an IAM user, or a group with one or more IAM users, or an IAM role with one or more trusted entity."
+      identifier           = "IAM_POLICY_IN_USE"
+      input_parameters     = var.iam_policy_in_use_parameters
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Low"
+    }
+
+    iam-policy-no-statements-with-admin-access = {
+      description          = "Checks if AWS Identity and Access Management (IAM) policies that you create have Allow statements that grant permissions to all actions on all resources. The rule is NON_COMPLIANT if any customer managed IAM policy statement includes Effect : Allow with..."
+      identifier           = "IAM_POLICY_NO_STATEMENTS_WITH_ADMIN_ACCESS"
+      input_parameters     = var.iam_policy_no_statements_with_admin_access_parameters
+      resource_types_scope = ["AWS::IAM::Policy"]
+      severity             = "High"
+    }
+
+    iam-policy-no-statements-with-full-access = {
+      description          = "Checks if AWS Identity and Access Management (IAM) policies that you create grant permissions to all actions on individual AWS resources. The rule is NON_COMPLIANT if any customer managed IAM policy allows full access to at least 1 AWS service."
+      identifier           = "IAM_POLICY_NO_STATEMENTS_WITH_FULL_ACCESS"
+      input_parameters     = var.iam_policy_no_statements_with_full_access_parameters
+      resource_types_scope = ["AWS::IAM::Policy"]
+      severity             = "Low"
+    }
+
+    iam-role-managed-policy-check = {
+      description          = "Checks if all managed policies specified in the list of managed policies are attached to the AWS Identity and Access Management (IAM) role. The rule is NON_COMPLIANT if a managed policy is not attached to the IAM role."
+      identifier           = "IAM_ROLE_MANAGED_POLICY_CHECK"
+      input_parameters     = var.iam_role_managed_policy_check_parameters
+      resource_types_scope = ["AWS::IAM::Role"]
+      severity             = "Medium"
+    }
+
+    iam-root-access-key-check = {
+      description = "Checks if the root user access key is available. The rule is COMPLIANT if the user access key does not exist. Otherwise, NON_COMPLIANT."
+      identifier  = "IAM_ROOT_ACCESS_KEY_CHECK"
+      severity    = "Critical"
+    }
+
+    iam-saml-provider-tagged = {
+      description          = "Checks if AWS IAM SAML providers have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IAM_SAML_PROVIDER_TAGGED"
+      input_parameters     = var.iam_saml_provider_tagged_parameters
+      resource_types_scope = ["AWS::IAM::SAMLProvider"]
+      severity             = "Medium"
+    }
+
+    iam-server-certificate-expiration-check = {
+      description          = "Checks if AWS IAM SSL/TLS server certificates stored in IAM are expired. The rule is NON_COMPLIANT if an IAM server certificate is expired."
+      identifier           = "IAM_SERVER_CERTIFICATE_EXPIRATION_CHECK"
+      resource_types_scope = ["AWS::IAM::ServerCertificate"]
+      severity             = "Medium"
+    }
+
+    iam-server-certificate-tagged = {
+      description          = "Checks if AWS IAM server certificates have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IAM_SERVER_CERTIFICATE_TAGGED"
+      input_parameters     = var.iam_server_certificate_tagged_parameters
+      resource_types_scope = ["AWS::IAM::ServerCertificate"]
+      severity             = "Medium"
+    }
+
+    iam-user-group-membership-check = {
+      description          = "Checks whether IAM users are members of at least one IAM group."
+      identifier           = "IAM_USER_GROUP_MEMBERSHIP_CHECK"
+      input_parameters     = var.iam_user_group_membership_check_parameters
+      resource_types_scope = ["AWS::IAM::User"]
+      severity             = "Medium"
+    }
+
+    iam-user-mfa-enabled = {
+      description          = "Checks if the AWS Identity and Access Management (IAM) users have multi-factor authentication (MFA) enabled. The rule is NON_COMPLIANT if MFA is not enabled for at least one IAM user."
+      identifier           = "IAM_USER_MFA_ENABLED"
+      resource_types_scope = ["AWS::IAM::User"]
+      severity             = "Medium"
+    }
+
+    iam-user-no-policies-check = {
+      description          = "Checks if none of your AWS Identity and Access Management (IAM) users have policies attached. IAM users must inherit permissions from IAM groups or roles. The rule is NON_COMPLIANT if there is at least one policy that is attached to the IAM user."
+      identifier           = "IAM_USER_NO_POLICIES_CHECK"
+      resource_types_scope = ["AWS::IAM::User"]
+      severity             = "Low"
+    }
+
+    iam-user-unused-credentials-check = {
+      description          = "Checks if your AWS Identity and Access Management (IAM) users have passwords or active access keys that have not been used within the specified number of days you provided. The rule is NON_COMPLIANT if there are inactive accounts not recently used."
+      identifier           = "IAM_USER_UNUSED_CREDENTIALS_CHECK"
+      input_parameters     = var.iam_user_unused_credentials_check_parameters
+      resource_types_scope = ["AWS::IAM::User"]
+      severity             = "Medium"
+    }
+
+    imagebuilder-distributionconfiguration-tagged = {
+      description          = "Checks if ImageBuilder DistributionConfiguration resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or the specified tag keys are not present. It does not consider tags starting with aws: ."
+      identifier           = "IMAGEBUILDER_DISTRIBUTIONCONFIGURATION_TAGGED"
+      input_parameters     = var.imagebuilder_distributionconfiguration_tagged_parameters
+      resource_types_scope = ["AWS::ImageBuilder::DistributionConfiguration"]
+      severity             = "Medium"
+    }
+
+    imagebuilder-imagepipeline-tagged = {
+      description          = "Checks if EC2 Image Builder image pipelines have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IMAGEBUILDER_IMAGEPIPELINE_TAGGED"
+      input_parameters     = var.imagebuilder_imagepipeline_tagged_parameters
+      resource_types_scope = ["AWS::ImageBuilder::ImagePipeline"]
+      severity             = "Medium"
+    }
+
+    imagebuilder-imagerecipe-ebs-volumes-encrypted = {
+      description          = "Checks that all Amazon EBS volumes in EC2 Image Builder image recipe block device mappings have encryption enabled. The rule is NON_COMPLIANT if not all EBS volumes have encryption enabled, or if there are no block device mappings defined."
+      identifier           = "IMAGEBUILDER_IMAGERECIPE_EBS_VOLUMES_ENCRYPTED"
+      resource_types_scope = ["AWS::ImageBuilder::ImageRecipe"]
+      severity             = "Medium"
+    }
+
+    imagebuilder-imagerecipe-tagged = {
+      description          = "Checks if AWS ImageBuilder image recipe resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IMAGEBUILDER_IMAGERECIPE_TAGGED"
+      input_parameters     = var.imagebuilder_imagerecipe_tagged_parameters
+      resource_types_scope = ["AWS::ImageBuilder::ImageRecipe"]
+      severity             = "Medium"
+    }
+
+    imagebuilder-infrastructureconfiguration-tagged = {
+      description          = "Checks if EC2 Image Builder infrastructure configuration resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present."
+      identifier           = "IMAGEBUILDER_INFRASTRUCTURECONFIGURATION_TAGGED"
+      input_parameters     = var.imagebuilder_infrastructureconfiguration_tagged_parameters
+      resource_types_scope = ["AWS::ImageBuilder::InfrastructureConfiguration"]
+      severity             = "Medium"
+    }
+
+    restricted-ssh = {
+      description          = "Checks if the incoming SSH traffic for the security groups is accessible. The rule is COMPLIANT if the IP addresses of the incoming SSH traffic in the security groups are restricted (CIDR other than 0.0.0.0/0 or ::/0). Otherwise, NON_COMPLIANT."
+      identifier           = "INCOMING_SSH_DISABLED"
+      resource_types_scope = ["AWS::EC2::SecurityGroup"]
+      severity             = "High"
+    }
+
+    inspector-ec2-scan-enabled = {
+      description          = "Checks if Amazon Inspector V2 EC2 scanning is activated for your single or multi-account environment to detect potential vulnerabilities and network reachability issues on your EC2 instances. The rule is NON_COMPLIANT if EC2 scanning is not activated."
+      identifier           = "INSPECTOR_EC2_SCAN_ENABLED"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "High"
+    }
+
+    inspector-ecr-scan-enabled = {
+      description          = "Checks if Amazon Inspector V2 ECR scanning is activated for your single or multi-account environment to detect potential software vulnerabilities in your container images. The rule is NON_COMPLIANT if ECR scanning is not activated."
+      identifier           = "INSPECTOR_ECR_SCAN_ENABLED"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "High"
+    }
+
+    inspector-lambda-code-scan-enabled = {
+      description          = "Checks if Amazon Inspector V2 Lambda code scanning is activated for your single or multi-account environment to detect potential code vulnerabilities. The rule is NON_COMPLIANT if Lambda code scanning is not activated."
+      identifier           = "INSPECTOR_LAMBDA_CODE_SCAN_ENABLED"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "High"
+    }
+
+    inspector-lambda-standard-scan-enabled = {
+      description          = "Checks if Amazon Inspector V2 Lambda standard scanning is activated for your single or multi-account environment to detect potential software vulnerabilities. The rule is NON_COMPLIANT if Lambda standard scanning is not activated."
+      identifier           = "INSPECTOR_LAMBDA_STANDARD_SCAN_ENABLED"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "High"
+    }
+
+    ec2-instances-in-vpc = {
+      description          = "Checks if your EC2 instances belong to a virtual private cloud (VPC). Optionally, you can specify the VPC ID to associate with your instances."
+      identifier           = "INSTANCES_IN_VPC"
+      input_parameters     = var.ec2_instances_in_vpc_parameters
+      resource_types_scope = ["AWS::EC2::Instance"]
+      severity             = "Medium"
+    }
+
+    internet-gateway-authorized-vpc-only = {
+      description          = "Checks if internet gateways are attached to an authorized virtual private cloud (Amazon VPC). The rule is NON_COMPLIANT if internet gateways are attached to an unauthorized VPC."
+      identifier           = "INTERNET_GATEWAY_AUTHORIZED_VPC_ONLY"
+      input_parameters     = var.internet_gateway_authorized_vpc_only_parameters
+      resource_types_scope = ["AWS::EC2::InternetGateway"]
+      severity             = "High"
+    }
+
+    iotdevicedefender-custom-metric-tagged = {
+      description          = "AWS IoT Device Defender custom metrics have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTDEVICEDEFENDER_CUSTOM_METRIC_TAGGED"
+      input_parameters     = var.iotdevicedefender_custom_metric_tagged_parameters
+      resource_types_scope = ["AWS::IoT::CustomMetric"]
+      severity             = "Medium"
+    }
+
+    iotevents-alarm-model-tagged = {
+      description          = "Checks if AWS IoT Events alarm models have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTEVENTS_ALARM_MODEL_TAGGED"
+      input_parameters     = var.iotevents_alarm_model_tagged_parameters
+      resource_types_scope = ["AWS::IoTEvents::AlarmModel"]
+      severity             = "Low"
+    }
+
+    iotevents-detector-model-tagged = {
+      description          = "Checks if AWS IoT Events detector models have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTEVENTS_DETECTOR_MODEL_TAGGED"
+      input_parameters     = var.iotevents_detector_model_tagged_parameters
+      resource_types_scope = ["AWS::IoTEvents::DetectorModel"]
+      severity             = "Low"
+    }
+
+    iotevents-input-tagged = {
+      description          = "Checks if AWS IoT Events inputs have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTEVENTS_INPUT_TAGGED"
+      input_parameters     = var.iotevents_input_tagged_parameters
+      resource_types_scope = ["AWS::IoTEvents::Input"]
+      severity             = "Low"
+    }
+
+    iotsitewise-asset-model-tagged = {
+      description          = "Checks if AWS IoT SiteWise asset models have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTSITEWISE_ASSET_MODEL_TAGGED"
+      input_parameters     = var.iotsitewise_asset_model_tagged_parameters
+      resource_types_scope = ["AWS::IoTSiteWise::AssetModel"]
+      severity             = "Low"
+    }
+
+    iotsitewise-dashboard-tagged = {
+      description          = "Checks if AWS IoT SiteWise dashboards have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTSITEWISE_DASHBOARD_TAGGED"
+      input_parameters     = var.iotsitewise_dashboard_tagged_parameters
+      resource_types_scope = ["AWS::IoTSiteWise::Dashboard"]
+      severity             = "Low"
+    }
+
+    iotsitewise-gateway-tagged = {
+      description          = "Checks if AWS IoT SiteWise gateways have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTSITEWISE_GATEWAY_TAGGED"
+      input_parameters     = var.iotsitewise_gateway_tagged_parameters
+      resource_types_scope = ["AWS::IoTSiteWise::Gateway"]
+      severity             = "Low"
+    }
+
+    iotsitewise-portal-tagged = {
+      description          = "Checks if AWS IoT SiteWise portals have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTSITEWISE_PORTAL_TAGGED"
+      input_parameters     = var.iotsitewise_portal_tagged_parameters
+      resource_types_scope = ["AWS::IoTSiteWise::Portal"]
+      severity             = "Low"
+    }
+
+    iotsitewise-project-tagged = {
+      description          = "Checks if AWS IoT SiteWise projects have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTSITEWISE_PROJECT_TAGGED"
+      input_parameters     = var.iotsitewise_project_tagged_parameters
+      resource_types_scope = ["AWS::IoTSiteWise::Project"]
+      severity             = "Low"
+    }
+
+    iottwinmaker-component-type-tagged = {
+      description          = "Checks if AWS IoT TwinMaker component types have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTTWINMAKER_COMPONENT_TYPE_TAGGED"
+      input_parameters     = var.iottwinmaker_component_type_tagged_parameters
+      resource_types_scope = ["AWS::IoTTwinMaker::ComponentType"]
+      severity             = "Medium"
+    }
+
+    iottwinmaker-entity-tagged = {
+      description          = "Checks if AWS IoT TwinMaker entities have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTTWINMAKER_ENTITY_TAGGED"
+      input_parameters     = var.iottwinmaker_entity_tagged_parameters
+      resource_types_scope = ["AWS::IoTTwinMaker::Entity"]
+      severity             = "Low"
+    }
+
+    iottwinmaker-scene-tagged = {
+      description          = "Checks if AWS IoT TwinMaker scenes have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTTWINMAKER_SCENE_TAGGED"
+      input_parameters     = var.iottwinmaker_scene_tagged_parameters
+      resource_types_scope = ["AWS::IoTTwinMaker::Scene"]
+      severity             = "Low"
+    }
+
+    iottwinmaker-sync-job-tagged = {
+      description          = "Checks if AWS IoT TwinMaker sync jobs have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTTWINMAKER_SYNC_JOB_TAGGED"
+      input_parameters     = var.iottwinmaker_sync_job_tagged_parameters
+      resource_types_scope = ["AWS::IoTTwinMaker::SyncJob"]
+      severity             = "Low"
+    }
+
+    iottwinmaker-workspace-tagged = {
+      description          = "Checks if AWS IoT TwinMaker workspaces have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTTWINMAKER_WORKSPACE_TAGGED"
+      input_parameters     = var.iottwinmaker_workspace_tagged_parameters
+      resource_types_scope = ["AWS::IoTTwinMaker::Workspace"]
+      severity             = "Low"
+    }
+
+    iotwireless-fuota-task-tagged = {
+      description          = "Checks if AWS IoT Wireless FUOTA tasks have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTWIRELESS_FUOTA_TASK_TAGGED"
+      input_parameters     = var.iotwireless_fuota_task_tagged_parameters
+      resource_types_scope = ["AWS::IoTWireless::FuotaTask"]
+      severity             = "Low"
+    }
+
+    iotwireless-multicast-group-tagged = {
+      description          = "Checks if AWS IoT Wireless multicast groups have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTWIRELESS_MULTICAST_GROUP_TAGGED"
+      input_parameters     = var.iotwireless_multicast_group_tagged_parameters
+      resource_types_scope = ["AWS::IoTWireless::MulticastGroup"]
+      severity             = "Low"
+    }
+
+    iotwireless-service-profile-tagged = {
+      description          = "Checks if AWS IoT Wireless service profiles have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOTWIRELESS_SERVICE_PROFILE_TAGGED"
+      input_parameters     = var.iotwireless_service_profile_tagged_parameters
+      resource_types_scope = ["AWS::IoTWireless::ServiceProfile"]
+      severity             = "Low"
+    }
+
+    iot-authorizer-token-signing-enabled = {
+      description          = "Checks if an AWS IoT Core authorizer has not disabled the signing requirements for validating the token signature in an authorization request. The rule is NON_COMPLIANT if the authorizer has configuration.SigningDisabled set to True."
+      identifier           = "IOT_AUTHORIZER_TOKEN_SIGNING_ENABLED"
+      resource_types_scope = ["AWS::IoT::Authorizer"]
+      severity             = "Medium"
+    }
+
+    iot-job-template-tagged = {
+      description          = "Checks if AWS IoT job template resources resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOT_JOB_TEMPLATE_TAGGED"
+      input_parameters     = var.iot_job_template_tagged_parameters
+      resource_types_scope = ["AWS::IoT::JobTemplate"]
+      severity             = "Medium"
+    }
+
+    iot-provisioning-template-description = {
+      description          = "Checks if AWS IoT provisioning templates have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "IOT_PROVISIONING_TEMPLATE_DESCRIPTION"
+      resource_types_scope = ["AWS::IoT::ProvisioningTemplate"]
+      severity             = "Medium"
+    }
+
+    iot-provisioning-template-jitp = {
+      description          = "Checks if AWS IoT provisioning templates are using just-in-time provisioning (JITP). The rule is NON_COMPLIANT if configuration.TemplateType is not JITP ."
+      identifier           = "IOT_PROVISIONING_TEMPLATE_JITP"
+      resource_types_scope = ["AWS::IoT::ProvisioningTemplate"]
+      severity             = "Medium"
+    }
+
+    iot-provisioning-template-tagged = {
+      description          = "Checks if AWS IoT provisioning templates have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOT_PROVISIONING_TEMPLATE_TAGGED"
+      input_parameters     = var.iot_provisioning_template_tagged_parameters
+      resource_types_scope = ["AWS::IoT::ProvisioningTemplate"]
+      severity             = "Medium"
+    }
+
+    iot-scheduled-audit-tagged = {
+      description          = "Checks if AWS IoT scheduled audits have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IOT_SCHEDULED_AUDIT_TAGGED"
+      input_parameters     = var.iot_scheduled_audit_tagged_parameters
+      resource_types_scope = ["AWS::IoT::ScheduledAudit"]
+      severity             = "Medium"
+    }
+
+    ivs-channel-playback-authorization-enabled = {
+      description          = "Checks if Amazon IVS channels have playback authorization enabled. The rule is NON_COMPLIANT if configuration.Authorized is false."
+      identifier           = "IVS_CHANNEL_PLAYBACK_AUTHORIZATION_ENABLED"
+      resource_types_scope = ["AWS::IVS::Channel"]
+      severity             = "Medium"
+    }
+
+    ivs-channel-tagged = {
+      description          = "Checks if Amazon IVS channels have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IVS_CHANNEL_TAGGED"
+      input_parameters     = var.ivs_channel_tagged_parameters
+      resource_types_scope = ["AWS::IVS::Channel"]
+      severity             = "Low"
+    }
+
+    ivs-playback-key-pair-tagged = {
+      description          = "Checks if Amazon IVS playback key pairs have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IVS_PLAYBACK_KEY_PAIR_TAGGED"
+      input_parameters     = var.ivs_playback_key_pair_tagged_parameters
+      resource_types_scope = ["AWS::IVS::PlaybackKeyPair"]
+      severity             = "Low"
+    }
+
+    ivs-recording-configuration-tagged = {
+      description          = "Checks if Amazon IVS recording configurations have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "IVS_RECORDING_CONFIGURATION_TAGGED"
+      input_parameters     = var.ivs_recording_configuration_tagged_parameters
+      resource_types_scope = ["AWS::IVS::RecordingConfiguration"]
+      severity             = "Medium"
+    }
+
+    kinesisvideo-signalingchannel-tagged = {
+      description          = "Checks if AWS KinesisVideo signaling channel resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. It does not check for tags starting with aws: ."
+      identifier           = "KINESISVIDEO_SIGNALINGCHANNEL_TAGGED"
+      input_parameters     = var.kinesisvideo_signalingchannel_tagged_parameters
+      resource_types_scope = ["AWS::KinesisVideo::SignalingChannel"]
+      severity             = "Medium"
+    }
+
+    kinesisvideo-stream-tagged = {
+      description          = "Checks if Amazon Kinesis Video Streams streams have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not consider tags starting with aws: ."
+      identifier           = "KINESISVIDEO_STREAM_TAGGED"
+      input_parameters     = var.kinesisvideo_stream_tagged_parameters
+      resource_types_scope = ["AWS::KinesisVideo::Stream"]
+      severity             = "Medium"
+    }
+
+    kinesis-firehose-delivery-stream-encrypted = {
+      description          = "Checks if Amazon Kinesis Data Firehose delivery streams are encrypted at rest with server-side encryption. The rule is NON_COMPLIANT if a Kinesis Data Firehose delivery stream is not encrypted at rest with server-side encryption."
+      identifier           = "KINESIS_FIREHOSE_DELIVERY_STREAM_ENCRYPTED"
+      input_parameters     = var.kinesis_firehose_delivery_stream_encrypted_parameters
+      resource_types_scope = ["AWS::KinesisFirehose::DeliveryStream"]
+      severity             = "Medium"
+    }
+
+    kinesis-stream-backup-retention-check = {
+      description          = "Checks if an Amazon Kinesis Data Stream has its data record retention period set to a specific number of hours. The rule is NON_COMPLIANT if the property RetentionPeriodHours is set to a value less than the value specified by the parameter."
+      identifier           = "KINESIS_STREAM_BACKUP_RETENTION_CHECK"
+      input_parameters     = var.kinesis_stream_backup_retention_check_parameters
+      resource_types_scope = ["AWS::Kinesis::Stream"]
+      severity             = "Medium"
+    }
+
+    kinesis-stream-encrypted = {
+      description          = "Checks if Amazon Kinesis streams are encrypted at rest with server-side encryption. The rule is NON_COMPLIANT for a Kinesis stream if StreamEncryption is not present."
+      identifier           = "KINESIS_STREAM_ENCRYPTED"
+      resource_types_scope = ["AWS::Kinesis::Stream"]
+      severity             = "Medium"
+    }
+
+    kinesis-video-stream-minimum-data-retention = {
+      description          = "Checks if an Amazon Kinesis Video stream is configured with a value greater than or equal to the specified minimum data retention. The rule is NON_COMPLIANT if DataRetentionInHours is less than the value specified in the required rule parameter."
+      identifier           = "KINESIS_VIDEO_STREAM_MINIMUM_DATA_RETENTION"
+      input_parameters     = var.kinesis_video_stream_minimum_data_retention_parameters
+      resource_types_scope = ["AWS::KinesisVideo::Stream"]
+      severity             = "Medium"
+    }
+
+    kms-cmk-not-scheduled-for-deletion = {
+      description          = "Checks if AWS Key Management Service (AWS KMS) keys are not scheduled for deletion in AWS KMS. The rule is NON_COMPLIANT if KMS keys are scheduled for deletion."
+      identifier           = "KMS_CMK_NOT_SCHEDULED_FOR_DELETION"
+      input_parameters     = var.kms_cmk_not_scheduled_for_deletion_parameters
+      resource_types_scope = ["AWS::KMS::Key"]
+      severity             = "Medium"
+    }
+
+    kms-key-policy-no-public-access = {
+      description          = "Checks if the AWS KMS key policy allows public access. The rule is NON_COMPLIANT if the KMS key policy allows public access to the KMS key."
+      identifier           = "KMS_KEY_POLICY_NO_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::KMS::Key"]
+      severity             = "Critical"
+    }
+
+    kms-key-tagged = {
+      description          = "Checks if AWS Key Management Service (KMS) keys have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "KMS_KEY_TAGGED"
+      input_parameters     = var.kms_key_tagged_parameters
+      resource_types_scope = ["AWS::KMS::Key"]
+      severity             = "Medium"
+    }
+
+    lambda-concurrency-check = {
+      description          = "Checks if the Lambda function is configured with a function-level concurrent execution limit. The rule is NON_COMPLIANT if the Lambda function is not configured with a function-level concurrent execution limit."
+      identifier           = "LAMBDA_CONCURRENCY_CHECK"
+      input_parameters     = var.lambda_concurrency_check_parameters
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Medium"
+    }
+
+    lambda-dlq-check = {
+      description          = "Checks whether an AWS Lambda function is configured with a dead-letter queue. The rule is NON_COMPLIANT if the Lambda function is not configured with a dead-letter queue."
+      identifier           = "LAMBDA_DLQ_CHECK"
+      input_parameters     = var.lambda_dlq_check_parameters
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Low"
+    }
+
+    lambda-function-application-log-level-check = {
+      description          = "Checks if AWS Lambda functions with JSON structured logs are configured with a specified application log level. The rule is NON_COMPLIANT if configuration.loggingConfig.applicationLogLevel is not a value specified in the required rule parameter."
+      identifier           = "LAMBDA_FUNCTION_APPLICATION_LOG_LEVEL_CHECK"
+      input_parameters     = var.lambda_function_application_log_level_check_parameters
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Medium"
+    }
+
+    lambda-function-description = {
+      description          = "Checks if AWS Lambda functions have a description. The rule is NON_COMPLIANT if configuration.description does not exist or is an empty string."
+      identifier           = "LAMBDA_FUNCTION_DESCRIPTION"
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Medium"
+    }
+
+    lambda-function-log-format-json = {
+      description          = "Checks if AWS Lambda functions have the log format set to JSON for more control and better readability. The rule is NON_COMPLIANT if configuration.loggingConfig.logFormat is not JSON ."
+      identifier           = "LAMBDA_FUNCTION_LOG_FORMAT_JSON"
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Medium"
+    }
+
+    lambda-function-public-access-prohibited = {
+      description          = "Checks if the AWS Lambda function policy attached to the Lambda resource prohibits public access. If the Lambda function policy allows public access it is NON_COMPLIANT."
+      identifier           = "LAMBDA_FUNCTION_PUBLIC_ACCESS_PROHIBITED"
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Critical"
+    }
+
+    lambda-function-settings-check = {
+      description          = "Checks if the AWS Lambda function settings for runtime, role, timeout, and memory size match the expected values. The rule ignores functions with the Image package type and functions with runtime set to OS-only Runtime . The rule is NON_COMPLIANT if the..."
+      identifier           = "LAMBDA_FUNCTION_SETTINGS_CHECK"
+      input_parameters     = var.lambda_function_settings_check_parameters
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Medium"
+    }
+
+    lambda-function-system-log-level-check = {
+      description          = "Checks if AWS Lambda functions with JSON structured logs are configured with a specified system log level. The rule is NON_COMPLIANT if configuration.loggingConfig.systemLogLevel is not a value specified in the required rule parameter."
+      identifier           = "LAMBDA_FUNCTION_SYSTEM_LOG_LEVEL_CHECK"
+      input_parameters     = var.lambda_function_system_log_level_check_parameters
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Medium"
+    }
+
+    lambda-function-xray-enabled = {
+      description          = "Checks if AWS X-Ray is enabled on AWS Lambda functions.The rule is NON_COMPLIANT if X-Ray tracing is disabled for a Lambda function."
+      identifier           = "LAMBDA_FUNCTION_XRAY_ENABLED"
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Low"
+    }
+
+    lambda-inside-vpc = {
+      description          = "Checks if a Lambda function is allowed access to a virtual private cloud (VPC). The rule is NON_COMPLIANT if the Lambda function is not VPC enabled."
+      identifier           = "LAMBDA_INSIDE_VPC"
+      input_parameters     = var.lambda_inside_vpc_parameters
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Low"
+    }
+
+    lambda-vpc-multi-az-check = {
+      description          = "Checks if Lambda has more than 1 availability zone associated. The rule is NON_COMPLIANT if only 1 availability zone is associated with the Lambda or the number of availability zones associated is less than number specified in the optional parameter."
+      identifier           = "LAMBDA_VPC_MULTI_AZ_CHECK"
+      input_parameters     = var.lambda_vpc_multi_az_check_parameters
+      resource_types_scope = ["AWS::Lambda::Function"]
+      severity             = "Medium"
+    }
+
+    lightsail-bucket-allow-public-overrides-disabled = {
+      description          = "Checks if Amazon Lightsail buckets have allow public overrides disabled. The rule is NON_COMPLIANT if AllowPublicOverrides is true. Note: AllowPublicOverrides has no effect if GetObject is public, see lightsail-bucket-get-object-private."
+      identifier           = "LIGHTSAIL_BUCKET_ALLOW_PUBLIC_OVERRIDES_DISABLED"
+      resource_types_scope = ["AWS::Lightsail::Bucket"]
+      severity             = "Medium"
+    }
+
+    lightsail-bucket-object-versioning-enabled = {
+      description          = "Checks if Amazon Lightsail Bucket resources have object versioning enabled to protect against unintended deletions and modifications. The rule is NON_COMPLIANT if the bucket does not have object versioning enabled."
+      identifier           = "LIGHTSAIL_BUCKET_OBJECT_VERSIONING_ENABLED"
+      resource_types_scope = ["AWS::Lightsail::Bucket"]
+      severity             = "Medium"
+    }
+
+    lightsail-bucket-tagged = {
+      description          = "Checks if Amazon Lightsail buckets have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "LIGHTSAIL_BUCKET_TAGGED"
+      input_parameters     = var.lightsail_bucket_tagged_parameters
+      resource_types_scope = ["AWS::Lightsail::Bucket"]
+      severity             = "Medium"
+    }
+
+    lightsail-certificate-tagged = {
+      description          = "Checks if Amazon Lightsail certificates have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "LIGHTSAIL_CERTIFICATE_TAGGED"
+      input_parameters     = var.lightsail_certificate_tagged_parameters
+      resource_types_scope = ["AWS::Lightsail::Certificate"]
+      severity             = "Medium"
+    }
+
+    lightsail-disk-tagged = {
+      description          = "Checks if Amazon Lightsail disks have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "LIGHTSAIL_DISK_TAGGED"
+      input_parameters     = var.lightsail_disk_tagged_parameters
+      resource_types_scope = ["AWS::Lightsail::Disk"]
+      severity             = "Medium"
+    }
+
+    macie-auto-sensitive-data-discovery-check = {
+      description          = "Checks if automated sensitive data discovery is enabled for Amazon Macie. The rule is NON_COMPLIANT if automated sensitive data discovery is disabled. The rule is APPLICABLE for administrator accounts and NOT_APPLICABLE for member accounts."
+      identifier           = "MACIE_AUTO_SENSITIVE_DATA_DISCOVERY_CHECK"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "High"
+    }
+
+    macie-status-check = {
+      description          = "Checks if Amazon Macie is enabled in your account per region. The rule is NON_COMPLIANT if the status attribute is not set to ENABLED ."
+      identifier           = "MACIE_STATUS_CHECK"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Medium"
+    }
+
+    mariadb-publish-logs-to-cloudwatch-logs = {
+      description          = "Checks if Amazon MariaDB database instances are configured to publish logs to Amazon CloudWatch Logs. The rule is NON_COMPLIANT if a database instance is not configured to publish logs to CloudWatch Logs."
+      identifier           = "MARIADB_PUBLISH_LOGS_TO_CLOUDWATCH_LOGS"
+      input_parameters     = var.mariadb_publish_logs_to_cloudwatch_logs_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    mediapackage-packagingconfiguration-tagged = {
+      description          = "Checks if AWS Elemental MediaPackage packaging configuration resources have tags. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "MEDIAPACKAGE_PACKAGINGCONFIGURATION_TAGGED"
+      input_parameters     = var.mediapackage_packagingconfiguration_tagged_parameters
+      resource_types_scope = ["AWS::MediaPackage::PackagingConfiguration"]
+      severity             = "Medium"
+    }
+
+    mediatailor-playbackconfiguration-tagged = {
+      description          = "Checks if AWS Elemental MediaTailor playback configurations have tags. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "MEDIATAILOR_PLAYBACKCONFIGURATION_TAGGED"
+      input_parameters     = var.mediatailor_playbackconfiguration_tagged_parameters
+      resource_types_scope = ["AWS::MediaTailor::PlaybackConfiguration"]
+      severity             = "Medium"
+    }
+
+    memorydb-subnetgroup-tagged = {
+      description          = "Checks if Amazon MemoryDB subnet group resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "MEMORYDB_SUBNETGROUP_TAGGED"
+      input_parameters     = var.memorydb_subnetgroup_tagged_parameters
+      resource_types_scope = ["AWS::MemoryDB::SubnetGroup"]
+      severity             = "Medium"
+    }
+
+    mfa-enabled-for-iam-console-access = {
+      description          = "Checks if AWS multi-factor authentication (MFA) is enabled for all AWS Identity and Access Management (IAM) users that use a console password. The rule is COMPLIANT if MFA is enabled."
+      identifier           = "MFA_ENABLED_FOR_IAM_CONSOLE_ACCESS"
+      resource_types_scope = ["AWS::IAM::User"]
+      severity             = "Medium"
+    }
+
+    mq-active-broker-ldap-authentication = {
+      description          = "Checks if Amazon MQ ActiveMQ brokers use the LDAP authentication strategy to secure the broker. The rule is NON_COMPLIANT if configuration.AuthenticationStrategy is not ldap ."
+      identifier           = "MQ_ACTIVE_BROKER_LDAP_AUTHENTICATION"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-active-deployment-mode = {
+      description          = "Checks the deployment mode configured for Amazon MQ ActiveMQ broker engine. The rule is NON_COMPLIANT if the default single-instance broker mode is being used."
+      identifier           = "MQ_ACTIVE_DEPLOYMENT_MODE"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Low"
+    }
+
+    mq-active-single-instance-broker-storage-type-efs = {
+      description          = "Checks if an Amazon MQ for ActiveMQ single-instance broker using the mq.m5 instance type family is configured with Amazon Elastic File System (EFS) for broker storage. The rule is NON_COMPLIANT if configuration.StorageType is not efs ."
+      identifier           = "MQ_ACTIVE_SINGLE_INSTANCE_BROKER_STORAGE_TYPE_EFS"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-automatic-minor-version-upgrade-enabled = {
+      description          = "Checks if automatic minor version upgrades are enabled for Amazon MQ brokers. The rule is NON_COMPLIANT if the AutoMinorVersionUpgrade field is not enabled for an Amazon MQ broker."
+      identifier           = "MQ_AUTOMATIC_MINOR_VERSION_UPGRADE_ENABLED"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-auto-minor-version-upgrade-enabled = {
+      description          = "Checks if automatic minor version upgrades are enabled for Amazon MQ brokers. The rule is NON_COMPLIANT if the AutoMinorVersionUpgrade field is not enabled for an Amazon MQ broker."
+      identifier           = "MQ_AUTO_MINOR_VERSION_UPGRADE_ENABLED"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-broker-general-logging-enabled = {
+      description          = "Checks if Amazon MQ brokers have general logging enabled. The rule is NON_COMPLIANT if configuration.Logs.General is false."
+      identifier           = "MQ_BROKER_GENERAL_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-cloudwatch-audit-logging-enabled = {
+      description          = "Checks if Amazon MQ brokers have Amazon CloudWatch audit logging enabled. The rule is NON_COMPLIANT if a broker does not have audit logging enabled."
+      identifier           = "MQ_CLOUDWATCH_AUDIT_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-cloudwatch-audit-log-enabled = {
+      description          = "Checks if an Amazon MQ broker has CloudWatch audit logging enabled. The rule is NON_COMPLIANT if the broker does not have audit logging enabled."
+      identifier           = "MQ_CLOUDWATCH_AUDIT_LOG_ENABLED"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-no-public-access = {
+      description          = "Checks if Amazon MQ brokers are not publicly accessible. The rule is NON_COMPLIANT if the PubliclyAccessible field is set to true for an Amazon MQ broker."
+      identifier           = "MQ_NO_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    mq-rabbit-deployment-mode = {
+      description          = "Checks the deployment mode configured for the Amazon MQ RabbitMQ broker engine. The rule is NON_COMPLIANT if the default single-instance broker mode is being used."
+      identifier           = "MQ_RABBIT_DEPLOYMENT_MODE"
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Low"
+    }
+
+    msk-cluster-public-access-disabled = {
+      description          = "Checks if public access is disabled on Amazon MSK clusters. The rule is NON_COMPLIANT if public access on an Amazon MSK cluster is not disabled."
+      identifier           = "MSK_CLUSTER_PUBLIC_ACCESS_DISABLED"
+      resource_types_scope = ["AWS::MSK::Cluster"]
+      severity             = "Critical"
+    }
+
+    msk-cluster-tagged = {
+      description          = "Checks if Amazon MSK clusters have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "MSK_CLUSTER_TAGGED"
+      input_parameters     = var.msk_cluster_tagged_parameters
+      resource_types_scope = ["AWS::MSK::Cluster"]
+      severity             = "Medium"
+    }
+
+    msk-connect-connector-logging-enabled = {
+      description          = "Checks if Amazon MSK Connector has logging enabled to any one of the log destinations. The rule is NON_COMPLIANT if Amazon MSK Connector does not have logging enabled."
+      identifier           = "MSK_CONNECT_CONNECTOR_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::KafkaConnect::Connector"]
+      severity             = "Medium"
+    }
+
+    msk-enhanced-monitoring-enabled = {
+      description          = "Checks if enhanced monitoring is enabled for an Amazon MSK cluster set to PER_TOPIC_PER_BROKER or PER_TOPIC_PER_PARTITION. The rule is NON_COMPLIANT if enhanced monitoring is enabled and set to DEFAULT or PER_BROKER."
+      identifier           = "MSK_ENHANCED_MONITORING_ENABLED"
+      resource_types_scope = ["AWS::MSK::Cluster"]
+      severity             = "Low"
+    }
+
+    msk-in-cluster-node-require-tls = {
+      description          = "Checks if an Amazon MSK cluster enforces encryption in transit using HTTPS (TLS) with the broker nodes of the cluster. The rule is NON_COMPLIANT if plain text communication is enabled for in-cluster broker node connections."
+      identifier           = "MSK_IN_CLUSTER_NODE_REQUIRE_TLS"
+      resource_types_scope = ["AWS::MSK::Cluster"]
+      severity             = "Medium"
+    }
+
+    msk-unrestricted-access-check = {
+      description          = "Checks if an Amazon MSK Cluster has unauthenticated access disabled. The rule is NON_COMPLIANT if Amazon MSK Cluster has unauthenticated access enabled."
+      identifier           = "MSK_UNRESTRICTED_ACCESS_CHECK"
+      resource_types_scope = ["AWS::MSK::Cluster"]
+      severity             = "Medium"
+    }
+
+    multi-region-cloudtrail-enabled = {
+      description      = "Checks if there is at least one multi-region AWS CloudTrail. The rule is NON_COMPLIANT if the trails do not match input parameters. The rule is NON_COMPLIANT if the ExcludeManagementEventSources field is not empty or if AWS CloudTrail is configured to..."
+      identifier       = "MULTI_REGION_CLOUD_TRAIL_ENABLED"
+      input_parameters = var.multi_region_cloudtrail_enabled_parameters
+      severity         = "High"
+    }
+
+    nacl-no-unrestricted-ssh-rdp = {
+      description          = "Checks if default ports for SSH/RDP ingress traffic for network access control lists (NACLs) is unrestricted. The rule is NON_COMPLIANT if a NACL inbound entry allows a source TCP or UDP CIDR block for ports 22 or 3389."
+      identifier           = "NACL_NO_UNRESTRICTED_SSH_RDP"
+      resource_types_scope = ["AWS::EC2::NetworkAcl"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-backup-retention-check = {
+      description          = "Checks if an Amazon Neptune DB cluster retention period is set to specific number of days. The rule is NON_COMPLIANT if the retention period is less than the value specified by the parameter."
+      identifier           = "NEPTUNE_CLUSTER_BACKUP_RETENTION_CHECK"
+      input_parameters     = var.neptune_cluster_backup_retention_check_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-cloudwatch-log-export-enabled = {
+      description          = "Checks if an Amazon Neptune cluster has CloudWatch log export enabled for audit logs. The rule is NON_COMPLIANT if a Neptune cluster does not have CloudWatch log export enabled for audit logs."
+      identifier           = "NEPTUNE_CLUSTER_CLOUDWATCH_LOG_EXPORT_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-copy-tags-to-snapshot-enabled = {
+      description          = "Checks if an Amazon Neptune cluster is configured to copy all tags to snapshots when the snapshots are created. The rule is NON_COMPLIANT if copyTagsToSnapshot is set to false."
+      identifier           = "NEPTUNE_CLUSTER_COPY_TAGS_TO_SNAPSHOT_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Low"
+    }
+
+    neptune-cluster-deletion-protection-enabled = {
+      description          = "Checks if an Amazon Neptune DB cluster has deletion protection enabled. The rule is NON_COMPLIANT if an Amazon Neptune cluster has the deletionProtection field set to false."
+      identifier           = "NEPTUNE_CLUSTER_DELETION_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Low"
+    }
+
+    neptune-cluster-encrypted = {
+      description          = "Checks if storage encryption is enabled for your Amazon Neptune DB clusters. The rule is NON_COMPLIANT if storage encryption is not enabled."
+      identifier           = "NEPTUNE_CLUSTER_ENCRYPTED"
+      input_parameters     = var.neptune_cluster_encrypted_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-iam-database-authentication = {
+      description          = "Checks if an Amazon Neptune cluster has AWS Identity and Access Management (IAM) database authentication enabled. The rule is NON_COMPLIANT if an Amazon Neptune cluster does not have IAM database authentication enabled."
+      identifier           = "NEPTUNE_CLUSTER_IAM_DATABASE_AUTHENTICATION"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-multi-az-enabled = {
+      description          = "Checks if an Amazon Neptune cluster is configured with Amazon RDS Multi-AZ replication. The rule is NON_COMPLIANT if Multi-AZ replication is not enabled."
+      identifier           = "NEPTUNE_CLUSTER_MULTI_AZ_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-snapshot-encrypted = {
+      description          = "Checks if an Amazon Neptune DB cluster has snapshots encrypted. The rule is NON_COMPLIANT if a Neptune cluster does not have snapshots encrypted."
+      identifier           = "NEPTUNE_CLUSTER_SNAPSHOT_ENCRYPTED"
+      resource_types_scope = ["AWS::RDS::DBClusterSnapshot"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-snapshot-iam-database-auth-enabled = {
+      description          = "Checks if Amazon Neptune cluster snapshots have IAM database authentication enabled. The rule is NON_COMPLIANT if configuration.iamdatabaseAuthenticationEnabled is false."
+      identifier           = "NEPTUNE_CLUSTER_SNAPSHOT_IAM_DATABASE_AUTH_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBClusterSnapshot"]
+      severity             = "Medium"
+    }
+
+    neptune-cluster-snapshot-public-prohibited = {
+      description          = "Checks if an Amazon Neptune manual DB cluster snapshot is public. The rule is NON_COMPLIANT if any existing and new Neptune cluster snapshot is public."
+      identifier           = "NEPTUNE_CLUSTER_SNAPSHOT_PUBLIC_PROHIBITED"
+      resource_types_scope = ["AWS::RDS::DBClusterSnapshot"]
+      severity             = "Critical"
+    }
+
+    netfw-deletion-protection-enabled = {
+      description          = "Checks if AWS Network Firewall has deletion protection enabled. The rule is NON_COMPLIANT if Network Firewall does not have deletion protection enabled."
+      identifier           = "NETFW_DELETION_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::NetworkFirewall::Firewall"]
+      severity             = "Medium"
+    }
+
+    netfw-logging-enabled = {
+      description          = "Checks if AWS Network Firewall firewalls have logging enabled. The rule is NON_COMPLIANT if a logging type is not configured. You can specify which logging type you want the rule to check."
+      identifier           = "NETFW_LOGGING_ENABLED"
+      input_parameters     = var.netfw_logging_enabled_parameters
+      resource_types_scope = ["AWS::NetworkFirewall::LoggingConfiguration"]
+      severity             = "Medium"
+    }
+
+    netfw-multi-az-enabled = {
+      description          = "Checks if AWS Network Firewall firewalls are deployed across multiple Availability Zones. The rule is NON_COMPLIANT if firewalls are deployed in only one Availability Zone or in fewer zones than the number listed in the optional parameter."
+      identifier           = "NETFW_MULTI_AZ_ENABLED"
+      input_parameters     = var.netfw_multi_az_enabled_parameters
+      resource_types_scope = ["AWS::NetworkFirewall::Firewall"]
+      severity             = "Medium"
+    }
+
+    netfw-policy-default-action-fragment-packets = {
+      description          = "Checks if an AWS Network Firewall policy is configured with a user defined stateless default action for fragmented packets. The rule is NON_COMPLIANT if stateless default action for fragmented packets does not match with user defined default action."
+      identifier           = "NETFW_POLICY_DEFAULT_ACTION_FRAGMENT_PACKETS"
+      input_parameters     = var.netfw_policy_default_action_fragment_packets_parameters
+      resource_types_scope = ["AWS::NetworkFirewall::FirewallPolicy"]
+      severity             = "Medium"
+    }
+
+    netfw-policy-default-action-full-packets = {
+      description          = "Checks if an AWS Network Firewall policy is configured with a user defined default stateless action for full packets. This rule is NON_COMPLIANT if default stateless action for full packets does not match with user defined default stateless action."
+      identifier           = "NETFW_POLICY_DEFAULT_ACTION_FULL_PACKETS"
+      input_parameters     = var.netfw_policy_default_action_full_packets_parameters
+      resource_types_scope = ["AWS::NetworkFirewall::FirewallPolicy"]
+      severity             = "Medium"
+    }
+
+    netfw-policy-rule-group-associated = {
+      description          = "Check AWS Network Firewall policy is associated with stateful OR stateless rule groups. This rule is NON_COMPLIANT if no stateful or stateless rule groups are associated with the Network Firewall policy else COMPLIANT if any one of the rule group exists."
+      identifier           = "NETFW_POLICY_RULE_GROUP_ASSOCIATED"
+      resource_types_scope = ["AWS::NetworkFirewall::FirewallPolicy"]
+      severity             = "Medium"
+    }
+
+    netfw-stateless-rule-group-not-empty = {
+      description          = "Checks if a Stateless Network Firewall Rule Group contains rules. The rule is NON_COMPLIANT if there are no rules in a Stateless Network Firewall Rule Group."
+      identifier           = "NETFW_STATELESS_RULE_GROUP_NOT_EMPTY"
+      resource_types_scope = ["AWS::NetworkFirewall::RuleGroup"]
+      severity             = "Medium"
+    }
+
+    netfw-subnet-change-protection-enabled = {
+      description          = "Checks if AWS Network Firewall has subnet change protection enabled. The rule is NON_COMPLIANT if subnet change protection is not enabled."
+      identifier           = "NETFW_SUBNET_CHANGE_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::NetworkFirewall::Firewall"]
+      severity             = "Medium"
+    }
+
+    nlb-cross-zone-load-balancing-enabled = {
+      description          = "Checks if cross-zone load balancing is enabled on Network Load Balancers (NLBs). The rule is NON_COMPLIANT if cross-zone load balancing is not enabled for an NLB."
+      identifier           = "NLB_CROSS_ZONE_LOAD_BALANCING_ENABLED"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    nlb-internal-scheme-check = {
+      description          = "Checks if a Network Load Balancer scheme is internal. The rule is NON_COMPLIANT if configuration.scheme is not set to internal."
+      identifier           = "NLB_INTERNAL_SCHEME_CHECK"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    nlb-listener-tagged = {
+      description          = "Checks if Network Load Balancer listeners have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "NLB_LISTENER_TAGGED"
+      input_parameters     = var.nlb_listener_tagged_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::Listener"]
+      severity             = "Medium"
+    }
+
+    nlb-logging-enabled = {
+      description          = "Checks if access logging is enabled for Network Load Balancers. The rule is NON_COMPLIANT if access logging is not enabled for a Network Load balancer."
+      identifier           = "NLB_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    nlb-tagged = {
+      description          = "Checks if Network Load Balancers have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "NLB_TAGGED"
+      input_parameters     = var.nlb_tagged_parameters
+      resource_types_scope = ["AWS::ElasticLoadBalancingV2::LoadBalancer"]
+      severity             = "Medium"
+    }
+
+    no-unrestricted-route-to-igw = {
+      description          = "Checks if there are public routes in the route table to an Internet gateway (IGW). The rule is NON_COMPLIANT if a route to an IGW has a destination CIDR block of 0.0.0.0/0 or ::/0 or if a destination CIDR block does not match the rule parameter."
+      identifier           = "NO_UNRESTRICTED_ROUTE_TO_IGW"
+      input_parameters     = var.no_unrestricted_route_to_igw_parameters
+      resource_types_scope = ["AWS::EC2::RouteTable"]
+      severity             = "Medium"
+    }
+
+    opensearchserverless-collection-description = {
+      description          = "Checks if Amazon OpenSearch Serverless collections have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "OPENSEARCHSERVERLESS_COLLECTION_DESCRIPTION"
+      resource_types_scope = ["AWS::OpenSearchServerless::Collection"]
+      severity             = "Medium"
+    }
+
+    opensearchserverless-collection-standbyreplicas-enabled = {
+      description          = "Checks if Amazon OpenSearch Serverless collections have standby replicas enabled. The rule is NON_COMPLIANT if configuration.StandbyReplicas is DISABLED ."
+      identifier           = "OPENSEARCHSERVERLESS_COLLECTION_STANDBYREPLICAS_ENABLED"
+      resource_types_scope = ["AWS::OpenSearchServerless::Collection"]
+      severity             = "Medium"
+    }
+
+    opensearch-access-control-enabled = {
+      description          = "Checks if Amazon OpenSearch Service domains have fine-grained access control enabled. The rule is NON_COMPLIANT if AdvancedSecurityOptions is not enabled for the OpenSearch Service domain."
+      identifier           = "OPENSEARCH_ACCESS_CONTROL_ENABLED"
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "High"
+    }
+
+    opensearch-audit-logging-enabled = {
+      description          = "Checks if Amazon OpenSearch Service domains have audit logging enabled. The rule is NON_COMPLIANT if an OpenSearch Service domain does not have audit logging enabled."
+      identifier           = "OPENSEARCH_AUDIT_LOGGING_ENABLED"
+      input_parameters     = var.opensearch_audit_logging_enabled_parameters
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Medium"
+    }
+
+    opensearch-data-node-fault-tolerance = {
+      description          = "Checks if Amazon OpenSearch Service domains are configured with at least three data nodes and zoneAwarenessEnabled is true. The rule is NON_COMPLIANT for an OpenSearch domain if instanceCount is less than 3 or zoneAwarenessEnabled is set to false ."
+      identifier           = "OPENSEARCH_DATA_NODE_FAULT_TOLERANCE"
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Medium"
+    }
+
+    opensearch-encrypted-at-rest = {
+      description          = "Checks if Amazon OpenSearch Service domains have encryption at rest configuration enabled. The rule is NON_COMPLIANT if the EncryptionAtRestOptions field is not enabled."
+      identifier           = "OPENSEARCH_ENCRYPTED_AT_REST"
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Medium"
+    }
+
+    opensearch-https-required = {
+      description          = "Checks whether connections to OpenSearch domains are using HTTPS. The rule is NON_COMPLIANT if the Amazon OpenSearch domain EnforceHTTPS is not true or is true and TLSSecurityPolicy is not in tlsPolicies ."
+      identifier           = "OPENSEARCH_HTTPS_REQUIRED"
+      input_parameters     = var.opensearch_https_required_parameters
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Medium"
+    }
+
+    opensearch-in-vpc-only = {
+      description          = "Checks if Amazon OpenSearch Service domains are in an Amazon Virtual Private Cloud (VPC). The rule is NON_COMPLIANT if an OpenSearch Service domain endpoint is public."
+      identifier           = "OPENSEARCH_IN_VPC_ONLY"
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Critical"
+    }
+
+    opensearch-logs-to-cloudwatch = {
+      description          = "Checks if Amazon OpenSearch Service domains are configured to send logs to Amazon CloudWatch Logs. The rule is NON_COMPLIANT if logging is not configured."
+      identifier           = "OPENSEARCH_LOGS_TO_CLOUDWATCH"
+      input_parameters     = var.opensearch_logs_to_cloudwatch_parameters
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Medium"
+    }
+
+    opensearch-node-to-node-encryption-check = {
+      description          = "Check if Amazon OpenSearch Service nodes are encrypted end to end. The rule is NON_COMPLIANT if the node-to-node encryption is not enabled on the domain"
+      identifier           = "OPENSEARCH_NODE_TO_NODE_ENCRYPTION_CHECK"
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Medium"
+    }
+
+    opensearch-primary-node-fault-tolerance = {
+      description          = "Checks if Amazon OpenSearch Service domains are configured with at least three dedicated primary nodes. The rule is NON_COMPLIANT for an OpenSearch Service domain if DedicatedMasterEnabled is set to false , or DedicatedMasterCount is less than 3."
+      identifier           = "OPENSEARCH_PRIMARY_NODE_FAULT_TOLERANCE"
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Low"
+    }
+
+    opensearch-update-check = {
+      description          = "Checks if Amazon OpenSearch Service version updates are available but not installed. The rule is NON_COMPLIANT for an OpenSearch domain if the latest software updates are not installed."
+      identifier           = "OPENSEARCH_UPDATE_CHECK"
+      resource_types_scope = ["AWS::OpenSearch::Domain"]
+      severity             = "Medium"
+    }
+
+    panorama-package-tagged = {
+      description          = "Checks if AWS Panorama package resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "PANORAMA_PACKAGE_TAGGED"
+      input_parameters     = var.panorama_package_tagged_parameters
+      resource_types_scope = ["AWS::Panorama::Package"]
+      severity             = "Medium"
+    }
+
+    rabbit-mq-supported-version = {
+      description          = "Checks if an Amazon MQ RabbitMQ broker is running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the RabbitMQ broker is not running on the minimum supported engine version that you specify."
+      identifier           = "RABBIT_MQ_SUPPORTED_VERSION"
+      input_parameters     = var.rabbit_mq_supported_version_parameters
+      resource_types_scope = ["AWS::AmazonMQ::Broker"]
+      severity             = "Medium"
+    }
+
+    rds-aurora-mysql-audit-logging-enabled = {
+      description          = "Checks if Amazon Aurora MySQL-Compatible Edition clusters are configured to publish audit logs to Amazon CloudWatch Logs. The rule is NON_COMPLIANT if Aurora MySQL-Compatible Edition clusters do not have audit log publishing configured."
+      identifier           = "RDS_AURORA_MYSQL_AUDIT_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-aurora-postgresql-logs-to-cloudwatch = {
+      description          = "Checks if an Amazon Aurora PostgreSQL DB cluster is configured to publish PostgreSQL logs to Amazon CloudWatch Logs. This rule is NON_COMPLIANT if the DB cluster is not configured to publish PostgreSQL logs to Amazon CloudWatch Logs."
+      identifier           = "RDS_AURORA_POSTGRESQL_LOGS_TO_CLOUDWATCH"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-automatic-minor-version-upgrade-enabled = {
+      description          = "Checks if Amazon Relational Database Service (RDS) database instances are configured for automatic minor version upgrades. The rule is NON_COMPLIANT if the value of autoMinorVersionUpgrade is false."
+      identifier           = "RDS_AUTOMATIC_MINOR_VERSION_UPGRADE_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "High"
+    }
+
+    rds-cluster-auto-minor-version-upgrade-enable = {
+      description          = "Checks if automatic minor version upgrades are enabled for Amazon RDS Multi-AZ cluster deployments. The rule is NON_COMPLIANT if autoMinorVersionUpgrade is set to false."
+      identifier           = "RDS_CLUSTER_AUTO_MINOR_VERSION_UPGRADE_ENABLE"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-cluster-backup-retention-check = {
+      description          = "Checks if an Amazon RDS cluster automated backup retention period is set to a specific number of days. The rule is NON_COMPLIANT if the retention period is less than the value specified by the parameter. The default value is 7 days."
+      identifier           = "RDS_CLUSTER_BACKUP_RETENTION_CHECK"
+      input_parameters     = var.rds_cluster_backup_retention_check_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-cluster-default-admin-check = {
+      description          = "Checks if an Amazon Relational Database Service (Amazon RDS) database cluster has changed the admin username from its default value. The rule is NON_COMPLIANT if the admin username is set to the default value."
+      identifier           = "RDS_CLUSTER_DEFAULT_ADMIN_CHECK"
+      input_parameters     = var.rds_cluster_default_admin_check_parameters
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-cluster-deletion-protection-enabled = {
+      description          = "Checks if an Amazon Relational Database Service (Amazon RDS) cluster has deletion protection enabled. This rule is NON_COMPLIANT if an RDS cluster does not have deletion protection enabled."
+      identifier           = "RDS_CLUSTER_DELETION_PROTECTION_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-cluster-encrypted-at-rest = {
+      description          = "Checks if an Amazon Relational Database Service (Amazon RDS) cluster is encrypted at rest. The rule is NON_COMPLIANT if an Amazon RDS cluster is not encrypted at rest."
+      identifier           = "RDS_CLUSTER_ENCRYPTED_AT_REST"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-cluster-iam-authentication-enabled = {
+      description          = "Checks if an Amazon Relational Database Service (Amazon RDS) cluster has AWS Identity and Access Management (IAM) authentication enabled. The rule is NON_COMPLIANT if an Amazon RDS Cluster does not have IAM authentication enabled."
+      identifier           = "RDS_CLUSTER_IAM_AUTHENTICATION_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-cluster-multi-az-enabled = {
+      description          = "Checks if Multi-Availability Zone (Multi-AZ) replication is enabled on Amazon Aurora and Multi-AZ DB clusters managed by Amazon Relational Database Service (Amazon RDS). The rule is NON_COMPLIANT if an Amazon RDS instance is not configured with Multi-AZ."
+      identifier           = "RDS_CLUSTER_MULTI_AZ_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Medium"
+    }
+
+    rds-db-security-group-not-allowed = {
+      description          = "Checks if there are any Amazon Relational Database Service (Amazon RDS) DB security groups that are not the default DB security group. The rule is NON_COMPLIANT if there are any DB security groups that are not the default DB security group."
+      identifier           = "RDS_DB_SECURITY_GROUP_NOT_ALLOWED"
+      resource_types_scope = ["AWS::RDS::DBSecurityGroup"]
+      severity             = "Medium"
+    }
+
+    rds-enhanced-monitoring-enabled = {
+      description          = "Checks if enhanced monitoring is enabled for Amazon RDS instances. This rule is NON_COMPLIANT if monitoringInterval is 0 in the configuration item of the RDS instance, or if monitoringInterval does not match the rule parameter value."
+      identifier           = "RDS_ENHANCED_MONITORING_ENABLED"
+      input_parameters     = var.rds_enhanced_monitoring_enabled_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Low"
+    }
+
+    rds-event-subscription-tagged = {
+      description          = "Checks if Amazon RDS event subscriptions have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "RDS_EVENT_SUBSCRIPTION_TAGGED"
+      input_parameters     = var.rds_event_subscription_tagged_parameters
+      resource_types_scope = ["AWS::RDS::EventSubscription"]
+      severity             = "Medium"
+    }
+
+    rds-global-cluster-aurora-mysql-supported-version = {
+      description          = "Checks if an Amazon Aurora MySQL global database is running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is not running on the minimum supported engine version that you specify."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_MYSQL_SUPPORTED_VERSION"
+      input_parameters     = var.rds_global_cluster_aurora_mysql_supported_version_parameters
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "Medium"
+    }
+
+    rds-instance-default-admin-check = {
+      description          = "Checks if an Amazon Relational Database Service (Amazon RDS) database has changed the admin username from its default value. This rule will only run on RDS database instances. The rule is NON_COMPLIANT if the admin username is set to the default value."
+      identifier           = "RDS_INSTANCE_DEFAULT_ADMIN_CHECK"
+      input_parameters     = var.rds_instance_default_admin_check_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-instance-deletion-protection-enabled = {
+      description          = "Checks if an Amazon Relational Database Service (Amazon RDS) instance has deletion protection enabled. The rule is NON_COMPLIANT if an Amazon RDS instance does not have deletion protection enabled; for example, deletionProtection is set to false."
+      identifier           = "RDS_INSTANCE_DELETION_PROTECTION_ENABLED"
+      input_parameters     = var.rds_instance_deletion_protection_enabled_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Low"
+    }
+
+    rds-instance-iam-authentication-enabled = {
+      description          = "Checks if an Amazon Relational Database Service (Amazon RDS) instance has AWS Identity and Access Management (IAM) authentication enabled. The rule is NON_COMPLIANT if an Amazon RDS instance does not have IAM authentication enabled."
+      identifier           = "RDS_INSTANCE_IAM_AUTHENTICATION_ENABLED"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-instance-public-access-check = {
+      description          = "Checks if the Amazon Relational Database Service (Amazon RDS) instances are not publicly accessible. The rule is NON_COMPLIANT if the publiclyAccessible field is true in the instance configuration item."
+      identifier           = "RDS_INSTANCE_PUBLIC_ACCESS_CHECK"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Critical"
+    }
+
+    rds-instance-subnet-igw-check = {
+      description          = "Checks if RDS DB instances are deployed in a public subnet with a route to the internet gateway. The rule is NON_COMPLIANT if RDS DB instances is deployed in a public subnet"
+      identifier           = "RDS_INSTANCE_SUBNET_IGW_CHECK"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "High"
+    }
+
+    rds-in-backup-plan = {
+      description          = "Checks if Amazon Relational Database Service (Amazon RDS) databases are present in AWS Backup plans. The rule is NON_COMPLIANT if Amazon RDS databases are not included in any AWS Backup plan."
+      identifier           = "RDS_IN_BACKUP_PLAN"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon Relational Database Service (Amazon RDS). The rule is NON_COMPLIANT if the Amazon RDS instance does not have a corresponding recovery point created within the specified time period."
+      identifier           = "RDS_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.rds_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-logging-enabled = {
+      description          = "Checks if respective logs of Amazon Relational Database Service (Amazon RDS) are enabled. The rule is NON_COMPLIANT if any log types are not enabled."
+      identifier           = "RDS_LOGGING_ENABLED"
+      input_parameters     = var.rds_logging_enabled_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-mariadb-instance-encrypted-in-transit = {
+      description          = "Checks if connections to Amazon RDS for MariaDB DB instances with engine version greater than or equal to 10.5 use encryption in transit. The rule is NON_COMPLIANT if the DB parameter group is not in-sync or if require_secure_transport is not set to ON."
+      identifier           = "RDS_MARIADB_INSTANCE_ENCRYPTED_IN_TRANSIT"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon Relational Database Service (Amazon RDS) instances meets specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Amazon RDS instance is greater than maxRestoreTime minutes."
+      identifier           = "RDS_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.rds_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-multi-az-support = {
+      description          = "Checks whether high availability is enabled for your RDS DB instances."
+      identifier           = "RDS_MULTI_AZ_SUPPORT"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-mysql-cluster-copy-tags-to-snapshot-check = {
+      description          = "Checks if Amazon Relational Database Service (Amazon RDS) MySQL DB clusters are configured to copy tags to snapshots. The rule is NON_COMPLIANT if an Amazon RDS MySQL DB cluster is not configured to copy tags to snapshots."
+      identifier           = "RDS_MYSQL_CLUSTER_COPY_TAGS_TO_SNAPSHOT_CHECK"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Low"
+    }
+
+    rds-mysql-instance-encrypted-in-transit = {
+      description          = "Checks if connections to Amazon RDS for MySQL database instances are configured to use encryption in transit. The rule is NON_COMPLIANT if the associated database parameter group is not in-sync or if the require_secure_transport parameter is not set to 1."
+      identifier           = "RDS_MYSQL_INSTANCE_ENCRYPTED_IN_TRANSIT"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-option-group-tagged = {
+      description          = "Checks if Amazon RDS option group resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "RDS_OPTION_GROUP_TAGGED"
+      input_parameters     = var.rds_option_group_tagged_parameters
+      resource_types_scope = ["AWS::RDS::OptionGroup"]
+      severity             = "Medium"
+    }
+
+    rds-pgsql-cluster-copy-tags-to-snapshot-check = {
+      description          = "Checks if Amazon Relational Database Service (Amazon RDS) PostgreSQL DB clusters are configured to copy tags to snapshots. The rule is NON_COMPLIANT if an RDS PostgreSQL DB cluster's CopyTagsToSnapshot property is set to false."
+      identifier           = "RDS_PGSQL_CLUSTER_COPY_TAGS_TO_SNAPSHOT_CHECK"
+      resource_types_scope = ["AWS::RDS::DBCluster"]
+      severity             = "Low"
+    }
+
+    rds-postgresql-logs-to-cloudwatch = {
+      description          = "Checks if an Amazon PostgreSQL DB instance is configured to publish logs to Amazon CloudWatch Logs. The rule is NON_COMPLIANT if the DB instance is not configured to publish logs to Amazon CloudWatch Logs."
+      identifier           = "RDS_POSTGRESQL_LOGS_TO_CLOUDWATCH"
+      input_parameters     = var.rds_postgresql_logs_to_cloudwatch_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-postgres-instance-encrypted-in-transit = {
+      description          = "Checks if connections to Amazon RDS PostgreSQL database instances are configured to use encryption in transit. The rule is NON_COMPLIANT if the associated database parameter group is not in-sync or if the rds.force_ssl parameter is not set to 1."
+      identifier           = "RDS_POSTGRES_INSTANCE_ENCRYPTED_IN_TRANSIT"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-proxy-tls-encryption = {
+      description          = "Checks if Amazon RDS proxies enforce TLS for all connections. The rule is NON_COMPLIANT if an Amazon RDS proxy does not have TLS enforced for all connections."
+      identifier           = "RDS_PROXY_TLS_ENCRYPTION"
+      resource_types_scope = ["AWS::RDS::DBProxy"]
+      severity             = "Medium"
+    }
+
+    rds-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon Relational Database Service (Amazon RDS) instances are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon RDS Database instance is not covered by a backup plan."
+      identifier           = "RDS_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.rds_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-snapshots-public-prohibited = {
+      description          = "Checks if Amazon Relational Database Service (Amazon RDS) snapshots are public. The rule is NON_COMPLIANT if any existing and new Amazon RDS snapshots are public."
+      identifier           = "RDS_SNAPSHOTS_PUBLIC_PROHIBITED"
+      resource_types_scope = ["AWS::RDS::DBClusterSnapshot", "AWS::RDS::DBSnapshot"]
+      severity             = "Critical"
+    }
+
+    rds-snapshot-encrypted = {
+      description          = "Checks if Amazon Relational Database Service (Amazon RDS) DB snapshots are encrypted. The rule is NON_COMPLIANT if the Amazon RDS DB snapshots are not encrypted."
+      identifier           = "RDS_SNAPSHOT_ENCRYPTED"
+      resource_types_scope = ["AWS::RDS::DBClusterSnapshot", "AWS::RDS::DBSnapshot"]
+      severity             = "Medium"
+    }
+
+    rds-sqlserver-encrypted-in-transit = {
+      description          = "Checks if connections to Amazon RDS SQL server database instances are configured to use encryption in transit. The rule is NON_COMPLIANT if the DB parameter force_ssl for the parameter group is not set to 1 or the ApplyStatus parameter is not in-sync ."
+      identifier           = "RDS_SQLSERVER_ENCRYPTED_IN_TRANSIT"
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-sql-server-logs-to-cloudwatch = {
+      description          = "Checks if an Amazon SQL Server DB instance is configured to publish logs to Amazon CloudWatch Logs. This rule is NON_COMPLIANT if the DB instance is not configured to publish logs to Amazon CloudWatch Logs."
+      identifier           = "RDS_SQL_SERVER_LOGS_TO_CLOUDWATCH"
+      input_parameters     = var.rds_sql_server_logs_to_cloudwatch_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    rds-storage-encrypted = {
+      description          = "Checks if storage encryption is enabled for your Amazon Relational Database Service (Amazon RDS) DB instances. The rule is NON_COMPLIANT if storage encryption is not enabled."
+      identifier           = "RDS_STORAGE_ENCRYPTED"
+      input_parameters     = var.rds_storage_encrypted_parameters
+      resource_types_scope = ["AWS::RDS::DBInstance"]
+      severity             = "Medium"
+    }
+
+    redshift-audit-logging-enabled = {
+      description          = "Checks if Amazon Redshift clusters are logging audits to a specific bucket. The rule is NON_COMPLIANT if audit logging is not enabled for a Redshift cluster or if the bucketNames parameter is provided but the audit logging destination does not match."
+      identifier           = "REDSHIFT_AUDIT_LOGGING_ENABLED"
+      input_parameters     = var.redshift_audit_logging_enabled_parameters
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-backup-enabled = {
+      description          = "Checks that Amazon Redshift automated snapshots are enabled for clusters. The rule is NON_COMPLIANT if the value for automatedSnapshotRetentionPeriod is greater than MaxRetentionPeriod or less than MinRetentionPeriod or the value is 0."
+      identifier           = "REDSHIFT_BACKUP_ENABLED"
+      input_parameters     = var.redshift_backup_enabled_parameters
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-cluster-configuration-check = {
+      description          = "Checks if Amazon Redshift clusters have the specified settings. The rule is NON_COMPLIANT if the Amazon Redshift cluster is not encrypted or encrypted with another key, or if a cluster does not have audit logging enabled."
+      identifier           = "REDSHIFT_CLUSTER_CONFIGURATION_CHECK"
+      input_parameters     = var.redshift_cluster_configuration_check_parameters
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-cluster-kms-enabled = {
+      description          = "Checks if Amazon Redshift clusters are using a specified AWS Key Management Service (AWS KMS) key for encryption. The rule is COMPLIANT if encryption is enabled and the cluster is encrypted with the key provided in the kmsKeyArn parameter. The rule is..."
+      identifier           = "REDSHIFT_CLUSTER_KMS_ENABLED"
+      input_parameters     = var.redshift_cluster_kms_enabled_parameters
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-cluster-maintenancesettings-check = {
+      description          = "Checks if Amazon Redshift clusters have the specified maintenance settings. The rule is NON_COMPLIANT if the automatic upgrades to major version is disabled."
+      identifier           = "REDSHIFT_CLUSTER_MAINTENANCESETTINGS_CHECK"
+      input_parameters     = var.redshift_cluster_maintenancesettings_check_parameters
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-cluster-multi-az-enabled = {
+      description          = "Checks if an Amazon Redshift cluster has multiple Availability Zones deployments enabled. This rule is NON_COMPLIANT if Amazon Redshift cluster does not have multiple Availability Zones deployments enabled."
+      identifier           = "REDSHIFT_CLUSTER_MULTI_AZ_ENABLED"
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-cluster-parameter-group-tagged = {
+      description          = "Checks if Amazon Redshift cluster parameter groups have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "REDSHIFT_CLUSTER_PARAMETER_GROUP_TAGGED"
+      input_parameters     = var.redshift_cluster_parameter_group_tagged_parameters
+      resource_types_scope = ["AWS::Redshift::ClusterParameterGroup"]
+      severity             = "Low"
+    }
+
+    redshift-cluster-public-access-check = {
+      description          = "Checks whether Amazon Redshift clusters are not publicly accessible. The rule is NON_COMPLIANT if the publiclyAccessible field is true in the cluster configuration item."
+      identifier           = "REDSHIFT_CLUSTER_PUBLIC_ACCESS_CHECK"
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Critical"
+    }
+
+    redshift-cluster-subnet-group-multi-az = {
+      description          = "Checks If Amazon Redshift subnet groups contain subnets from more than one Availability Zone. The rule is NON_COMPLIANT if an Amazon Redshift subnet group does not contain subnets from at least two different Availability Zones."
+      identifier           = "REDSHIFT_CLUSTER_SUBNET_GROUP_MULTI_AZ"
+      resource_types_scope = ["AWS::Redshift::ClusterSubnetGroup"]
+      severity             = "Medium"
+    }
+
+    redshift-default-admin-check = {
+      description          = "Checks if an Amazon Redshift cluster has changed the admin username from its default value. The rule is NON_COMPLIANT if the admin username for a Redshift cluster is set to “awsuser” or if the username does not match what is listed in parameter."
+      identifier           = "REDSHIFT_DEFAULT_ADMIN_CHECK"
+      input_parameters     = var.redshift_default_admin_check_parameters
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-default-db-name-check = {
+      description          = "Checks if a Redshift cluster has changed its database name from the default value. The rule is NON_COMPLIANT if the database name for a Redshift cluster is set to “dev”, or if the optional parameter is provided and the database name does not match."
+      identifier           = "REDSHIFT_DEFAULT_DB_NAME_CHECK"
+      input_parameters     = var.redshift_default_db_name_check_parameters
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-enhanced-vpc-routing-enabled = {
+      description          = "Checks if Amazon Redshift cluster has enhancedVpcRouting enabled. The rule is NON_COMPLIANT if enhancedVpcRouting is not enabled or if the configuration.enhancedVpcRouting field is false ."
+      identifier           = "REDSHIFT_ENHANCED_VPC_ROUTING_ENABLED"
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "Medium"
+    }
+
+    redshift-require-tls-ssl = {
+      description          = "Checks if Amazon Redshift clusters require TLS/SSL encryption to connect to SQL clients. The rule is NON_COMPLIANT if any Amazon Redshift cluster has parameter require_SSL not set to true."
+      identifier           = "REDSHIFT_REQUIRE_TLS_SSL"
+      resource_types_scope = ["AWS::Redshift::Cluster", "AWS::Redshift::ClusterParameterGroup"]
+      severity             = "Medium"
+    }
+
+    redshift-serverless-default-admin-check = {
+      description          = "Checks if an Amazon Redshift Serverless Namespace has changed the admin username from its default value. The rule is NON_COMPLIANT if the admin username for a Redshift Serverless Namespace is set to “admin”."
+      identifier           = "REDSHIFT_SERVERLESS_DEFAULT_ADMIN_CHECK"
+      resource_types_scope = ["AWS::RedshiftServerless::Namespace"]
+      severity             = "Medium"
+    }
+
+    redshift-serverless-default-db-name-check = {
+      description          = "Checks if an Amazon Redshift Serverless namespace has changed its database name from the default value. The rule is NON_COMPLIANT if the database name for an Amazon Redshift Serverless namespace is set to dev ."
+      identifier           = "REDSHIFT_SERVERLESS_DEFAULT_DB_NAME_CHECK"
+      resource_types_scope = ["AWS::RedshiftServerless::Namespace"]
+      severity             = "Medium"
+    }
+
+    redshift-serverless-namespace-cmk-encryption = {
+      description          = "Checks if Amazon Redshift Serverless namespaces are encrypted by customer managed AWS KMS keys. The rule is NON_COMPLIANT if a namespace is not encrypted by a customer managed key. Optionally, you can specify a list of KMS keys for rule to check."
+      identifier           = "REDSHIFT_SERVERLESS_NAMESPACE_CMK_ENCRYPTION"
+      input_parameters     = var.redshift_serverless_namespace_cmk_encryption_parameters
+      resource_types_scope = ["AWS::RedshiftServerless::Namespace"]
+      severity             = "Medium"
+    }
+
+    redshift-serverless-publish-logs-to-cloudwatch = {
+      description          = "Checks if Amazon Redshift Serverless Namespace is configured to publish the following logs to Amazon CloudWatch Logs. This rule is NON_COMPLIANT if the Namespace is not configured to publish the following logs to Amazon CloudWatch Logs."
+      identifier           = "REDSHIFT_SERVERLESS_PUBLISH_LOGS_TO_CLOUDWATCH"
+      input_parameters     = var.redshift_serverless_publish_logs_to_cloudwatch_parameters
+      resource_types_scope = ["AWS::RedshiftServerless::Namespace"]
+      severity             = "Medium"
+    }
+
+    redshift-serverless-workgroup-encrypted-in-transit = {
+      description          = "Checks if AWS Redshift Serverless workgroups have the require_ssl config parameter set to true. The rule is NON_COMPLIANT if require_ssl is set to false."
+      identifier           = "REDSHIFT_SERVERLESS_WORKGROUP_ENCRYPTED_IN_TRANSIT"
+      resource_types_scope = ["AWS::RedshiftServerless::Workgroup"]
+      severity             = "Medium"
+    }
+
+    redshift-serverless-workgroup-no-public-access = {
+      description          = "Checks if Amazon Redshift Serverless workgroups do not allow public access. The rule is NON_COMPLIANT if a workgroup has Turn on Public Accessible enabled."
+      identifier           = "REDSHIFT_SERVERLESS_WORKGROUP_NO_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::RedshiftServerless::Workgroup"]
+      severity             = "High"
+    }
+
+    redshift-serverless-workgroup-routes-within-vpc = {
+      description          = "Checks if Amazon Redshift Serverless workgroups route the network traffic through a VPC. The rule is NON_COMPLIANT if workgroups have Turn on Enhanced VPC routing disabled."
+      identifier           = "REDSHIFT_SERVERLESS_WORKGROUP_ROUTES_WITHIN_VPC"
+      resource_types_scope = ["AWS::RedshiftServerless::Workgroup"]
+      severity             = "High"
+    }
+
+    redshift-unrestricted-port-access = {
+      description          = "Checks if security groups associated with an Amazon Redshift cluster have inbound rules that allow unrestricted incoming traffic. The rule is NON_COMPLIANT if there are inbound rules that allow unrestricted incoming traffic to the Redshift cluster port."
+      identifier           = "REDSHIFT_UNRESTRICTED_PORT_ACCESS"
+      resource_types_scope = ["AWS::Redshift::Cluster"]
+      severity             = "High"
+    }
+
+    required-tags = {
+      description          = "Checks if your resources have the tags that you specify. For example, you can check whether your Amazon EC2 instances have the CostCenter tag, while also checking if all your RDS instance have one set of Keys tag. Separate multiple values with commas...."
+      identifier           = "REQUIRED_TAGS"
+      input_parameters     = var.required_tags_parameters
+      resource_types_scope = ["AWS::ACM::Certificate", "AWS::AutoScaling::AutoScalingGroup", "AWS::CloudFormation::Stack", "AWS::CodeBuild::Project", "AWS::DynamoDB::Table", "AWS::EC2::CustomerGateway", "AWS::EC2::Instance", "AWS::EC2::InternetGateway", "AWS::EC2::NetworkAcl", "AWS::EC2::NetworkInterface", "AWS::EC2::RouteTable", "AWS::EC2::SecurityGroup", "AWS::EC2::Subnet", "AWS::EC2::Volume", "AWS::EC2::VPC", "AWS::EC2::VPNConnection", "AWS::EC2::VPNGateway", "AWS::ElasticLoadBalancing::LoadBalancer", "AWS::ElasticLoadBalancingV2::LoadBalancer", "AWS::RDS::DBInstance", "AWS::RDS::DBSecurityGroup", "AWS::RDS::DBSnapshot", "AWS::RDS::DBSubnetGroup", "AWS::RDS::EventSubscription", "AWS::Redshift::Cluster", "AWS::Redshift::ClusterParameterGroup", "AWS::Redshift::ClusterSecurityGroup", "AWS::Redshift::ClusterSnapshot", "AWS::Redshift::ClusterSubnetGroup", "AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    resiliencehub-app-tagged = {
+      description          = "Checks if AWS Resilience Hub app resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "RESILIENCEHUB_APP_TAGGED"
+      input_parameters     = var.resiliencehub_app_tagged_parameters
+      resource_types_scope = ["AWS::ResilienceHub::App"]
+      severity             = "Medium"
+    }
+
+    resiliencehub-resiliencypolicy-tagged = {
+      description          = "Checks if AWS Resilience Hub policy resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "RESILIENCEHUB_RESILIENCYPOLICY_TAGGED"
+      input_parameters     = var.resiliencehub_resiliencypolicy_tagged_parameters
+      resource_types_scope = ["AWS::ResilienceHub::ResiliencyPolicy"]
+      severity             = "Medium"
+    }
+
+    restricted-common-ports = {
+      description          = "Checks if the security groups in use do not allow unrestricted incoming Transmission Control Protocol (TCP) traffic to specified ports. The rule is COMPLIANT if:"
+      identifier           = "RESTRICTED_INCOMING_TRAFFIC"
+      input_parameters     = var.restricted_common_ports_parameters
+      resource_types_scope = ["AWS::EC2::SecurityGroup"]
+      severity             = "High"
+    }
+
+    root-account-hardware-mfa-enabled = {
+      description = "Checks if your AWS account is enabled to use multi-factor authentication (MFA) hardware device to sign in with root credentials. The rule is NON_COMPLIANT if any virtual MFA devices are permitted for signing in with root credentials."
+      identifier  = "ROOT_ACCOUNT_HARDWARE_MFA_ENABLED"
+      severity    = "Critical"
+    }
+
+    root-account-mfa-enabled = {
+      description = "Checks if the root user of your AWS account requires multi-factor authentication for console sign-in. The rule is NON_COMPLIANT if the AWS Identity and Access Management (IAM) root account user does not have multi-factor authentication (MFA) enabled."
+      identifier  = "ROOT_ACCOUNT_MFA_ENABLED"
+      severity    = "Critical"
+    }
+
+    route53-health-check-tagged = {
+      description          = "Checks if Amazon Route 53 health checks have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_HEALTH_CHECK_TAGGED"
+      input_parameters     = var.route53_health_check_tagged_parameters
+      resource_types_scope = ["AWS::Route53::HealthCheck"]
+      severity             = "Medium"
+    }
+
+    route53-hosted-zone-tagged = {
+      description          = "Checks if Amazon Route 53 hosted zones have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_HOSTED_ZONE_TAGGED"
+      input_parameters     = var.route53_hosted_zone_tagged_parameters
+      resource_types_scope = ["AWS::Route53::HostedZone"]
+      severity             = "Medium"
+    }
+
+    route53-query-logging-enabled = {
+      description          = "Checks if DNS query logging is enabled for your Amazon Route 53 public hosted zones. The rule is NON_COMPLIANT if DNS query logging is not enabled for your Amazon Route 53 public hosted zones."
+      identifier           = "ROUTE53_QUERY_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::Route53::HostedZone"]
+      severity             = "Medium"
+    }
+
+    route53-recovery-control-cluster-tagged = {
+      description          = "Checks if Amazon Route 53 Recovery Control clusters have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RECOVERY_CONTROL_CLUSTER_TAGGED"
+      input_parameters     = var.route53_recovery_control_cluster_tagged_parameters
+      resource_types_scope = ["AWS::Route53RecoveryControl::Cluster"]
+      severity             = "Medium"
+    }
+
+    route53-recovery-readiness-cell-tagged = {
+      description          = "Checks if Amazon Route 53 Recovery Readiness cells have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RECOVERY_READINESS_CELL_TAGGED"
+      input_parameters     = var.route53_recovery_readiness_cell_tagged_parameters
+      resource_types_scope = ["AWS::Route53RecoveryReadiness::Cell"]
+      severity             = "Medium"
+    }
+
+    route53-recovery-readiness-readiness-check-tagged = {
+      description          = "Checks if Amazon Route 53 Recovery Readiness readiness checks have tags. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RECOVERY_READINESS_READINESS_CHECK_TAGGED"
+      input_parameters     = var.route53_recovery_readiness_readiness_check_tagged_parameters
+      resource_types_scope = ["AWS::Route53RecoveryReadiness::ReadinessCheck"]
+      severity             = "Medium"
+    }
+
+    route53-recovery-readiness-recovery-group-tagged = {
+      description          = "Checks if Amazon Route 53 Recovery Readiness recovery groups have tags. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RECOVERY_READINESS_RECOVERY_GROUP_TAGGED"
+      input_parameters     = var.route53_recovery_readiness_recovery_group_tagged_parameters
+      resource_types_scope = ["AWS::Route53RecoveryReadiness::RecoveryGroup"]
+      severity             = "Medium"
+    }
+
+    route53-recovery-readiness-resource-set-tagged = {
+      description          = "Checks if Amazon Route 53 Recovery Readiness resource sets have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RECOVERY_READINESS_RESOURCE_SET_TAGGED"
+      input_parameters     = var.route53_recovery_readiness_resource_set_tagged_parameters
+      resource_types_scope = ["AWS::Route53RecoveryReadiness::ResourceSet"]
+      severity             = "Medium"
+    }
+
+    route53-resolver-firewall-domain-list-tagged = {
+      description          = "Checks if Amazon Route 53 Resolver firewall domain lists have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RESOLVER_FIREWALL_DOMAIN_LIST_TAGGED"
+      input_parameters     = var.route53_resolver_firewall_domain_list_tagged_parameters
+      resource_types_scope = ["AWS::Route53Resolver::FirewallDomainList"]
+      severity             = "Medium"
+    }
+
+    route53-resolver-firewall-rule-group-association-tagged = {
+      description          = "Checks if Amazon Route 53 Resolver firewall rule group associations have tags. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RESOLVER_FIREWALL_RULE_GROUP_ASSOCIATION_TAGGED"
+      input_parameters     = var.route53_resolver_firewall_rule_group_association_tagged_parameters
+      resource_types_scope = ["AWS::Route53Resolver::FirewallRuleGroupAssociation"]
+      severity             = "Medium"
+    }
+
+    route53-resolver-firewall-rule-group-tagged = {
+      description          = "Checks if Amazon Route 53 Resolver firewall rule groups have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RESOLVER_FIREWALL_RULE_GROUP_TAGGED"
+      input_parameters     = var.route53_resolver_firewall_rule_group_tagged_parameters
+      resource_types_scope = ["AWS::Route53Resolver::FirewallRuleGroup"]
+      severity             = "Medium"
+    }
+
+    route53-resolver-resolver-endpoint-tagged = {
+      description          = "Checks if Amazon Route 53 Resolver resolver endpoints have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RESOLVER_RESOLVER_ENDPOINT_TAGGED"
+      input_parameters     = var.route53_resolver_resolver_endpoint_tagged_parameters
+      resource_types_scope = ["AWS::Route53Resolver::ResolverEndpoint"]
+      severity             = "Medium"
+    }
+
+    route53-resolver-resolver-rule-tagged = {
+      description          = "Checks if Amazon Route 53 Resolver resolver rules have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "ROUTE53_RESOLVER_RESOLVER_RULE_TAGGED"
+      input_parameters     = var.route53_resolver_resolver_rule_tagged_parameters
+      resource_types_scope = ["AWS::Route53Resolver::ResolverRule"]
+      severity             = "Medium"
+    }
+
+    rum-app-monitor-cloudwatch-logs-enabled = {
+      description          = "Checks if Amazon CloudWatch RUM app monitors have CloudWatch logs enabled. The rule is NON_COMPLIANT if configuration.CwLogEnabled is false."
+      identifier           = "RUM_APP_MONITOR_CLOUDWATCH_LOGS_ENABLED"
+      resource_types_scope = ["AWS::RUM::AppMonitor"]
+      severity             = "Medium"
+    }
+
+    rum-app-monitor-tagged = {
+      description          = "Checks if Amazon CloudWatch RUM app monitors have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "RUM_APP_MONITOR_TAGGED"
+      input_parameters     = var.rum_app_monitor_tagged_parameters
+      resource_types_scope = ["AWS::RUM::AppMonitor"]
+      severity             = "Medium"
+    }
+
+    s3express-dir-bucket-lifecycle-rules-check = {
+      description          = "Checks if lifecycle rules are configured for an Amazon S3 Express directory bucket. The rule is NON_COMPLIANT if there is no active lifecycle configuration rules or the configuration does not match with the parameter values."
+      identifier           = "S3EXPRESS_DIR_BUCKET_LIFECYCLE_RULES_CHECK"
+      input_parameters     = var.s3express_dir_bucket_lifecycle_rules_check_parameters
+      resource_types_scope = ["AWS::S3Express::DirectoryBucket"]
+      severity             = "Low"
+    }
+
+    s3-access-point-in-vpc-only = {
+      description          = "Checks if an Amazon S3 access point does not allow access from the internet (NetworkOrigin is VPC). The rule is NON_COMPLIANT if NetworkOrigin is Internet."
+      identifier           = "S3_ACCESS_POINT_IN_VPC_ONLY"
+      resource_types_scope = ["AWS::S3::AccessPoint"]
+      severity             = "Medium"
+    }
+
+    s3-access-point-public-access-blocks = {
+      description          = "Checks if Amazon S3 access points have block public access settings enabled. The rule is NON_COMPLIANT if block public access settings are not enabled for S3 access points."
+      identifier           = "S3_ACCESS_POINT_PUBLIC_ACCESS_BLOCKS"
+      input_parameters     = var.s3_access_point_public_access_blocks_parameters
+      resource_types_scope = ["AWS::S3::AccessPoint"]
+      severity             = "Critical"
+    }
+
+    s3-account-level-public-access-blocks = {
+      description          = "Checks if the required public access block settings are configured from account level. The rule is only NON_COMPLIANT when the fields set below do not match the corresponding fields in the configuration item."
+      identifier           = "S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS"
+      input_parameters     = var.s3_account_level_public_access_blocks_parameters
+      resource_types_scope = ["AWS::S3::AccountPublicAccessBlock"]
+      severity             = "Medium"
+    }
+
+    s3-account-level-public-access-blocks-periodic = {
+      description          = "Checks if the required public access block settings are configured at the account level. The rule is NON_COMPLIANT if the configuration item does not match one or more settings from parameters (or default)."
+      identifier           = "S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS_PERIODIC"
+      input_parameters     = var.s3_account_level_public_access_blocks_periodic_parameters
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-acl-prohibited = {
+      description          = "Checks if Amazon Simple Storage Service (Amazon S3) Buckets allow user permissions through access control lists (ACLs). The rule is NON_COMPLIANT if ACLs are configured for user access in Amazon S3 Buckets."
+      identifier           = "S3_BUCKET_ACL_PROHIBITED"
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-blacklisted-actions-prohibited = {
+      description          = "Checks if an Amazon Simple Storage Service (Amazon S3) bucket policy does not allow blocklisted bucket-level and object-level actions on resources in the bucket for principals from other AWS accounts. For example, the rule checks that the Amazon S3..."
+      identifier           = "S3_BUCKET_BLACKLISTED_ACTIONS_PROHIBITED"
+      input_parameters     = var.s3_bucket_blacklisted_actions_prohibited_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-cross-region-replication-enabled = {
+      description          = "Checks if you have enabled S3 Cross-Region Replication for your Amazon S3 buckets. The rule is NON_COMPLIANT if there are no replication rules enabled for Cross-Region Replication."
+      identifier           = "S3_BUCKET_CROSS_REGION_REPLICATION_ENABLED"
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "High"
+    }
+
+    s3-bucket-default-lock-enabled = {
+      description          = "Checks if the S3 bucket has lock enabled, by default. The rule is NON_COMPLIANT if the lock is not enabled."
+      identifier           = "S3_BUCKET_DEFAULT_LOCK_ENABLED"
+      input_parameters     = var.s3_bucket_default_lock_enabled_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-level-public-access-prohibited = {
+      description          = "Checks if S3 buckets are publicly accessible. The rule is NON_COMPLIANT if an S3 bucket is not listed in the excludedPublicBuckets parameter and bucket level settings are public."
+      identifier           = "S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED"
+      input_parameters     = var.s3_bucket_level_public_access_prohibited_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "High"
+    }
+
+    s3-bucket-logging-enabled = {
+      description          = "Checks if logging is enabled for your S3 buckets. The rule is NON_COMPLIANT if logging is not enabled."
+      identifier           = "S3_BUCKET_LOGGING_ENABLED"
+      input_parameters     = var.s3_bucket_logging_enabled_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-mfa-delete-enabled = {
+      description          = "Checks if MFA Delete is enabled in the Amazon Simple Storage Service (Amazon S3) bucket versioning configuration. The rule is NON_COMPLIANT if MFA Delete is not enabled."
+      identifier           = "S3_BUCKET_MFA_DELETE_ENABLED"
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Low"
+    }
+
+    s3-bucket-policy-grantee-check = {
+      description          = "Checks that the access granted by the Amazon S3 bucket is restricted by any of the AWS principals, federated users, service principals, IP addresses, or VPCs that you provide. The rule is COMPLIANT if a bucket policy is not present."
+      identifier           = "S3_BUCKET_POLICY_GRANTEE_CHECK"
+      input_parameters     = var.s3_bucket_policy_grantee_check_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-policy-not-more-permissive = {
+      description          = "Checks if your Amazon Simple Storage Service bucket policies do not allow other inter-account permissions than the control Amazon S3 bucket policy that you provide."
+      identifier           = "S3_BUCKET_POLICY_NOT_MORE_PERMISSIVE"
+      input_parameters     = var.s3_bucket_policy_not_more_permissive_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-public-read-prohibited = {
+      description          = "Checks if your Amazon S3 buckets do not allow public read access. The rule checks the Block Public Access settings, the bucket policy, and the bucket access control list (ACL)."
+      identifier           = "S3_BUCKET_PUBLIC_READ_PROHIBITED"
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Critical"
+    }
+
+    s3-bucket-public-write-prohibited = {
+      description          = "Checks if your Amazon S3 buckets do not allow public write access. The rule checks the Block Public Access settings, the bucket policy, and the bucket access control list (ACL)."
+      identifier           = "S3_BUCKET_PUBLIC_WRITE_PROHIBITED"
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Critical"
+    }
+
+    s3-bucket-replication-enabled = {
+      description          = "Checks if S3 buckets have replication rules enabled. The rule is NON_COMPLIANT if an S3 bucket does not have a replication rule or has a replication rule that is not enabled."
+      identifier           = "S3_BUCKET_REPLICATION_ENABLED"
+      input_parameters     = var.s3_bucket_replication_enabled_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Low"
+    }
+
+    s3-bucket-server-side-encryption-enabled = {
+      description          = "Checks if your Amazon S3 bucket either has the Amazon S3 default encryption enabled or that the Amazon S3 bucket policy explicitly denies put-object requests without server side encryption that uses AES-256 or AWS Key Management Service. The rule is..."
+      identifier           = "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-ssl-requests-only = {
+      description          = "Checks if S3 buckets have policies that require requests to use SSL/TLS. The rule is NON_COMPLIANT if any S3 bucket has policies allowing HTTP requests."
+      identifier           = "S3_BUCKET_SSL_REQUESTS_ONLY"
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-tagged = {
+      description          = "Checks if Amazon S3 buckets have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "S3_BUCKET_TAGGED"
+      input_parameters     = var.s3_bucket_tagged_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-bucket-versioning-enabled = {
+      description          = "Checks if versioning is enabled for your S3 buckets. Optionally, the rule checks if MFA delete is enabled for your S3 buckets."
+      identifier           = "S3_BUCKET_VERSIONING_ENABLED"
+      input_parameters     = var.s3_bucket_versioning_enabled_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Low"
+    }
+
+    s3-default-encryption-kms = {
+      description          = "Checks if the S3 buckets are encrypted with AWS Key Management Service (AWS KMS). The rule is NON_COMPLIANT if the S3 bucket is not encrypted with an AWS KMS key."
+      identifier           = "S3_DEFAULT_ENCRYPTION_KMS"
+      input_parameters     = var.s3_default_encryption_kms_parameters
+      resource_types_scope = ["AWS::S3::Bucket", "AWS::KMS::Key"]
+      severity             = "Medium"
+    }
+
+    s3-directory-bucket-lifecycle-policy-rule-check = {
+      description          = "Checks if directory buckets for Amazon S3 have a lifecycle policy with at least one enabled rule. The rule is NON_COMPLIANT if there are no lifecycle policy rules or if none of the lifecycle policy rules have status Enabled."
+      identifier           = "S3_DIRECTORY_BUCKET_LIFECYCLE_POLICY_RULE_CHECK"
+      resource_types_scope = ["AWS::S3Express::DirectoryBucket"]
+      severity             = "Medium"
+    }
+
+    s3-event-notifications-enabled = {
+      description          = "Checks if Amazon S3 Events Notifications are enabled on an S3 bucket. The rule is NON_COMPLIANT if S3 Events Notifications are not set on a bucket, or if the event type or destination do not match the eventTypes and destinationArn parameters."
+      identifier           = "S3_EVENT_NOTIFICATIONS_ENABLED"
+      input_parameters     = var.s3_event_notifications_enabled_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for Amazon Simple Storage Service (Amazon S3). The rule is NON_COMPLIANT if the Amazon S3 bucket does not have a corresponding recovery point created within the specified time period."
+      identifier           = "S3_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.s3_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-lifecycle-policy-check = {
+      description          = "Checks if a lifecycle rule is configured for an Amazon Simple Storage Service (Amazon S3) bucket. The rule is NON_COMPLIANT if there is no active lifecycle configuration rules or the configuration does not match with the parameter values."
+      identifier           = "S3_LIFECYCLE_POLICY_CHECK"
+      input_parameters     = var.s3_lifecycle_policy_check_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Low"
+    }
+
+    s3-meets-restore-time-target = {
+      description          = "Checks if the restore time of Amazon Simple Storage Service (Amazon S3) buckets meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Amazon S3 bucket is greater than maxRestoreTime minutes."
+      identifier           = "S3_MEETS_RESTORE_TIME_TARGET"
+      input_parameters     = var.s3_meets_restore_time_target_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-resources-in-logically-air-gapped-vault = {
+      description          = "Checks if Amazon Simple Storage Service (Amazon S3) buckets are in a logically air-gapped vault. The rule is NON_COMPLIANT if an Amazon S3 bucket is not in a logically air-gapped vault within the specified time period."
+      identifier           = "S3_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT"
+      input_parameters     = var.s3_resources_in_logically_air_gapped_vault_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-resources-protected-by-backup-plan = {
+      description          = "Checks if Amazon Simple Storage Service (Amazon S3) buckets are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon S3 bucket is not covered by a backup plan."
+      identifier           = "S3_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.s3_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    s3-version-lifecycle-policy-check = {
+      description          = "Checks if Amazon Simple Storage Service (Amazon S3) version enabled buckets have lifecycle policy configured. The rule is NON_COMPLIANT if Amazon S3 lifecycle policy is not enabled."
+      identifier           = "S3_VERSION_LIFECYCLE_POLICY_CHECK"
+      input_parameters     = var.s3_version_lifecycle_policy_check_parameters
+      resource_types_scope = ["AWS::S3::Bucket"]
+      severity             = "Medium"
+    }
+
+    sagemaker-app-image-config-tagged = {
+      description          = "Checks if Amazon SageMaker app image configs have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SAGEMAKER_APP_IMAGE_CONFIG_TAGGED"
+      input_parameters     = var.sagemaker_app_image_config_tagged_parameters
+      resource_types_scope = ["AWS::SageMaker::AppImageConfig"]
+      severity             = "Low"
+    }
+
+    sagemaker-data-quality-job-encrypt-in-transit = {
+      description          = "Checks if Amazon SageMaker data quality job definitions have inter-container traffic encryption enabled when the instance count is 2 or greater. The rule is NON_COMPLIANT if configuration.NetworkConfig.EnableInterContainerTrafficEncryption is false."
+      identifier           = "SAGEMAKER_DATA_QUALITY_JOB_ENCRYPT_IN_TRANSIT"
+      resource_types_scope = ["AWS::SageMaker::DataQualityJobDefinition"]
+      severity             = "Medium"
+    }
+
+    sagemaker-data-quality-job-isolation = {
+      description          = "Checks if Amazon SageMaker data quality job definitions have network isolation enabled. The rule is NON_COMPLIANT if configuration.NetworkConfig.EnableNetworkIsolation is false."
+      identifier           = "SAGEMAKER_DATA_QUALITY_JOB_ISOLATION"
+      resource_types_scope = ["AWS::SageMaker::DataQualityJobDefinition"]
+      severity             = "Medium"
+    }
+
+    sagemaker-domain-in-vpc = {
+      description          = "Checks if an Amazon SageMaker domain uses a customer owned Amazon Virtual Private Cloud (VPC) for non-EFS traffic. The rule is NON_COMPLIANT if configuration.AppNetworkAccessType is not set to VpcOnly."
+      identifier           = "SAGEMAKER_DOMAIN_IN_VPC"
+      resource_types_scope = ["AWS::SageMaker::Domain"]
+      severity             = "Medium"
+    }
+
+    sagemaker-domain-tagged = {
+      description          = "Checks if Amazon SageMaker domains have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SAGEMAKER_DOMAIN_TAGGED"
+      input_parameters     = var.sagemaker_domain_tagged_parameters
+      resource_types_scope = ["AWS::SageMaker::Domain"]
+      severity             = "Medium"
+    }
+
+    sagemaker-endpoint-configuration-kms-key-configured = {
+      description          = "Checks if AWS Key Management Service (AWS KMS) key is configured for an Amazon SageMaker endpoint configuration. The rule is NON_COMPLIANT if KmsKeyId is not specified for the Amazon SageMaker endpoint configuration."
+      identifier           = "SAGEMAKER_ENDPOINT_CONFIGURATION_KMS_KEY_CONFIGURED"
+      input_parameters     = var.sagemaker_endpoint_configuration_kms_key_configured_parameters
+      resource_types_scope = ["AWS::SageMaker::EndpointConfig"]
+      severity             = "Medium"
+    }
+
+    sagemaker-endpoint-config-prod-instance-count = {
+      description          = "Checks if Amazon SageMaker endpoint configurations have production variants InitialInstanceCount set to a value greater than 1. The rule is NON_COMPLIANT if production variants InitialInstanceCount is equal to 1."
+      identifier           = "SAGEMAKER_ENDPOINT_CONFIG_PROD_INSTANCE_COUNT"
+      resource_types_scope = ["AWS::SageMaker::EndpointConfig"]
+      severity             = "Medium"
+    }
+
+    sagemaker-featuregroup-description = {
+      description          = "Checks if Amazon SageMaker FeatureGroup resources contain a description. The rule is NON_COMPLIANT if the FeatureGroup does not contain a description field or the description is empty."
+      identifier           = "SAGEMAKER_FEATUREGROUP_DESCRIPTION"
+      resource_types_scope = ["AWS::SageMaker::FeatureGroup"]
+      severity             = "Medium"
+    }
+
+    sagemaker-feature-group-tagged = {
+      description          = "Checks if Amazon SageMaker feature groups have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SAGEMAKER_FEATURE_GROUP_TAGGED"
+      input_parameters     = var.sagemaker_feature_group_tagged_parameters
+      resource_types_scope = ["AWS::SageMaker::FeatureGroup"]
+      severity             = "Medium"
+    }
+
+    sagemaker-image-description = {
+      description          = "Checks if Amazon SageMaker images have a description. The rule is NON_COMPLIANT if configuration.ImageDescription does not exist."
+      identifier           = "SAGEMAKER_IMAGE_DESCRIPTION"
+      resource_types_scope = ["AWS::SageMaker::Image"]
+      severity             = "Medium"
+    }
+
+    sagemaker-image-tagged = {
+      description          = "Checks if Amazon SageMaker images have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SAGEMAKER_IMAGE_TAGGED"
+      input_parameters     = var.sagemaker_image_tagged_parameters
+      resource_types_scope = ["AWS::SageMaker::Image"]
+      severity             = "Low"
+    }
+
+    sagemaker-inferenceexperiment-tagged = {
+      description          = "Checks if Amazon SageMaker Inference Experiments have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SAGEMAKER_INFERENCEEXPERIMENT_TAGGED"
+      input_parameters     = var.sagemaker_inferenceexperiment_tagged_parameters
+      resource_types_scope = ["AWS::SageMaker::InferenceExperiment"]
+      severity             = "Medium"
+    }
+
+    sagemaker-model-bias-job-encrypt-in-transit = {
+      description          = "Checks if Amazon SageMaker model bias job definitions have inter-container traffic encryption enabled when the instance count is 2 or greater. The rule is NON_COMPLIANT if configuration.NetworkConfig.EnableInterContainerTrafficEncryption is false."
+      identifier           = "SAGEMAKER_MODEL_BIAS_JOB_ENCRYPT_IN_TRANSIT"
+      resource_types_scope = ["AWS::SageMaker::ModelBiasJobDefinition"]
+      severity             = "Medium"
+    }
+
+    sagemaker-model-bias-job-isolation = {
+      description          = "Checks if Amazon SageMaker model bias job definitions have network isolation enabled. The rule is NON_COMPLIANT if configuration.NetworkConfig.EnableNetworkIsolation is false."
+      identifier           = "SAGEMAKER_MODEL_BIAS_JOB_ISOLATION"
+      resource_types_scope = ["AWS::SageMaker::ModelBiasJobDefinition"]
+      severity             = "Medium"
+    }
+
+    sagemaker-model-explainability-job-encrypt-in-transit = {
+      description          = "Checks if Amazon SageMaker model explainability job definitions have inter-container traffic encryption enabled when instance count is 2 or greater. The rule is NON_COMPLIANT if configuration.NetworkConfig.EnableInterContainerTrafficEncryption is false."
+      identifier           = "SAGEMAKER_MODEL_EXPLAINABILITY_JOB_ENCRYPT_IN_TRANSIT"
+      resource_types_scope = ["AWS::SageMaker::ModelExplainabilityJobDefinition"]
+      severity             = "Medium"
+    }
+
+    sagemaker-model-in-vpc = {
+      description          = "Checks if an Amazon SageMaker model uses an Amazon Virtual Private Cloud (Amazon VPC) for container traffic. The rule is NON_COMPLIANT if configuration.VpcConfig does not exist."
+      identifier           = "SAGEMAKER_MODEL_IN_VPC"
+      resource_types_scope = ["AWS::SageMaker::Model"]
+      severity             = "Medium"
+    }
+
+    sagemaker-model-isolation-enabled = {
+      description          = "Checks if an Amazon SageMaker model has network isolation enabled. The rule is NON_COMPLIANT if configuration.EnableNetworkIsolation is false."
+      identifier           = "SAGEMAKER_MODEL_ISOLATION_ENABLED"
+      resource_types_scope = ["AWS::SageMaker::Model"]
+      severity             = "Medium"
+    }
+
+    sagemaker-monitoring-schedule-isolation = {
+      description          = "Checks if Amazon SageMaker monitoring schedules have network isolation enabled. The rule is NON_COMPLIANT if configuration.MonitoringScheduleConfig.MonitoringJobDefinition.NetworkConfig.EnableNetworkIsolation is false."
+      identifier           = "SAGEMAKER_MONITORING_SCHEDULE_ISOLATION"
+      resource_types_scope = ["AWS::SageMaker::MonitoringSchedule"]
+      severity             = "Medium"
+    }
+
+    sagemaker-notebook-instance-inside-vpc = {
+      description          = "Checks if an Amazon SageMaker notebook instance is launched within a VPC or within a list of approved subnets. The rule is NON_COMPLIANT if a notebook instance is not launched within a VPC or if its subnet ID is not included in the parameter list."
+      identifier           = "SAGEMAKER_NOTEBOOK_INSTANCE_INSIDE_VPC"
+      input_parameters     = var.sagemaker_notebook_instance_inside_vpc_parameters
+      resource_types_scope = ["AWS::SageMaker::NotebookInstance"]
+      severity             = "High"
+    }
+
+    sagemaker-notebook-instance-kms-key-configured = {
+      description          = "Checks if an AWS Key Management Service (AWS KMS) key is configured for an Amazon SageMaker notebook instance. The rule is NON_COMPLIANT if KmsKeyId is not specified for the SageMaker notebook instance."
+      identifier           = "SAGEMAKER_NOTEBOOK_INSTANCE_KMS_KEY_CONFIGURED"
+      input_parameters     = var.sagemaker_notebook_instance_kms_key_configured_parameters
+      resource_types_scope = ["AWS::SageMaker::NotebookInstance"]
+      severity             = "Medium"
+    }
+
+    sagemaker-notebook-instance-platform-version = {
+      description          = "Checks if a Sagemaker Notebook Instance is configured to use a supported platform identifier version. The rule is NON_COMPLIANT if a Notebook Instance is not using the specified supported platform identifier version as specified in the parameter."
+      identifier           = "SAGEMAKER_NOTEBOOK_INSTANCE_PLATFORM_VERSION"
+      input_parameters     = var.sagemaker_notebook_instance_platform_version_parameters
+      resource_types_scope = ["AWS::SageMaker::NotebookInstance"]
+      severity             = "Medium"
+    }
+
+    sagemaker-notebook-instance-root-access-check = {
+      description          = "Checks if the Amazon SageMaker RootAccess setting is enabled for Amazon SageMaker notebook instances. The rule is NON_COMPLIANT if the RootAccess setting is set to Enabled for an Amazon SageMaker notebook instance."
+      identifier           = "SAGEMAKER_NOTEBOOK_INSTANCE_ROOT_ACCESS_CHECK"
+      resource_types_scope = ["AWS::SageMaker::NotebookInstance"]
+      severity             = "High"
+    }
+
+    sagemaker-notebook-no-direct-internet-access = {
+      description          = "Checks if direct internet access is disabled for an Amazon SageMaker notebook instance. The rule is NON_COMPLIANT if a SageMaker notebook instance is internet-enabled."
+      identifier           = "SAGEMAKER_NOTEBOOK_NO_DIRECT_INTERNET_ACCESS"
+      resource_types_scope = ["AWS::SageMaker::NotebookInstance"]
+      severity             = "High"
+    }
+
+    secretsmanager-rotation-enabled-check = {
+      description          = "Checks if AWS Secrets Manager secret has rotation enabled. The rule also checks an optional maximumAllowedRotationFrequency parameter. If the parameter is specified, the rotation frequency of the secret is compared with the maximum allowed frequency...."
+      identifier           = "SECRETSMANAGER_ROTATION_ENABLED_CHECK"
+      input_parameters     = var.secretsmanager_rotation_enabled_check_parameters
+      resource_types_scope = ["AWS::SecretsManager::Secret"]
+      severity             = "Medium"
+    }
+
+    secretsmanager-scheduled-rotation-success-check = {
+      description          = "Checks if AWS Secrets Manager secrets rotated successfully according to the rotation schedule. Secrets Manager calculates the date the rotation should happen. The rule is NON_COMPLIANT if the date passes and the secret isn t rotated."
+      identifier           = "SECRETSMANAGER_SCHEDULED_ROTATION_SUCCESS_CHECK"
+      resource_types_scope = ["AWS::SecretsManager::Secret"]
+      severity             = "Medium"
+    }
+
+    secretsmanager-secret-periodic-rotation = {
+      description          = "Checks if AWS Secrets Manager secrets have been rotated in the past specified number of days. The rule is NON_COMPLIANT if a secret has not been rotated for more than maxDaysSinceRotation number of days. The default value is 90 days."
+      identifier           = "SECRETSMANAGER_SECRET_PERIODIC_ROTATION"
+      input_parameters     = var.secretsmanager_secret_periodic_rotation_parameters
+      resource_types_scope = ["AWS::SecretsManager::Secret"]
+      severity             = "Medium"
+    }
+
+    secretsmanager-secret-unused = {
+      description          = "Checks if AWS Secrets Manager secrets have been accessed within a specified number of days. The rule is NON_COMPLIANT if a secret has not been accessed in unusedForDays number of days. The default value is 90 days."
+      identifier           = "SECRETSMANAGER_SECRET_UNUSED"
+      input_parameters     = var.secretsmanager_secret_unused_parameters
+      resource_types_scope = ["AWS::SecretsManager::Secret"]
+      severity             = "Medium"
+    }
+
+    secretsmanager-using-cmk = {
+      description          = "Checks if all secrets in AWS Secrets Manager are encrypted using the AWS managed key (aws/secretsmanager) or a customer managed key that was created in AWS Key Management Service (AWS KMS). The rule is COMPLIANT if a secret is encrypted using a customer..."
+      identifier           = "SECRETSMANAGER_USING_CMK"
+      input_parameters     = var.secretsmanager_using_cmk_parameters
+      resource_types_scope = ["AWS::SecretsManager::Secret"]
+      severity             = "Medium"
+    }
+
+    securityhub-enabled = {
+      description = "Checks if AWS Security Hub is enabled for an AWS Account. The rule is NON_COMPLIANT if AWS Security Hub is not enabled."
+      identifier  = "SECURITYHUB_ENABLED"
+      severity    = "Medium"
+    }
+
+    security-account-information-provided = {
+      description          = "Checks if you have provided security contact information for your AWS account contacts. The rule is NON_COMPLIANT if security contact information within the account is not provided."
+      identifier           = "SECURITY_ACCOUNT_INFORMATION_PROVIDED"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Medium"
+    }
+
+    service-catalog-portfolio-tagged = {
+      description          = "Checks if AWS Service Catalog portfolio resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SERVICE_CATALOG_PORTFOLIO_TAGGED"
+      input_parameters     = var.service_catalog_portfolio_tagged_parameters
+      resource_types_scope = ["AWS::ServiceCatalog::Portfolio"]
+      severity             = "Medium"
+    }
+
+    service-catalog-shared-within-organization = {
+      description          = "Checks if AWS Service Catalog shares portfolios to an organization (a collection of AWS accounts treated as a single unit) when integration is enabled with AWS Organizations. The rule is NON_COMPLIANT if the Type value of a share is ACCOUNT ."
+      identifier           = "SERVICE_CATALOG_SHARED_WITHIN_ORGANIZATION"
+      resource_types_scope = ["AWS::ServiceCatalog::Portfolio"]
+      severity             = "Medium"
+    }
+
+    service-vpc-endpoint-enabled = {
+      description          = "Checks if Service Endpoint for the service provided in rule parameter is created for each Amazon Virtual Private Cloud (Amazon VPC). The rule is NON_COMPLIANT if an Amazon VPC doesn t have an Amazon VPC endpoint created for the service."
+      identifier           = "SERVICE_VPC_ENDPOINT_ENABLED"
+      input_parameters     = var.service_vpc_endpoint_enabled_parameters
+      resource_types_scope = ["AWS::EC2::VPC"]
+      severity             = "Medium"
+    }
+
+    ses-malware-scanning-enabled = {
+      description          = "Checks if malware and spam scanning on receiving messages is enabled for Amazon Simple Email Service (Amazon SES). The rule is NON_COMPLIANT if malware and spam scanning is not enabled."
+      identifier           = "SES_MALWARE_SCANNING_ENABLED"
+      resource_types_scope = ["AWS::SES::ReceiptRule"]
+      severity             = "Medium"
+    }
+
+    ses-sending-tls-required = {
+      description          = "Checks if Amazon Simple Email Service (SES) Configuration Set has TLS encryption enforced for email delivery. The rule is NON_COMPLIANT if the TLS Policy is not set to REQUIRE in the Configuration Set."
+      identifier           = "SES_SENDING_TLS_REQUIRED"
+      resource_types_scope = ["AWS::SES::ConfigurationSet"]
+      severity             = "Medium"
+    }
+
+    shield-advanced-enabled-autorenew = {
+      description = "Checks if AWS Shield Advanced is enabled in your AWS account and this subscription is set to automatically renew. The rule is COMPLIANT if Shield Advanced is enabled and auto renew is enabled."
+      identifier  = "SHIELD_ADVANCED_ENABLED_AUTORENEW"
+      severity    = "Medium"
+    }
+
+    shield-drt-access = {
+      description = "Checks if the Shield Response Team (SRT) can access your AWS account. The rule is NON_COMPLIANT if AWS Shield Advanced is enabled but the role for SRT access is not configured."
+      identifier  = "SHIELD_DRT_ACCESS"
+      severity    = "Medium"
+    }
+
+    signer-signingprofile-tagged = {
+      description          = "Checks if AWS Signer signing profile resources have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SIGNER_SIGNINGPROFILE_TAGGED"
+      input_parameters     = var.signer_signingprofile_tagged_parameters
+      resource_types_scope = ["AWS::Signer::SigningProfile"]
+      severity             = "Medium"
+    }
+
+    sns-encrypted-kms = {
+      description          = "Checks if SNS topics are encrypted with AWS Key Management Service (AWS KMS). The rule is NON_COMPLIANT if an SNS topic is not encrypted with AWS KMS. Optionally, specify the key ARNs, the alias ARNs, the alias name, or the key IDs for the rule to check."
+      identifier           = "SNS_ENCRYPTED_KMS"
+      input_parameters     = var.sns_encrypted_kms_parameters
+      resource_types_scope = ["AWS::SNS::Topic"]
+      severity             = "Medium"
+    }
+
+    sns-topic-message-delivery-notification-enabled = {
+      description          = "Checks if Amazon Simple Notification Service (SNS) logging is enabled for the delivery status of notification messages sent to a topic for the endpoints. The rule is NON_COMPLIANT if the delivery status notification for messages is not enabled."
+      identifier           = "SNS_TOPIC_MESSAGE_DELIVERY_NOTIFICATION_ENABLED"
+      resource_types_scope = ["AWS::SNS::Topic"]
+      severity             = "Medium"
+    }
+
+    sns-topic-no-public-access = {
+      description          = "Checks if the SNS topic access policy allows public access. The rule is NON_COMPLIANT if the SNS topic access policy allows public access."
+      identifier           = "SNS_TOPIC_NO_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::SNS::Topic"]
+      severity             = "Critical"
+    }
+
+    sqs-queue-dlq-check = {
+      description          = "Checks if Amazon Simple Queue Service (Amazon SQS) queues have configuration to use dead-letter queue (DLQ). The rule is NON_COMPLIANT if an Amazon SQS queue does not have any configuration to use DLQ."
+      identifier           = "SQS_QUEUE_DLQ_CHECK"
+      resource_types_scope = ["AWS::SQS::Queue"]
+      severity             = "Medium"
+    }
+
+    sqs-queue-no-public-access = {
+      description          = "Checks if the SQS queue access policy allows public access. The rule is NON_COMPLIANT if the SQS queue access policy allows public access."
+      identifier           = "SQS_QUEUE_NO_PUBLIC_ACCESS"
+      resource_types_scope = ["AWS::SQS::Queue"]
+      severity             = "Critical"
+    }
+
+    sqs-queue-policy-full-access-check = {
+      description          = "Checks if the SQS queue access policy allows full access. The rule is NON_COMPLIANT if the SQS policy contains SQS:* within Action and Effect is Allow ."
+      identifier           = "SQS_QUEUE_POLICY_FULL_ACCESS_CHECK"
+      resource_types_scope = ["AWS::SQS::Queue"]
+      severity             = "Medium"
+    }
+
+    ssm-automation-block-public-sharing = {
+      description          = "Checks if AWS Systems Manager Documents has block public sharing enabled. The rule is NON_COMPLIANT if Systems Manager Documents has block public sharing disabled."
+      identifier           = "SSM_AUTOMATION_BLOCK_PUBLIC_SHARING"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Critical"
+    }
+
+    ssm-automation-logging-enabled = {
+      description          = "Checks if AWS Systems Manager Automation has Amazon CloudWatch logging enabled. The rule returns NON_COMPLIANT if Systems Manager Automation doesn t have CloudWatch logging enabled."
+      identifier           = "SSM_AUTOMATION_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::::Account"]
+      severity             = "Medium"
+    }
+
+    ssm-document-not-public = {
+      description          = "Checks if AWS Systems Manager documents owned by the account are public. The rule is NON_COMPLIANT if Systems Manager documents with the owner Self are public."
+      identifier           = "SSM_DOCUMENT_NOT_PUBLIC"
+      resource_types_scope = ["AWS::SSM::Document"]
+      severity             = "Critical"
+    }
+
+    ssm-document-tagged = {
+      description          = "Checks if AWS Systems Manager documents have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "SSM_DOCUMENT_TAGGED"
+      input_parameters     = var.ssm_document_tagged_parameters
+      resource_types_scope = ["AWS::SSM::Document"]
+      severity             = "Low"
+    }
+
+    stepfunctions-state-machine-tagged = {
+      description          = "Checks if AWS Step Functions state machines have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "STEPFUNCTIONS_STATE_MACHINE_TAGGED"
+      input_parameters     = var.stepfunctions_state_machine_tagged_parameters
+      resource_types_scope = ["AWS::StepFunctions::StateMachine"]
+      severity             = "Medium"
+    }
+
+    step-functions-state-machine-logging-enabled = {
+      description          = "Checks if AWS Step Functions machine has logging enabled. The rule is NON_COMPLIANT if a state machine does not have logging enabled or the logging configuration is not at the minimum level provided."
+      identifier           = "STEP_FUNCTIONS_STATE_MACHINE_LOGGING_ENABLED"
+      input_parameters     = var.step_functions_state_machine_logging_enabled_parameters
+      resource_types_scope = ["AWS::StepFunctions::StateMachine"]
+      severity             = "Medium"
+    }
+
+    storagegateway-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for AWS Storage Gateway volumes. The rule is NON_COMPLIANT if the Storage Gateway volume does not have a corresponding recovery point created within the specified time period."
+      identifier           = "STORAGEGATEWAY_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.storagegateway_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::StorageGateway::Volume"]
+      severity             = "High"
+    }
+
+    storagegateway-resources-in-logically-air-gapped-vault = {
+      description          = "Checks if AWS Storage Gateway volumes are in a logically air-gapped vault. The rule is NON_COMPLIANT if an AWS Storage Gateway volume is not in a logically air-gapped vault within the specified time period."
+      identifier           = "STORAGEGATEWAY_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT"
+      input_parameters     = var.storagegateway_resources_in_logically_air_gapped_vault_parameters
+      resource_types_scope = ["AWS::StorageGateway::Volume"]
+      severity             = "Medium"
+    }
+
+    storagegateway-resources-protected-by-backup-plan = {
+      description          = "Checks if AWS Storage Gateway volumes are protected by a backup plan. The rule is NON_COMPLIANT if the Storage Gateway volume is not covered by a backup plan."
+      identifier           = "STORAGEGATEWAY_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.storagegateway_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::StorageGateway::Volume"]
+      severity             = "Medium"
+    }
+
+    subnet-auto-assign-public-ip-disabled = {
+      description          = "Checks if Amazon Virtual Private Cloud (Amazon VPC) subnets are configured to automatically assign public IP addresses to instances launched within them. This rule is COMPLIANT if subnets do not auto-assign public IPv4 or IPv6 addresses. This rule is..."
+      identifier           = "SUBNET_AUTO_ASSIGN_PUBLIC_IP_DISABLED"
+      resource_types_scope = ["AWS::EC2::Subnet"]
+      severity             = "Medium"
+    }
+
+    transfer-agreement-description = {
+      description          = "Checks if AWS Transfer Family agreements have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "TRANSFER_AGREEMENT_DESCRIPTION"
+      resource_types_scope = ["AWS::Transfer::Agreement"]
+      severity             = "Medium"
+    }
+
+    transfer-agreement-tagged = {
+      description          = "Checks if AWS Transfer Family agreements have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "TRANSFER_AGREEMENT_TAGGED"
+      input_parameters     = var.transfer_agreement_tagged_parameters
+      resource_types_scope = ["AWS::Transfer::Agreement"]
+      severity             = "Low"
+    }
+
+    transfer-certificate-description = {
+      description          = "Checks if AWS Transfer Family certificates have a description. The rule is NON_COMPLIANT if configuration.Description does not exist."
+      identifier           = "TRANSFER_CERTIFICATE_DESCRIPTION"
+      resource_types_scope = ["AWS::Transfer::Certificate"]
+      severity             = "Medium"
+    }
+
+    transfer-certificate-tagged = {
+      description          = "Checks if AWS Transfer Family certificates have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "TRANSFER_CERTIFICATE_TAGGED"
+      input_parameters     = var.transfer_certificate_tagged_parameters
+      resource_types_scope = ["AWS::Transfer::Certificate"]
+      severity             = "Low"
+    }
+
+    transfer-connector-as2-encryption-algorithm-check = {
+      description          = "Checks that AWS Transfer Family AS2 connectors are not configured with a weak encryption algorithm. The rule is NON_COMPLIANT if configuration.As2Config.EncryptionAlgorithm is DES_EDE3_CBC ."
+      identifier           = "TRANSFER_CONNECTOR_AS2_ENCRYPTION_ALGORITHM_CHECK"
+      input_parameters     = var.transfer_connector_as2_encryption_algorithm_check_parameters
+      resource_types_scope = ["AWS::Transfer::Connector"]
+      severity             = "Medium"
+    }
+
+    transfer-connector-as2-mdn-signing-algorithm-check = {
+      description          = "Checks if AWS Transfer Family AS2 connectors are configured with a specified MDN signing algorithm for MDN responses. The rule is NON_COMPLIANT if configuration.As2Config.MdnSigningAlgorithm is a value not specified in the required rule parameter."
+      identifier           = "TRANSFER_CONNECTOR_AS2_MDN_SIGNING_ALGORITHM_CHECK"
+      input_parameters     = var.transfer_connector_as2_mdn_signing_algorithm_check_parameters
+      resource_types_scope = ["AWS::Transfer::Connector"]
+      severity             = "Medium"
+    }
+
+    transfer-connector-as2-signing-algorithm-check = {
+      description          = "Checks if AWS Transfer Family AS2 connectors are configured with a signing algorithm. The rule is NON_COMPLIANT if configuration.As2Config.SigningAlgorithm is NONE ."
+      identifier           = "TRANSFER_CONNECTOR_AS2_SIGNING_ALGORITHM_CHECK"
+      input_parameters     = var.transfer_connector_as2_signing_algorithm_check_parameters
+      resource_types_scope = ["AWS::Transfer::Connector"]
+      severity             = "Medium"
+    }
+
+    transfer-connector-logging-enabled = {
+      description          = "Checks if AWS Transfer Family Connector publishes logs to Amazon CloudWatch. The rule is NON_COMPLIANT if a Connector does not have a LoggingRole assigned."
+      identifier           = "TRANSFER_CONNECTOR_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::Transfer::Connector"]
+      severity             = "Medium"
+    }
+
+    transfer-connector-tagged = {
+      description          = "Checks if AWS Transfer Family connectors have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "TRANSFER_CONNECTOR_TAGGED"
+      input_parameters     = var.transfer_connector_tagged_parameters
+      resource_types_scope = ["AWS::Transfer::Connector"]
+      severity             = "Low"
+    }
+
+    transfer-family-server-no-ftp = {
+      description          = "Checks if a server created with AWS Transfer Family uses FTP for endpoint connection. The rule is NON_COMPLIANT if the server protocol for endpoint connection is FTP-enabled."
+      identifier           = "TRANSFER_FAMILY_SERVER_NO_FTP"
+      resource_types_scope = ["AWS::Transfer::Server"]
+      severity             = "Medium"
+    }
+
+    transfer-profile-tagged = {
+      description          = "Checks if AWS Transfer Family profiles have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "TRANSFER_PROFILE_TAGGED"
+      input_parameters     = var.transfer_profile_tagged_parameters
+      resource_types_scope = ["AWS::Transfer::Profile"]
+      severity             = "Low"
+    }
+
+    transfer-workflow-description = {
+      description          = "Checks if AWS Transfer Family workflows have a description. The rule is NON_COMPLIANT if configuration.Description does not exist or is an empty string."
+      identifier           = "TRANSFER_WORKFLOW_DESCRIPTION"
+      resource_types_scope = ["AWS::Transfer::Workflow"]
+      severity             = "Medium"
+    }
+
+    transfer-workflow-tagged = {
+      description          = "Checks if AWS Transfer Family workflows have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "TRANSFER_WORKFLOW_TAGGED"
+      input_parameters     = var.transfer_workflow_tagged_parameters
+      resource_types_scope = ["AWS::Transfer::Workflow"]
+      severity             = "Medium"
+    }
+
+    virtualmachine-last-backup-recovery-point-created = {
+      description          = "Checks if a recovery point was created for AWS Backup-Gateway VirtualMachines. The rule is NON_COMPLIANT if an AWS Backup-Gateway VirtualMachines does not have a corresponding recovery point created within the specified time period."
+      identifier           = "VIRTUALMACHINE_LAST_BACKUP_RECOVERY_POINT_CREATED"
+      input_parameters     = var.virtualmachine_last_backup_recovery_point_created_parameters
+      resource_types_scope = ["AWS::BackupGateway::VirtualMachine"]
+      severity             = "High"
+    }
+
+    virtualmachine-resources-in-logically-air-gapped-vault = {
+      description          = "Checks if AWS Backup-Gateway VirtualMachines are in a logically air-gapped vault. The rule is NON_COMPLIANT if an AWS Backup-Gateway VirtualMachines is not in a logically air-gapped vault within the specified time period."
+      identifier           = "VIRTUALMACHINE_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT"
+      input_parameters     = var.virtualmachine_resources_in_logically_air_gapped_vault_parameters
+      resource_types_scope = ["AWS::BackupGateway::VirtualMachine"]
+      severity             = "Medium"
+    }
+
+    virtualmachine-resources-protected-by-backup-plan = {
+      description          = "Checks if AWS Backup-Gateway VirtualMachines are protected by a backup plan. The rule is NON_COMPLIANT if the Backup-Gateway VirtualMachine is not covered by a backup plan."
+      identifier           = "VIRTUALMACHINE_RESOURCES_PROTECTED_BY_BACKUP_PLAN"
+      input_parameters     = var.virtualmachine_resources_protected_by_backup_plan_parameters
+      resource_types_scope = ["AWS::BackupGateway::VirtualMachine"]
+      severity             = "High"
+    }
+
+    vpc-default-security-group-closed = {
+      description          = "Checks if the default security group of any Amazon Virtual Private Cloud (Amazon VPC) does not allow inbound or outbound traffic. The rule is NON_COMPLIANT if the default security group has one or more inbound or outbound traffic rules."
+      identifier           = "VPC_DEFAULT_SECURITY_GROUP_CLOSED"
+      resource_types_scope = ["AWS::EC2::SecurityGroup"]
+      severity             = "High"
+    }
+
+    vpc-endpoint-enabled = {
+      description          = "Checks if each service specified in the parameter has an Amazon VPC endpoint. The rule is NON_COMPLIANT if Amazon VPC does not have a VPC endpoint created for each specified service. Optionally, you can specify certain VPCs for the rule to check."
+      identifier           = "VPC_ENDPOINT_ENABLED"
+      input_parameters     = var.vpc_endpoint_enabled_parameters
+      resource_types_scope = ["AWS::EC2::VPC"]
+      severity             = "Medium"
+    }
+
+    vpc-flow-logs-enabled = {
+      description          = "Checks if Amazon Virtual Private Cloud (Amazon VPC) flow logs are found and enabled for all Amazon VPCs. The rule is NON_COMPLIANT if flow logs are not enabled for at least one Amazon VPC."
+      identifier           = "VPC_FLOW_LOGS_ENABLED"
+      input_parameters     = var.vpc_flow_logs_enabled_parameters
+      resource_types_scope = ["AWS::EC2::VPC"]
+      severity             = "Medium"
+    }
+
+    vpc-network-acl-unused-check = {
+      description          = "Checks if there are unused network access control lists (network ACLs). The rule is COMPLIANT if each network ACL is associated with a subnet. The rule is NON_COMPLIANT if a network ACL is not associated with a subnet."
+      identifier           = "VPC_NETWORK_ACL_UNUSED_CHECK"
+      resource_types_scope = ["AWS::EC2::NetworkAcl"]
+      severity             = "Low"
+    }
+
+    vpc-peering-dns-resolution-check = {
+      description          = "Checks if DNS resolution from accepter/requester VPC to private IP is enabled. The rule is NON_COMPLIANT if DNS resolution from accepter/requester VPC to private IP is not enabled."
+      identifier           = "VPC_PEERING_DNS_RESOLUTION_CHECK"
+      input_parameters     = var.vpc_peering_dns_resolution_check_parameters
+      resource_types_scope = ["AWS::EC2::VPCPeeringConnection"]
+      severity             = "High"
+    }
+
+    vpc-sg-open-only-to-authorized-ports = {
+      description          = "Checks if security groups allowing unrestricted incoming traffic ( 0.0.0.0/0 or ::/0 ) only allow inbound TCP or UDP connections on authorized ports. The rule is NON_COMPLIANT if such security groups do not have ports specified in the rule parameters."
+      identifier           = "VPC_SG_OPEN_ONLY_TO_AUTHORIZED_PORTS"
+      input_parameters     = var.vpc_sg_open_only_to_authorized_ports_parameters
+      resource_types_scope = ["AWS::EC2::SecurityGroup"]
+      severity             = "High"
+    }
+
+    vpc-sg-port-restriction-check = {
+      description          = "Checks if security groups restrict incoming traffic to restricted ports explicitly from 0.0.0.0/0 or ::/0. The rule is NON_COMPLIANT if security groups allow incoming traffic from 0.0.0.0/0 or ::/0 over TCP/UDP ports 22/3389 or as specified in parameters."
+      identifier           = "VPC_SG_PORT_RESTRICTION_CHECK"
+      input_parameters     = var.vpc_sg_port_restriction_check_parameters
+      resource_types_scope = ["AWS::EC2::SecurityGroup"]
+      severity             = "High"
+    }
+
+    vpc-vpn-2-tunnels-up = {
+      description          = "Checks if both virtual private network (VPN) tunnels provided by AWS Site-to-Site VPN are in UP status. The rule is NON_COMPLIANT if one or both tunnels are in DOWN status."
+      identifier           = "VPC_VPN_2_TUNNELS_UP"
+      resource_types_scope = ["AWS::EC2::VPNConnection"]
+      severity             = "Medium"
+    }
+
+    wafv2-logging-enabled = {
+      description          = "Checks if logging is enabled on AWS WAFv2 regional and global web access control lists (web ACLs). The rule is NON_COMPLIANT if the logging is enabled but the logging destination does not match the value of the parameter."
+      identifier           = "WAFV2_LOGGING_ENABLED"
+      input_parameters     = var.wafv2_logging_enabled_parameters
+      resource_types_scope = ["AWS::WAFv2::WebACL"]
+      severity             = "Low"
+    }
+
+    wafv2-rulegroup-logging-enabled = {
+      description          = "Checks if Amazon CloudWatch security metrics collection on AWS WAFv2 rule groups is enabled. The rule is NON_COMPLIANT if the VisibilityConfig.CloudWatchMetricsEnabled field is set to false."
+      identifier           = "WAFV2_RULEGROUP_LOGGING_ENABLED"
+      resource_types_scope = ["AWS::WAFv2::RuleGroup"]
+      severity             = "Medium"
+    }
+
+    wafv2-rulegroup-not-empty = {
+      description          = "Checks if WAFv2 Rule Groups contain rules. The rule is NON_COMPLIANT if there are no rules in a WAFv2 Rule Group."
+      identifier           = "WAFV2_RULEGROUP_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAFv2::RuleGroup"]
+      severity             = "Medium"
+    }
+
+    wafv2-webacl-not-empty = {
+      description          = "Checks if a WAFv2 Web ACL contains any WAF rules or WAF rule groups. This rule is NON_COMPLIANT if a Web ACL does not contain any WAF rules or WAF rule groups."
+      identifier           = "WAFV2_WEBACL_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAFv2::WebACL"]
+      severity             = "Medium"
+    }
+
+    waf-classic-logging-enabled = {
+      description          = "Checks if logging is enabled on AWS WAF classic global web access control lists (web ACLs). The rule is NON_COMPLIANT for a global web ACL, if it does not have logging enabled."
+      identifier           = "WAF_CLASSIC_LOGGING_ENABLED"
+      input_parameters     = var.waf_classic_logging_enabled_parameters
+      resource_types_scope = ["AWS::WAF::WebACL"]
+      severity             = "Medium"
+    }
+
+    waf-global-rulegroup-not-empty = {
+      description          = "Checks if an AWS WAF Classic rule group contains any rules. The rule is NON_COMPLIANT if there are no rules present within a rule group."
+      identifier           = "WAF_GLOBAL_RULEGROUP_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAF::RuleGroup"]
+      severity             = "Medium"
+    }
+
+    waf-global-rule-not-empty = {
+      description          = "Checks if an AWS WAF global rule contains any conditions. The rule is NON_COMPLIANT if no conditions are present within the WAF global rule."
+      identifier           = "WAF_GLOBAL_RULE_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAF::Rule"]
+      severity             = "Medium"
+    }
+
+    waf-global-webacl-not-empty = {
+      description          = "Checks whether a WAF Global Web ACL contains any WAF rules or rule groups. This rule is NON_COMPLIANT if a Web ACL does not contain any WAF rule or rule group."
+      identifier           = "WAF_GLOBAL_WEBACL_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAF::WebACL"]
+      severity             = "Medium"
+    }
+
+    waf-regional-rulegroup-not-empty = {
+      description          = "Checks if WAF Regional rule groups contain any rules. The rule is NON_COMPLIANT if there are no rules present within a WAF Regional rule group."
+      identifier           = "WAF_REGIONAL_RULEGROUP_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAFRegional::RuleGroup"]
+      severity             = "Medium"
+    }
+
+    waf-regional-rule-not-empty = {
+      description          = "Checks whether WAF regional rule contains conditions. This rule is COMPLIANT if the regional rule contains at least one condition and NON_COMPLIANT otherwise."
+      identifier           = "WAF_REGIONAL_RULE_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAFRegional::Rule"]
+      severity             = "Medium"
+    }
+
+    waf-regional-webacl-not-empty = {
+      description          = "Checks if a WAF regional Web ACL contains any WAF rules or rule groups. The rule is NON_COMPLIANT if there are no WAF rules or rule groups present within a Web ACL."
+      identifier           = "WAF_REGIONAL_WEBACL_NOT_EMPTY"
+      resource_types_scope = ["AWS::WAFRegional::WebACL"]
+      severity             = "Medium"
+    }
+
+    workspaces-connection-alias-tagged = {
+      description          = "Checks if Amazon WorkSpaces connection aliases have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "WORKSPACES_CONNECTION_ALIAS_TAGGED"
+      input_parameters     = var.workspaces_connection_alias_tagged_parameters
+      resource_types_scope = ["AWS::WorkSpaces::ConnectionAlias"]
+      severity             = "Medium"
+    }
+
+    workspaces-root-volume-encryption-enabled = {
+      description          = "Checks if an Amazon WorkSpace volume has the root volume encryption settings set to enabled. This rule is NON_COMPLIANT if the encryption setting is not enabled for the root volume."
+      identifier           = "WORKSPACES_ROOT_VOLUME_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::WorkSpaces::Workspace"]
+      severity             = "Medium"
+    }
+
+    workspaces-user-volume-encryption-enabled = {
+      description          = "Checks if an Amazon WorkSpace volume has the user volume encryption settings set to enabled. This rule is NON_COMPLIANT if the encryption setting is not enabled for the user volume."
+      identifier           = "WORKSPACES_USER_VOLUME_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::WorkSpaces::Workspace"]
+      severity             = "Medium"
+    }
+
+    workspaces-workspace-tagged = {
+      description          = "Checks if Amazon WorkSpaces workspaces have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      identifier           = "WORKSPACES_WORKSPACE_TAGGED"
+      input_parameters     = var.workspaces_workspace_tagged_parameters
+      resource_types_scope = ["AWS::WorkSpaces::Workspace"]
+      severity             = "Medium"
+    }
+
+  }
+}
