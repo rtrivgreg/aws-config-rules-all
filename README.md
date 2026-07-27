@@ -1,3 +1,9 @@
+git status
+git fetch origin
+git pull --rebase origin main
+git push
+
+
 https://github.com/rtrivgreg/config-rules-all.git
 
 python3 ~/gold/py/cpg0727a.py --r ~/gold/json/mrs2.json --t ~/gold/yml/y62-truth-manifest.yml --o ~/output/CP0727.yml
