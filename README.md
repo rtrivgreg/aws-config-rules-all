@@ -5,3 +5,5 @@ python emitter.py \
   --output output/y62-truth-manifest.yaml
 
 python emitter.py \ --format conformance-pack-format.yaml \ --output output/test-pack.yaml \ --rule-limit 2 \ --debug
+
+https://github.com/niaid/terraform-aws-managed-config-rules/blob/main/managed_rules_variables.tf
