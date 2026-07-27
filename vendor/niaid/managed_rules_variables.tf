@@ -2786,7 +2786,7 @@ variable "lambda_function_application_log_level_check_parameters" {
 
 
 variable "lambda_function_settings_check_parameters" {
-  description = "Input parameters for the lambda-function-settings-check rule."
+  description = "Input parameters for the lambda-function-settings-check rule. "
   type = object({
     runtime    = optional(string, null)
     role       = optional(string, null)
