@@ -375,7 +375,7 @@ def main() -> None:
     sot_index = build_sot_index(sot_yaml)
 
     template = generate_conformance_pack(rule_names, sot_yaml, sot_index)
-
+  
     try:
         with args.output.open("w", encoding="utf-8") as f:
             yaml_rt.dump(template, f)
