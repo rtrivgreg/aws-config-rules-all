@@ -1,3 +1,5 @@
+# python3 ~/gold/py/cpg0717g.py --r ~/gold/json/mrs2.json --t ~/gold/yml/y62-truth-manifest.yaml --o ~/output/CP0727.yml
+#
 #!/usr/bin/env python3
 import argparse
 import re

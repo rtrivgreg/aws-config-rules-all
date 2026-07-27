@@ -1,0 +1,572 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Conformance Pack generated from curated list of AWS Config Managed Rules
+Resources:
+  AutoscalingCapacityRebalancingRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-capacity-rebalancing
+      Description: Checks if Capacity Rebalancing is enabled for Amazon EC2 Auto Scaling groups that use multiple instance types. The rule is NON_COMPLIANT if capacity Rebalancing is not enabled.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::AutoScalingGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_CAPACITY_REBALANCING
+
+  AutoscalingGroupElbHealthcheckRequiredRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-group-elb-healthcheck-required
+      Description: Checks if your Amazon EC2 Auto Scaling groups that are associated with an Elastic Load Balancer use Elastic Load Balancing health checks. The rule is NON_COMPLIANT if the Amazon EC2 Auto Scaling groups are not using Elastic Load Balancing health checks.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::AutoScalingGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_GROUP_ELB_HEALTHCHECK_REQUIRED
+
+  AutoscalingLaunchConfigHopLimitRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-launch-config-hop-limit
+      Description: Checks the number of network hops that the metadata token can travel. This rule is NON_COMPLIANT if the Metadata response hop limit is greater than 1.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::LaunchConfiguration
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_LAUNCH_CONFIG_HOP_LIMIT
+
+  AutoscalingLaunchConfigPublicIpDisabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-launch-config-public-ip-disabled
+      Description: Checks if Amazon EC2 Auto Scaling groups have public IP addresses enabled through Launch Configurations. The rule is NON_COMPLIANT if the Launch Configuration for an Amazon EC2 Auto Scaling group has AssociatePublicIpAddress set to true .
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::LaunchConfiguration
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_LAUNCH_CONFIG_PUBLIC_IP_DISABLED
+
+  AutoscalingLaunchTemplateRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-launch-template
+      Description: Checks if an Amazon Elastic Compute Cloud (EC2) Auto Scaling group is created from an EC2 launch template. The rule is NON_COMPLIANT if the scaling group is not created from an EC2 launch template.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::AutoScalingGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_LAUNCH_TEMPLATE
+
+  AutoscalingLaunchconfigRequiresImdsv2Rule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-launchconfig-requires-imdsv2
+      Description: Checks whether only IMDSv2 is enabled. This rule is NON_COMPLIANT if the Metadata version is not included in the launch configuration or if both Metadata V1 and V2 are enabled.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::LaunchConfiguration
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_LAUNCHCONFIG_REQUIRES_IMDSV2
+
+  AutoscalingMultipleAzRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-multiple-az
+      Description: Checks if the Auto Scaling group spans multiple Availability Zones. The rule is NON_COMPLIANT if the Auto Scaling group does not span multiple Availability Zones.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::AutoScalingGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_MULTIPLE_AZ
+      InputParameters:
+        minAvailabilityZones: optional_string
+
+  AutoscalingMultipleInstanceTypesRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: autoscaling-multiple-instance-types
+      Description: Checks if an Amazon EC2 Auto Scaling group uses multiple instance types. The rule is NON_COMPLIANT if the Amazon EC2 Auto Scaling group has only one instance type defined. This rule does not evaluate attribute-based instance types.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AutoScaling::AutoScalingGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: AUTOSCALING_MULTIPLE_INSTANCE_TYPES
+
+  CloudwatchAlarmResourceCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudwatch-alarm-resource-check
+      Description: Checks if a resource type has a CloudWatch alarm for the named metric. For resource type, you can specify EBS volumes, EC2 instances, Amazon RDS clusters, or S3 buckets. The rule is COMPLIANT if the named metric has a resource ID and CloudWatch alarm.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+          - AWS::RDS::DBCluster
+          - AWS::S3::Bucket
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDWATCH_ALARM_RESOURCE_CHECK
+      InputParameters:
+        resourceType: optional_string
+        metricName: optional_string
+
+  EbsInBackupPlanRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-in-backup-plan
+      Description: Check if Amazon Elastic Block Store (Amazon EBS) volumes are added in backup plans of AWS Backup. The rule is NON_COMPLIANT if Amazon EBS volumes are not included in backup plans.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_IN_BACKUP_PLAN
+
+  EbsOptimizedInstanceRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-optimized-instance
+      Description: Checks if Amazon EBS optimization is enabled for your Amazon Elastic Compute Cloud (Amazon EC2) instances that can be Amazon EBS-optimized. The rule is NON_COMPLIANT if EBS optimization is not enabled for an Amazon EC2 instance that can be EBS-optimized.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_OPTIMIZED_INSTANCE
+
+  EbsResourcesProtectedByBackupPlanRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-resources-protected-by-backup-plan
+      Description: Checks if Amazon Elastic Block Store (Amazon EBS) volumes are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon EBS volume is not covered by a backup plan.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+      InputParameters:
+        resourceTags: optional_tag_list
+        resourceId: optional_string
+        crossRegionList: optional_string
+        crossAccountList: optional_string
+        maxRetentionDays: 0
+        minRetentionDays: 0
+        backupVaultLockCheck: optional_string
+
+  EbsSnapshotPublicRestorableCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-snapshot-public-restorable-check
+      Description: Checks if Amazon Elastic Block Store (Amazon EBS) snapshots are not publicly restorable. The rule is NON_COMPLIANT if one or more individual snapshots with RestorableByUserIds field are set to all.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_SNAPSHOT_PUBLIC_RESTORABLE_CHECK
+
+  Ec2CapacityReservationTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-capacity-reservation-tagged
+      Description: 'Checks if Amazon EC2 capacity reservations have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::CapacityReservation
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_CAPACITY_RESERVATION_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2CarrierGatewayTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-carrier-gateway-tagged
+      Description: 'Checks if Amazon EC2 carrier gateways have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::CarrierGateway
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_CARRIER_GATEWAY_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2ClientVpnConnectionLogEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-client-vpn-connection-log-enabled
+      Description: Checks if AWS Client VPN endpoint has client connection logging enabled. The rule is NON_COMPLIANT if Configuration.ConnectionLogOptions.Enabled is set to false.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::ClientVpnEndpoint
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_CLIENT_VPN_CONNECTION_LOG_ENABLED
+
+  Ec2ClientVpnEndpointTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-client-vpn-endpoint-tagged
+      Description: 'Checks if Amazon EC2 client VPN endpoints have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::ClientVpnEndpoint
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_CLIENT_VPN_ENDPOINT_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2ClientVpnNotAuthorizeAllRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-client-vpn-not-authorize-all
+      Description: Checks if the AWS Client VPN authorization rules authorizes connection access for all clients. The rule is NON_COMPLIANT if AccessAll is present and set to true.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::ClientVpnEndpoint
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_CLIENT_VPN_NOT_AUTHORIZE_ALL
+
+  Ec2DhcpOptionsTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-dhcp-options-tagged
+      Description: 'Checks if Amazon EC2 DHCP options have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::DHCPOptions
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_DHCP_OPTIONS_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2EbsEncryptionByDefaultRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-ebs-encryption-by-default
+      Description: Checks if Amazon Elastic Block Store (EBS) encryption is enabled by default. The rule is NON_COMPLIANT if the encryption is not enabled.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_EBS_ENCRYPTION_BY_DEFAULT
+
+  Ec2EnisSourceDestinationCheckEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-enis-source-destination-check-enabled
+      Description: Checks if EC2 ENIs managed by users have source/destination check enabled. The rule is NON_COMPLIANT if source/destination check is disabled on these ENIs for lambda , aws_codestar_connections_managed , branch , efa , interface , and quicksight .
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::NetworkInterface
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_ENIS_SOURCE_DESTINATION_CHECK_ENABLED
+
+  Ec2FleetTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-fleet-tagged
+      Description: 'Checks if Amazon EC2 fleets have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::EC2Fleet
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_FLEET_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2Imdsv2CheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-imdsv2-check
+      Description: Checks whether your Amazon Elastic Compute Cloud (Amazon EC2) instance metadata version is configured with Instance Metadata Service Version 2 (IMDSv2). The rule is NON_COMPLIANT if the HttpTokens is set to optional.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_IMDSV2_CHECK
+
+  Ec2InstanceDetailedMonitoringEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-detailed-monitoring-enabled
+      Description: Checks if detailed monitoring is enabled for EC2 instances. The rule is NON_COMPLIANT if detailed monitoring is not enabled.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_DETAILED_MONITORING_ENABLED
+
+  Ec2InstanceLaunchedWithAllowedAmiRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-launched-with-allowed-ami
+      Description: Checks if running or stopped EC2 instances were launched with Amazon Machine Images (AMIs) that meet your Allowed AMIs criteria. The rule is NON_COMPLIANT if an AMI doesn t meet the Allowed AMIs criteria and the Allowed AMIs settings isn t disabled.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_LAUNCHED_WITH_ALLOWED_AMI
+      InputParameters:
+        InstanceStateNameList: optional_string
+
+  Ec2InstanceManagedBySystemsManagerRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-managed-by-systems-manager
+      Description: Checks if your Amazon EC2 instances are managed by AWS Systems Manager Agent (SSM Agent). The rule is NON_COMPLIANT if an EC2 instance is running and the SSM Agent is stopped, or if an EC2 instance is running and the SSM Agent is terminated.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_MANAGED_BY_SSM
+
+  Ec2InstanceMultipleEniCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-multiple-eni-check
+      Description: Checks if Amazon Elastic Compute Cloud (Amazon EC2) uses multiple Elastic Network Interfaces (ENIs) or Elastic Fabric Adapters (EFAs). The rule is NON_COMPLIANT an Amazon EC2 instance use multiple network interfaces.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_MULTIPLE_ENI_CHECK
+      InputParameters:
+        NetworkInterfaceIds: optional_ids_csv
+
+  Ec2InstanceNoPublicIpRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-no-public-ip
+      Description: Checks whether Amazon Elastic Compute Cloud (Amazon EC2) instances have a public IP association. The rule is NON_COMPLIANT if the publicIp field is present in the Amazon EC2 instance configuration item. This rule applies only to IPv4.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_NO_PUBLIC_IP
+
+  Ec2InstanceProfileAttachedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instance-profile-attached
+      Description: Checks if an EC2 instance has an AWS Identity and Access Management (IAM) profile attached to it. The rule is NON_COMPLIANT if no IAM profile is attached to the EC2 instance.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_INSTANCE_PROFILE_ATTACHED
+      InputParameters:
+        IamInstanceProfileArnList: optional_arn
+
+  Ec2InstancesInVpcRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-instances-in-vpc
+      Description: Checks if your EC2 instances belong to a virtual private cloud (VPC). Optionally, you can specify the VPC ID to associate with your instances.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: INSTANCES_IN_VPC
+      InputParameters:
+        vpcId: optional_string
+
+  Ec2IpamscopeTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-ipamscope-tagged
+      Description: 'Checks if Amazon EC2 IPAM Scopes have tags. Optionally, required tag keys can be specified. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::IPAMScope
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_IPAMSCOPE_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2LastBackupRecoveryPointCreatedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-last-backup-recovery-point-created
+      Description: Checks if a recovery point was created for Amazon Elastic Compute Cloud (Amazon EC2) instances. The rule is NON_COMPLIANT if the Amazon EC2 instance does not have a corresponding recovery point created within the specified time period.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAST_BACKUP_RECOVERY_POINT_CREATED
+      InputParameters:
+        recoveryPointAgeValue: '1'
+        recoveryPointAgeUnit: days
+
+  Ec2LaunchTemplateImdsv2CheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-launch-template-imdsv2-check
+      Description: Checks if the currently set default version of an Amazon EC2 Launch Template requires new launched instances to use V2 of the Amazon EC2 Instance Metadata Service (IMDSv2). The rule is NON_COMPLIANT if Metadata version is not specified as V2 (IMDSv2).
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::LaunchTemplate
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCH_TEMPLATE_IMDSV2_CHECK
+
+  Ec2LaunchTemplatePublicIpDisabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-launch-template-public-ip-disabled
+      Description: Checks if Amazon EC2 Launch Templates are set to assign public IP addresses to Network Interfaces. The rule is NON_COMPLIANT if the default version of an EC2 Launch Template has at least 1 Network Interface with AssociatePublicIpAddress set to true .
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::LaunchTemplate
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCH_TEMPLATE_PUBLIC_IP_DISABLED
+      InputParameters:
+        exemptedLaunchTemplates: optional_string
+
+  Ec2LaunchTemplateTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-launch-template-tagged
+      Description: 'Checks if Amazon EC2 launch templates have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::LaunchTemplate
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCH_TEMPLATE_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2LaunchTemplatesEbsVolumeEncryptedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-launch-templates-ebs-volume-encrypted
+      Description: Checks whether Amazon EC2 launch templates have encryption enabled for all attached EBS volumes.The rule is NON_COMPLIANT if encryption is set to False for any EBS volume configured in the launch template.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::LaunchTemplate
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCH_TEMPLATES_EBS_VOLUME_ENCRYPTED
+
+  Ec2LaunchtemplateEbsEncryptedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-launchtemplate-ebs-encrypted
+      Description: Checks if Amazon EC2 launch template resources have encrypted EBS volumes. The rule is NON_COMPLIANT if any EBS volumes are not encrypted. The rule will only check the default version of the LaunchTemplate.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::LaunchTemplate
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCHTEMPLATE_EBS_ENCRYPTED
+
+  Ec2ManagedinstanceApplicationsBlacklistedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-applications-blacklisted
+      Description: Checks if none of the specified applications are installed on the instance. Optionally, specify the version. Newer versions will not be denylisted. Optionally, specify the platform to apply the rule only to instances running that platform.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_APPLICATIONS_BLACKLISTED
+      InputParameters:
+        applicationNames: optional_string
+        platformType: optional_string
+
+  Ec2ManagedinstanceApplicationsRequiredRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-applications-required
+      Description: Checks if all of the specified applications are installed on the instance. Optionally, specify the minimum acceptable version. You can also specify the platform to apply the rule only to instances running that platform.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_APPLICATIONS_REQUIRED
+      InputParameters:
+        applicationNames: optional_string
+        platformType: optional_string
+
+  Ec2ManagedinstanceAssociationComplianceStatusCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-association-compliance-status-check
+      Description: Checks if the status of the AWS Systems Manager association compliance is COMPLIANT or NON_COMPLIANT after the association execution on the instance. The rule is compliant if the field status is COMPLIANT. For more information about associations, see...
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::AssociationCompliance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_ASSOCIATION_COMPLIANCE_STATUS_CHECK
+
+  Ec2ManagedinstanceInventoryBlacklistedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-inventory-blacklisted
+      Description: Checks whether instances managed by Amazon EC2 Systems Manager are configured to collect blacklisted inventory types.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_INVENTORY_BLACKLISTED
+      InputParameters:
+        inventoryNames: optional_string
+        platformType: optional_string
+
+  Ec2ManagedinstancePatchComplianceStatusCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-patch-compliance-status-check
+      Description: Checks if the compliance status of the AWS Systems Manager patch compliance is COMPLIANT or NON_COMPLIANT after the patch installation on the instance. The rule is compliant if the field status is COMPLIANT.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::PatchCompliance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_PATCH_COMPLIANCE_STATUS_CHECK
+
+  Ec2ManagedinstancePlatformCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-managedinstance-platform-check
+      Description: Checks whether EC2 managed instances have the desired configurations.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::SSM::ManagedInstanceInventory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MANAGEDINSTANCE_PLATFORM_CHECK
+      InputParameters:
+        platformType: optional_string
+        platformVersion: optional_string
+        agentVersion: 0
+        platformName: optional_string
+
+  

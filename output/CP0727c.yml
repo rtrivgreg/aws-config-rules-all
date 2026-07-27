@@ -1,0 +1,354 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Conformance Pack generated from curated list of AWS Config Managed Rules
+Resources:
+  
+  Ec2MeetsRestoreTimeTargetRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-meets-restore-time-target
+      Description: Checks if the restore time of Amazon Elastic Compute Cloud (Amazon EC2) instances meets the specified duration. The rule is NON_COMPLIANT if LatestRestoreExecutionTimeMinutes of an Amazon EC2 instance is greater than maxRestoreTime minutes.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_MEETS_RESTORE_TIME_TARGET
+      InputParameters:
+        maxRestoreTime: optional_string
+        resourceTags: optional_tag_list
+        resourceId: optional_string
+
+  Ec2NetworkInsightsAccessScopeAnalysisTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-network-insights-access-scope-analysis-tagged
+      Description: 'Checks if Amazon EC2 network insights access scope analyses have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::NetworkInsightsAccessScopeAnalysis
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_NETWORK_INSIGHTS_ACCESS_SCOPE_ANALYSIS_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2NetworkInsightsAccessScopeTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-network-insights-access-scope-tagged
+      Description: 'Checks if Amazon EC2 network insights access scopes have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::NetworkInsightsAccessScope
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_NETWORK_INSIGHTS_ACCESS_SCOPE_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2NetworkInsightsAnalysisTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-network-insights-analysis-tagged
+      Description: 'Checks if Amazon EC2 network insights analyses have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::NetworkInsightsAnalysis
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_NETWORK_INSIGHTS_ANALYSIS_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2NetworkInsightsPathTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-network-insights-path-tagged
+      Description: 'Checks if Amazon EC2 network insights paths have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::NetworkInsightsPath
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_NETWORK_INSIGHTS_PATH_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2NoAmazonKeyPairRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-no-amazon-key-pair
+      Description: Checks if running Amazon Elastic Compute Cloud (EC2) instances are launched using amazon key pairs. The rule is NON_COMPLIANT if a running EC2 instance is launched with a key pair.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_NO_AMAZON_KEY_PAIR
+
+  Ec2PrefixListTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-prefix-list-tagged
+      Description: 'Checks if Amazon EC2 managed prefix lists have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::PrefixList
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_PREFIX_LIST_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2ResourcesInLogicallyAirGappedVaultRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-resources-in-logically-air-gapped-vault
+      Description: Checks if Amazon Elastic Compute Cloud (Amazon EC2) instances are in a logically air-gapped vault. The rule is NON_COMPLIANT if an Amazon EC2 instance is not in a logically air-gapped vault within the specified time period.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
+      InputParameters:
+        recoveryPointAgeValue: '1'
+        recoveryPointAgeUnit: days
+
+  Ec2ResourcesProtectedByBackupPlanRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-resources-protected-by-backup-plan
+      Description: Checks if Amazon Elastic Compute Cloud (Amazon EC2) instances are protected by a backup plan. The rule is NON_COMPLIANT if the Amazon EC2 instance is not covered by a backup plan.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+      InputParameters:
+        resourceTags: optional_tag_list
+        resourceId: optional_string
+        crossRegionList: optional_string
+        crossAccountList: optional_string
+        maxRetentionDays: 0
+        minRetentionDays: 0
+        backupVaultLockCheck: optional_string
+
+  Ec2SecurityGroupAttachedToEniRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-security-group-attached-to-eni
+      Description: Checks if non-default security groups are attached to elastic network interfaces. The rule is NON_COMPLIANT if the security group is not associated with a network interface.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::SecurityGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_SECURITY_GROUP_ATTACHED_TO_ENI
+
+  Ec2SecurityGroupAttachedToEniPeriodicRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-security-group-attached-to-eni-periodic
+      Description: Checks if non-default security groups are attached to Elastic network interfaces (ENIs). The rule is NON_COMPLIANT if the security group is not associated with an ENI. Security groups not owned by the calling account evaluate as NOT_APPLICABLE.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::SecurityGroup
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_SECURITY_GROUP_ATTACHED_TO_ENI_PERIODIC
+
+  Ec2SpotFleetRequestCtEncryptionAtRestRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-spot-fleet-request-ct-encryption-at-rest
+      Description: Checks if Amazon EC2 Spot Fleet request launch parameters set encrypted to True for attached EBS volumes. The rule is NON_COMPLIANT if any EBS volumes has encrypted set to False. The rule does not evaluate spot fleet requests using launch templates.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::SpotFleet
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_SPOT_FLEET_REQUEST_CT_ENCRYPTION_AT_REST
+
+  Ec2StoppedInstanceRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-stopped-instance
+      Description: Checks if there are Amazon Elastic Compute Cloud (Amazon EC2) instances stopped for more than the allowed number of days. The rule is NON_COMPLIANT if the state of an Amazon EC2 instance has been stopped for longer than the allowed number of days, or if...
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_STOPPED_INSTANCE
+      InputParameters:
+        AllowedDays: '30'
+
+  Ec2TokenHopLimitCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-token-hop-limit-check
+      Description: Checks if an Amazon Elastic Compute Cloud (EC2) instance metadata has a specified token hop limit that is below the desired limit. The rule is NON_COMPLIANT for an instance if it has a hop limit value above the intended limit.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TOKEN_HOP_LIMIT_CHECK
+      InputParameters:
+        tokenHopLimit: optional_string
+
+  Ec2TrafficMirrorFilterDescriptionRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-traffic-mirror-filter-description
+      Description: Checks if Amazon EC2 traffic mirror filters have a description. The rule is NON_COMPLIANT if configuration.Description does not exist.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TrafficMirrorFilter
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRAFFIC_MIRROR_FILTER_DESCRIPTION
+
+  Ec2TrafficMirrorFilterTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-traffic-mirror-filter-tagged
+      Description: 'Checks if Amazon EC2 traffic mirror filters have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TrafficMirrorFilter
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRAFFIC_MIRROR_FILTER_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2TrafficMirrorSessionDescriptionRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-traffic-mirror-session-description
+      Description: Checks if Amazon EC2 traffic mirror sessions have a description. The rule is NON_COMPLIANT if configuration.Description does not exist.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TrafficMirrorSession
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRAFFIC_MIRROR_SESSION_DESCRIPTION
+
+  Ec2TrafficMirrorSessionTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-traffic-mirror-session-tagged
+      Description: 'Checks if Amazon EC2 traffic mirror sessions have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TrafficMirrorSession
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRAFFIC_MIRROR_SESSION_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2TrafficMirrorTargetDescriptionRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-traffic-mirror-target-description
+      Description: Checks if Amazon EC2 traffic mirror targets have a description. The rule is NON_COMPLIANT if configuration.Description does not exist.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TrafficMirrorTarget
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRAFFIC_MIRROR_TARGET_DESCRIPTION
+
+  Ec2TrafficMirrorTargetTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-traffic-mirror-target-tagged
+      Description: 'Checks if Amazon EC2 traffic mirror targets have tags. Optionally, you can specify tag keys for the rule. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TrafficMirrorTarget
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRAFFIC_MIRROR_TARGET_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2TransitGatewayAutoVpcAttachDisabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-transit-gateway-auto-vpc-attach-disabled
+      Description: Checks if Amazon Elastic Compute Cloud (Amazon EC2) Transit Gateways have AutoAcceptSharedAttachments enabled. The rule is NON_COMPLIANT for a Transit Gateway if AutoAcceptSharedAttachments is set to enable .
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TransitGateway
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRANSIT_GATEWAY_AUTO_VPC_ATTACH_DISABLED
+
+  Ec2TransitGatewayMulticastDomainTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-transit-gateway-multicast-domain-tagged
+      Description: 'Checks if Amazon EC2 transit gateway multicast domains have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::TransitGatewayMulticastDomain
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_TRANSIT_GATEWAY_MULTICAST_DOMAIN_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
+  Ec2VolumeInuseCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-volume-inuse-check
+      Description: Checks if EBS volumes are attached to EC2 instances. Optionally checks if EBS volumes are marked for deletion when an instance is terminated.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::Volume
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_VOLUME_INUSE_CHECK
+      InputParameters:
+        deleteOnTermination: optional_string
+
+  Ec2VpnConnectionIkeVersionCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-vpn-connection-ike-version-check
+      Description: Verifies that Amazon EC2 VPN connection tunnels are restricted to IKEv2.
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_VPN_CONNECTION_IKE_VERSION_CHECK
+
+  Ec2VpnConnectionLoggingEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-vpn-connection-logging-enabled
+      Description: Checks if AWS Site-to-Site VPN connections have Amazon CloudWatch logging enabled for both tunnels. The rule is NON_COMPLIANT if a Site-to-Site VPN connection does not have CloudWatch logging enabled for either or both tunnels.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::VPNConnection
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_VPN_CONNECTION_LOGGING_ENABLED
+
+  Ec2VpnConnectionTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-vpn-connection-tagged
+      Description: 'Checks if Amazon EC2 VPN connections have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: .'
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::EC2::VPNConnection
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_VPN_CONNECTION_TAGGED
+      InputParameters:
+        requiredKeyTags: optional_tag_list
+
