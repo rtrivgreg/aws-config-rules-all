@@ -4,6 +4,7 @@ git pull --rebase origin main
 git push
 
 
+https://github.com/niaid/terraform-aws-managed-config-rules.git
 
 python3 /home/cloudshell-user/gold/py/upack.py a1 /home/cloudshell-user/output/CP0727m-part01.yml
 
