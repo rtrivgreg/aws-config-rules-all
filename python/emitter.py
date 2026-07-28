@@ -244,8 +244,9 @@ def placeholder_for_key(key: str) -> str:
 
 def render_input_parameters(rule: dict, param_defs: dict) -> list[str]:
     input_var = rule.get("input_var")
+
     if not input_var:
-        return []
+        return ["      InputParameters: {}"]
 
     var_def = param_defs.get(input_var)
     if not var_def:
@@ -254,29 +255,33 @@ def render_input_parameters(rule: dict, param_defs: dict) -> list[str]:
     defaults = var_def.get("default", {})
     attrs = var_def.get("attrs", [])
 
-    if defaults:
-        lines = ["      InputParameters:"]
-        for key, value in defaults.items():
-            rendered = yaml_scalar(value)
-            if rendered is None:
-                rendered = placeholder_for_key(key)
-            lines.append(f"        {key}: {rendered}")
-        return lines
+    required_keys = set(defaults.keys())
+    optional_attrs = []
+    for attr in attrs:
+        if attr["name"] not in required_keys:
+            optional_attrs.append(attr)
 
-    if attrs:
-        lines = ["      InputParameters:"]
-        for attr in attrs:
-            default = attr.get("default")
-            if default is not None and clean_hcl_string(default).lower() != "null":
-                rendered = yaml_scalar(default)
-            else:
-                rendered = placeholder_for_key(attr["name"])
-            lines.append(f"        {attr['name']}: {rendered}")
-        return lines
+    if not required_keys and not optional_attrs:
+        return ["      InputParameters: {}"]
 
-    return ["      InputParameters: {}"]
+    lines = ["      InputParameters:"]
 
+    for key, value in defaults.items():
+        rendered = yaml_scalar(value)
+        if rendered is None:
+            rendered = placeholder_for_key(key)
+        lines.append(f"        {key}: {rendered}")
 
+    for attr in optional_attrs:
+        default = attr.get("default")
+        if default is not None and clean_hcl_string(default).lower() != "null":
+            rendered = yaml_scalar(default)
+        else:
+            rendered = placeholder_for_key(attr["name"])
+        lines.append(f"        # {attr['name']}: {rendered}")
+
+    return lines
+ 
 def render_rule(rule: dict, param_defs: dict) -> list[str]:
     lines = []
     lines.append(f"  {logical_name(rule['name'])}:")

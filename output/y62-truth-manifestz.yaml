@@ -13,7 +13,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: ACCESS_KEYS_ROTATED
       InputParameters:
-        # maxAccessKeyAge: "90"
+        maxAccessKeyAge: "90"
 
   AccountPartOfOrganizationsRule:
     Type: AWS::Config::ConfigRule
@@ -52,7 +52,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: ACM_CERTIFICATE_EXPIRATION_CHECK
       InputParameters:
-        # daysToExpiration: "14"
+        daysToExpiration: "14"
 
   AcmCertificateRsaCheckRule:
     Type: AWS::Config::ConfigRule
@@ -536,7 +536,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: API_GW_EXECUTION_LOGGING_ENABLED
       InputParameters:
-        # loggingLevel: "ERROR,INFO"
+        loggingLevel: "ERROR,INFO"
 
   ApiGwRestApiTaggedRule:
     Type: AWS::Config::ConfigRule
@@ -672,7 +672,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: APPCONFIG_DEPLOYMENT_STRATEGY_MINIMUM_FINAL_BAKE_TIME
       InputParameters:
-        # minBakeTime: "30"
+        minBakeTime: "30"
 
   AppconfigDeploymentStrategyReplicateToSsmRule:
     Type: AWS::Config::ConfigRule
@@ -699,7 +699,8 @@ Resources:
         Owner: AWS
         SourceIdentifier: APPCONFIG_DEPLOYMENT_STRATEGY_TAGGED
       InputParameters:
-        # includePredefinedSystemResources: false
+        includePredefinedSystemResources: false
+        # requiredKeyTags: "optional_tag_list"
 
   AppconfigEnvironmentDescriptionRule:
     Type: AWS::Config::ConfigRule
@@ -1134,7 +1135,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: APPROVED_AMIS_BY_TAG
       InputParameters:
-        # amisByTagKeyAndValue: "tag-key:tag-value,other-tag-key"
+        amisByTagKeyAndValue: "tag-key:tag-value,other-tag-key"
 
   ApprunnerServiceInVpcRule:
     Type: AWS::Config::ConfigRule
@@ -1482,8 +1483,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: AURORA_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   AuroraMeetsRestoreTimeTargetRule:
     Type: AWS::Config::ConfigRule
@@ -1540,8 +1543,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: AURORA_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   AuroraResourcesProtectedByBackupPlanRule:
     Type: AWS::Config::ConfigRule
@@ -1680,9 +1685,9 @@ Resources:
         Owner: AWS
         SourceIdentifier: BACKUP_PLAN_MIN_FREQUENCY_AND_MIN_RETENTION_CHECK
       InputParameters:
-        # requiredFrequencyValue: "1"
-        # requiredRetentionDays: "35"
-        # requiredFrequencyUnit: "days"
+        requiredFrequencyValue: "1"
+        requiredRetentionDays: "35"
+        requiredFrequencyUnit: "days"
 
   BackupRecoveryPointEncryptedRule:
     Type: AWS::Config::ConfigRule
@@ -1723,7 +1728,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: BACKUP_RECOVERY_POINT_MINIMUM_RETENTION_CHECK
       InputParameters:
-        # requiredRetentionDays: "35"
+        requiredRetentionDays: "35"
 
   BatchComputeEnvironmentEnabledRule:
     Type: AWS::Config::ConfigRule
@@ -2283,9 +2288,14 @@ Resources:
         Owner: AWS
         SourceIdentifier: CLOUDWATCH_ALARM_ACTION_CHECK
       InputParameters:
-        # okActionRequired: false
-        # insufficientDataActionRequired: true
-        # alarmActionRequired: true
+        okActionRequired: false
+        insufficientDataActionRequired: true
+        alarmActionRequired: true
+        # action1: "optional_string"
+        # action2: "optional_string"
+        # action3: "optional_string"
+        # action4: "optional_string"
+        # action5: "optional_string"
 
   CloudwatchAlarmActionEnabledCheckRule:
     Type: AWS::Config::ConfigRule
@@ -2343,7 +2353,12 @@ Resources:
         Owner: AWS
         SourceIdentifier: CLOUDWATCH_ALARM_SETTINGS_CHECK
       InputParameters:
-        # period: "300"
+        period: "300"
+        # metricName: "optional_string"
+        # statistic: "optional_string"
+        # comparisonOperator: "optional_string"
+        # threshold: 0
+        # evaluationPeriods: 0
 
   CloudwatchLogGroupEncryptedRule:
     Type: AWS::Config::ConfigRule
@@ -2627,8 +2642,8 @@ Resources:
         Owner: AWS
         SourceIdentifier: CODEDEPLOY_EC2_MINIMUM_HEALTHY_HOSTS_CONFIGURED
       InputParameters:
-        # minimumHealthyHostsFleetPercent: "66"
-        # minimumHealthyHostsHostCount: "1"
+        minimumHealthyHostsFleetPercent: "66"
+        minimumHealthyHostsHostCount: "1"
 
   CodedeployLambdaAllatonceTrafficShiftDisabledRule:
     Type: AWS::Config::ConfigRule
@@ -2697,7 +2712,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: CODEPIPELINE_REGION_FANOUT_CHECK
       InputParameters:
-        # regionFanoutFactor: "3"
+        regionFanoutFactor: "3"
 
   CognitoIdentityPoolUnauthenticatedLoginsRule:
     Type: AWS::Config::ConfigRule
@@ -2790,12 +2805,12 @@ Resources:
         Owner: AWS
         SourceIdentifier: COGNITO_USER_POOL_PASSWORD_POLICY_CHECK
       InputParameters:
-        # requireSymbols: true
-        # temporaryPasswordValidity: "7"
-        # minLength: "8"
-        # requireNumbers: true
-        # requireUppercase: true
-        # requireLowercase: true
+        requireSymbols: true
+        temporaryPasswordValidity: "7"
+        minLength: "8"
+        requireNumbers: true
+        requireUppercase: true
+        requireLowercase: true
 
   CognitoUserPoolTaggedRule:
     Type: AWS::Config::ConfigRule
@@ -3345,8 +3360,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: DYNAMODB_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   DynamodbMeetsRestoreTimeTargetRule:
     Type: AWS::Config::ConfigRule
@@ -3446,8 +3463,8 @@ Resources:
         Owner: AWS
         SourceIdentifier: DYNAMODB_THROUGHPUT_LIMIT_CHECK
       InputParameters:
-        # accountRCUThresholdPercentage: "80"
-        # accountWCUThresholdPercentage: "80"
+        accountRCUThresholdPercentage: "80"
+        accountWCUThresholdPercentage: "80"
 
   EbsInBackupPlanRule:
     Type: AWS::Config::ConfigRule
@@ -3474,8 +3491,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: EBS_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   EbsMeetsRestoreTimeTargetRule:
     Type: AWS::Config::ConfigRule
@@ -3518,8 +3537,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: EBS_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   EbsResourcesProtectedByBackupPlanRule:
     Type: AWS::Config::ConfigRule
@@ -3804,8 +3825,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: EC2_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   Ec2LaunchtemplateEbsEncryptedRule:
     Type: AWS::Config::ConfigRule
@@ -4086,8 +4109,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: EC2_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   Ec2ResourcesProtectedByBackupPlanRule:
     Type: AWS::Config::ConfigRule
@@ -4160,7 +4185,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: EC2_STOPPED_INSTANCE
       InputParameters:
-        # AllowedDays: "30"
+        AllowedDays: "30"
 
   Ec2TokenHopLimitCheckRule:
     Type: AWS::Config::ConfigRule
@@ -4740,8 +4765,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: EFS_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   EfsMeetsRestoreTimeTargetRule:
     Type: AWS::Config::ConfigRule
@@ -4784,8 +4811,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: EFS_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   EfsResourcesProtectedByBackupPlanRule:
     Type: AWS::Config::ConfigRule
@@ -4998,7 +5027,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: ELASTICACHE_REDIS_CLUSTER_AUTOMATIC_BACKUP_CHECK
       InputParameters:
-        # snapshotRetentionPeriod: "15"
+        snapshotRetentionPeriod: "15"
 
   ElasticacheReplGrpAutoFailoverEnabledRule:
     Type: AWS::Config::ConfigRule
@@ -5771,8 +5800,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: FSX_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   FsxLustreCopyTagsToBackupsRule:
     Type: AWS::Config::ConfigRule
@@ -6126,9 +6157,9 @@ Resources:
         Owner: AWS
         SourceIdentifier: GUARDDUTY_NON_ARCHIVED_FINDINGS
       InputParameters:
-        # daysLowSev: "30"
-        # daysMediumSev: "7"
-        # daysHighSev: "1"
+        daysLowSev: "30"
+        daysMediumSev: "7"
+        daysHighSev: "1"
 
   GuarddutyRdsProtectionEnabledRule:
     Type: AWS::Config::ConfigRule
@@ -6293,13 +6324,13 @@ Resources:
         Owner: AWS
         SourceIdentifier: IAM_PASSWORD_POLICY
       InputParameters:
-        # RequireUppercaseCharacters: true
-        # RequireLowercaseCharacters: true
-        # RequireSymbols: true
-        # RequireNumbers: true
-        # MinimumPasswordLength: "14"
-        # PasswordReusePrevention: "24"
-        # MaxPasswordAge: "90"
+        RequireUppercaseCharacters: true
+        RequireLowercaseCharacters: true
+        RequireSymbols: true
+        RequireNumbers: true
+        MinimumPasswordLength: "14"
+        PasswordReusePrevention: "24"
+        MaxPasswordAge: "90"
 
   IamPolicyBlacklistedCheckRule:
     Type: AWS::Config::ConfigRule
@@ -6315,7 +6346,8 @@ Resources:
         Owner: AWS
         SourceIdentifier: IAM_POLICY_BLACKLISTED_CHECK
       InputParameters:
-        # policyArns: "arn:aws:iam::aws:policy/AdministratorAccess"
+        policyArns: "arn:aws:iam::aws:policy/AdministratorAccess"
+        # exceptionList: "optional_string"
 
   IamPolicyDescriptionRule:
     Type: AWS::Config::ConfigRule
@@ -6490,7 +6522,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: IAM_USER_UNUSED_CREDENTIALS_CHECK
       InputParameters:
-        # maxCredentialUsageAge: "90"
+        maxCredentialUsageAge: "90"
 
   ImagebuilderDistributionconfigurationTaggedRule:
     Type: AWS::Config::ConfigRule
@@ -7246,8 +7278,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: LAMBDA_FUNCTION_SETTINGS_CHECK
       InputParameters:
-        # memorySize: "128"
-        # timeout: "3"
+        memorySize: "128"
+        timeout: "3"
+        # runtime: "optional_string"
+        # role: "optional_string"
 
   LambdaFunctionSystemLogLevelCheckRule:
     Type: AWS::Config::ConfigRule
@@ -8276,7 +8310,7 @@ Resources:
         Owner: AWS
         SourceIdentifier: RDS_CLUSTER_BACKUP_RETENTION_CHECK
       InputParameters:
-        # minimumBackupRetentionPeriod: "7"
+        minimumBackupRetentionPeriod: "7"
 
   RdsClusterDefaultAdminCheckRule:
     Type: AWS::Config::ConfigRule
@@ -8491,8 +8525,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: RDS_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   RdsLoggingEnabledRule:
     Type: AWS::Config::ConfigRule
@@ -8773,9 +8809,9 @@ Resources:
         Owner: AWS
         SourceIdentifier: REDSHIFT_CLUSTER_CONFIGURATION_CHECK
       InputParameters:
-        # loggingEnabled: true
-        # clusterDbEncrypted: true
-        # nodeTypes: "dc1.large"
+        loggingEnabled: true
+        clusterDbEncrypted: true
+        nodeTypes: "dc1.large"
 
   RedshiftClusterKmsEnabledRule:
     Type: AWS::Config::ConfigRule
@@ -8803,8 +8839,9 @@ Resources:
         Owner: AWS
         SourceIdentifier: REDSHIFT_CLUSTER_MAINTENANCESETTINGS_CHECK
       InputParameters:
-        # allowVersionUpgrade: true
-        # automatedSnapshotRetentionPeriod: "1"
+        allowVersionUpgrade: true
+        automatedSnapshotRetentionPeriod: "1"
+        # preferredMaintenanceWindow: "optional_string"
 
   RedshiftClusterMultiAzEnabledRule:
     Type: AWS::Config::ConfigRule
@@ -9061,7 +9098,18 @@ Resources:
         Owner: AWS
         SourceIdentifier: REQUIRED_TAGS
       InputParameters:
-        # tag1Key: "CostCenter"
+        tag1Key: "CostCenter"
+        # tag1Value: "optional_tag_list"
+        # tag2Key: "optional_tag_list"
+        # tag2Value: "optional_tag_list"
+        # tag3Key: "optional_tag_list"
+        # tag3Value: "optional_tag_list"
+        # tag4Key: "optional_tag_list"
+        # tag4Value: "optional_tag_list"
+        # tag5Key: "optional_tag_list"
+        # tag5Value: "optional_tag_list"
+        # tag6Key: "optional_tag_list"
+        # tag6Value: "optional_tag_list"
 
   ResiliencehubAppTaggedRule:
     Type: AWS::Config::ConfigRule
@@ -9103,11 +9151,12 @@ Resources:
         Owner: AWS
         SourceIdentifier: RESTRICTED_INCOMING_TRAFFIC
       InputParameters:
-        # blockedPort1: "20"
-        # blockedPort2: "21"
-        # blockedPort3: "3389"
-        # blockedPort4: "3306"
-        # blockedPort5: "4333"
+        blockedPort1: "20"
+        blockedPort2: "21"
+        blockedPort3: "3389"
+        blockedPort4: "3306"
+        blockedPort5: "4333"
+        # blockedPorts: "optional_string"
 
   RootAccountHardwareMfaEnabledRule:
     Type: AWS::Config::ConfigRule
@@ -9390,10 +9439,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS
       InputParameters:
-        # RestrictPublicBuckets: true
-        # BlockPublicPolicy: true
-        # BlockPublicAcls: true
-        # IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
 
   S3AccountLevelPublicAccessBlocksPeriodicRule:
     Type: AWS::Config::ConfigRule
@@ -9689,8 +9738,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: S3_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   S3LifecyclePolicyCheckRule:
     Type: AWS::Config::ConfigRule
@@ -9738,8 +9789,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: S3_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   S3ResourcesProtectedByBackupPlanRule:
     Type: AWS::Config::ConfigRule
@@ -10450,8 +10503,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: STORAGEGATEWAY_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   StoragegatewayResourcesInLogicallyAirGappedVaultRule:
     Type: AWS::Config::ConfigRule
@@ -10465,8 +10520,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: STORAGEGATEWAY_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   StoragegatewayResourcesProtectedByBackupPlanRule:
     Type: AWS::Config::ConfigRule
@@ -10690,8 +10747,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: VIRTUALMACHINE_LAST_BACKUP_RECOVERY_POINT_CREATED
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   VirtualmachineResourcesInLogicallyAirGappedVaultRule:
     Type: AWS::Config::ConfigRule
@@ -10705,8 +10764,10 @@ Resources:
         Owner: AWS
         SourceIdentifier: VIRTUALMACHINE_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
       InputParameters:
-        # recoveryPointAgeValue: "1"
-        # recoveryPointAgeUnit: "days"
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "days"
+        # resourceTags: "optional_tag_list"
+        # resourceId: "optional_string"
 
   VirtualmachineResourcesProtectedByBackupPlanRule:
     Type: AWS::Config::ConfigRule
