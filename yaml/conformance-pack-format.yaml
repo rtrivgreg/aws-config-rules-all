@@ -1,0 +1,20 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: "Y62 Managed Config Rule Manifest\n" #comment 1
+Resources:
+  AccessKeysRotatedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: access-keys-rotated
+      #comment 2
+      #comment 3
+      Description: Checks if active IAM access keys are rotated (changed) within the number of days specified in maxAccessKeyAge...
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::IAM::User
+      Source:
+        Owner: AWS
+        SourceIdentifier: ACCESS_KEYS_ROTATED
+      InputParameters:
+      #comment 4
+        maxAccessKeyAge: 90
+  # …repeat for every rule…config-rules-all
