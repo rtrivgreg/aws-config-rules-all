@@ -10,7 +10,7 @@ python3 /home/cloudshell-user/gold/py/upack.py a1 /home/cloudshell-user/output/C
 
 https://github.com/rtrivgreg/config-rules-all.git
 
-python3 ~/gold/py/cpg0727b.py --r ~/gold/json/mrs2.json --t ~/gold/yml/y62-truth-manifestz1.yaml --o ~/output/CP0728a.yml
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/compute.json --t ~/repos/config-rules-all/output/y62-truth-manifestz.yaml --o ~/output/CP0728n.yml
 
 python emitter.py \
   --format conformance-pack-format.yaml \
