@@ -1,16 +1,13 @@
 import argparse
 import json
 import logging
+import math
 import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
 from ruamel.yaml import YAML
 from ruamel.yaml.comments import CommentedMap
-
-# ---------------------------------------------------------------------------
-# Logging
-# ---------------------------------------------------------------------------
 
 logging.basicConfig(
     level=logging.INFO,
@@ -19,22 +16,13 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# YAML (ruamel) helper
-# ---------------------------------------------------------------------------
-
-yaml_rt = YAML(typ="rt")        # round-trip to preserve comments and order
+yaml_rt = YAML(typ="rt")
 yaml_rt.indent(mapping=2, sequence=4, offset=2)
-yaml_rt.width = 4096            # keep long scalars like Description on one line
-yaml_rt.representer.ignore_aliases = lambda x: True  # suppress &id001 / *id001
-
-# ---------------------------------------------------------------------------
-# Load JSON rules
-# ---------------------------------------------------------------------------
+yaml_rt.width = 4096
+yaml_rt.representer.ignore_aliases = lambda x: True
 
 
 def load_rules_json(path: Path) -> List[str]:
-    """Load JSON array of rule names (strings)."""
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
@@ -62,13 +50,7 @@ def load_rules_json(path: Path) -> List[str]:
     return rules
 
 
-# ---------------------------------------------------------------------------
-# Load YAML SOT via ruamel.yaml
-# ---------------------------------------------------------------------------
-
-
 def load_yaml(path: Path) -> CommentedMap:
-    """Load a YAML file with ruamel.yaml (round-trip) and ensure top-level is a mapping."""
     try:
         with path.open("r", encoding="utf-8") as f:
             data = yaml_rt.load(f)
@@ -86,30 +68,16 @@ def load_yaml(path: Path) -> CommentedMap:
     return data
 
 
-# ---------------------------------------------------------------------------
-# Helper name transformations
-# ---------------------------------------------------------------------------
-
-
 def kebab_to_pascal(name: str) -> str:
-    """Convert kebab-case to PascalCase."""
-    parts = name.split("-")
-    return "".join(p.capitalize() for p in parts if p)
+    return "".join(p.capitalize() for p in name.split("-") if p)
 
 
 def derive_logical_id(config_rule_name: str) -> str:
-    """Derive CloudFormation logical ID from ConfigRuleName."""
     return kebab_to_pascal(config_rule_name) + "Rule"
 
 
 def derive_source_identifier_from_name(config_rule_name: str) -> str:
-    """Derive SourceIdentifier from ConfigRuleName."""
     return config_rule_name.replace("-", "_").upper()
-
-
-# ---------------------------------------------------------------------------
-# Build SOT index (ConfigRuleName -> resource_map)
-# ---------------------------------------------------------------------------
 
 
 def build_sot_index(sot: CommentedMap) -> Dict[str, CommentedMap]:
@@ -118,9 +86,7 @@ def build_sot_index(sot: CommentedMap) -> Dict[str, CommentedMap]:
         return {}
 
     if not isinstance(resources, CommentedMap):
-        logger.warning(
-            "SOT has Resources, but it is not a mapping; SOT will be ignored."
-        )
+        logger.warning("SOT has Resources, but it is not a mapping; SOT will be ignored.")
         return {}
 
     index: Dict[str, CommentedMap] = {}
@@ -139,25 +105,15 @@ def build_sot_index(sot: CommentedMap) -> Dict[str, CommentedMap]:
         name = name.strip()
         if not name:
             continue
+        if name in index:
+            logger.warning(f"Duplicate ConfigRuleName in SOT; keeping first and skipping: {name}")
+            continue
         index[name] = res
 
     return index
 
-# ---------------------------------------------------------------------------
-# SourceIdentifier resolution
-# ---------------------------------------------------------------------------
 
-
-def resolve_source_identifier(
-    rule_name: str,
-    resource: Optional[CommentedMap],
-) -> str:
-    """
-    Apply the SourceIdentifier override rule:
-
-    - If SOT resource Properties contain a non-empty Source.SourceIdentifier, use it.
-    - Otherwise derive from the rule_name (ConfigRuleName).
-    """
+def resolve_source_identifier(rule_name: str, resource: Optional[CommentedMap]) -> str:
     if resource:
         props = resource.get("Properties")
         if isinstance(props, CommentedMap):
@@ -171,19 +127,7 @@ def resolve_source_identifier(
     return derive_source_identifier_from_name(rule_name)
 
 
-# ---------------------------------------------------------------------------
-# InputParameters normalization
-# ---------------------------------------------------------------------------
-
-
 def ensure_input_parameters_map(resource: CommentedMap) -> None:
-    """
-    Ensure Properties.InputParameters is an explicit empty map ({}) when present
-    but empty/null, so the output consistently means:
-      'this field exists, but currently has no active parameters'.
-
-    This avoids InputParameters: null and preserves a stable mapping shape.
-    """
     props = resource.get("Properties")
     if not isinstance(props, CommentedMap):
         props = CommentedMap()
@@ -197,27 +141,7 @@ def ensure_input_parameters_map(resource: CommentedMap) -> None:
                 props["InputParameters"] = CommentedMap()
 
 
-# ---------------------------------------------------------------------------
-# Mutate an existing SOT resource in-place
-# ---------------------------------------------------------------------------
-
-
-def mutate_resource_in_place(
-    rule_name: str,
-    resource: CommentedMap,
-) -> None:
-    """
-    Mutate the existing SOT resource in-place to conform to our generation rules,
-    while preserving all comments on the resource, its Properties, and
-    nested mappings such as InputParameters.
-
-    Changes:
-    - Ensure Type is AWS::Config::ConfigRule.
-    - Ensure Properties.ConfigRuleName == rule_name.
-    - Ensure Properties.Source.Owner == 'AWS'.
-    - Ensure Properties.Source.SourceIdentifier is set according to rules.
-    - Ensure InputParameters, if present, is an explicit empty map instead of null.
-    """
+def mutate_resource_in_place(rule_name: str, resource: CommentedMap) -> None:
     resource["Type"] = "AWS::Config::ConfigRule"
 
     props = resource.get("Properties")
@@ -241,27 +165,11 @@ def mutate_resource_in_place(
     ensure_input_parameters_map(resource)
 
 
-# ---------------------------------------------------------------------------
-# Description normalization helper
-# ---------------------------------------------------------------------------
-
-
 def _normalize_description_value(value: str) -> str:
-    """
-    Normalize a Description string to a single logical line by:
-    - Stripping leading/trailing whitespace.
-    - Replacing all internal runs of whitespace (spaces, tabs, newlines) with single spaces.
-    """
     return " ".join(value.split())
 
 
 def normalize_descriptions(template: CommentedMap) -> None:
-    """
-    Ensure all Description fields are single-line strings, with no embedded
-    newlines or irregular whitespace. This affects:
-    - Top-level Description (if present).
-    - Per-resource Properties.Description fields.
-    """
     top_desc = template.get("Description")
     if isinstance(top_desc, str):
         template["Description"] = _normalize_description_value(top_desc)
@@ -281,16 +189,7 @@ def normalize_descriptions(template: CommentedMap) -> None:
             props["Description"] = _normalize_description_value(desc)
 
 
-# ---------------------------------------------------------------------------
-# Generate full conformance pack template
-# ---------------------------------------------------------------------------
-
-
-def generate_conformance_pack(
-    rule_names: List[str],
-    sot_yaml: CommentedMap,
-    sot_index: Dict[str, CommentedMap],
-) -> CommentedMap:
+def build_pack_template(rule_names: List[str], sot_index: Dict[str, CommentedMap]) -> CommentedMap:
     resources = CommentedMap()
 
     for rule_name in rule_names:
@@ -307,8 +206,7 @@ def generate_conformance_pack(
             logger.info(f"Included SOT-backed rule: {rule_name} -> {logical_id}")
         else:
             logger.info(
-                f"No SOT entry found for rule '{rule_name}'; generating without "
-                f"Description, InputParameters, or Scope."
+                f"No SOT entry found for rule '{rule_name}'; generating without Description, InputParameters, or Scope."
             )
             new_resource = CommentedMap()
             new_resource["Type"] = "AWS::Config::ConfigRule"
@@ -327,24 +225,24 @@ def generate_conformance_pack(
 
     template = CommentedMap()
     template["AWSTemplateFormatVersion"] = "2010-09-09"
-    template["Description"] = (
-        "Conformance Pack generated from curated list of AWS Config Managed Rules"
-    )
+    template["Description"] = "Conformance Pack generated from curated list of AWS Config Managed Rules"
     template["Resources"] = resources
 
     normalize_descriptions(template)
     return template
-# ---------------------------------------------------------------------------
-# main()
-# ---------------------------------------------------------------------------
+
+
+def batch_rules(rule_names: List[str], batch_size: int = 30) -> List[List[str]]:
+    return [rule_names[i:i + batch_size] for i in range(0, len(rule_names), batch_size)]
+
+
+def output_path_for_part(output_path: Path, part_num: int) -> Path:
+    return output_path.with_name(f"{output_path.stem}-part{part_num:02d}{output_path.suffix}")
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=(
-            "Generate an AWS Config Conformance Pack from a list of managed rule "
-            "names and a Source of Truth file, preserving YAML comments."
-        )
+        description="Generate AWS Config Conformance Pack YAML files from a list of managed rule names and a Source of Truth file, preserving YAML comments."
     )
     parser.add_argument(
         "-t",
@@ -365,7 +263,7 @@ def main() -> None:
         "--output",
         type=Path,
         default=Path("cpout01.yml"),
-        help="Output conformance pack YAML file (default: cpout01.yml).",
+        help="Output conformance pack YAML basename (default: cpout01.yml).",
     )
 
     args = parser.parse_args()
@@ -374,16 +272,26 @@ def main() -> None:
     sot_yaml = load_yaml(args.truth_file)
     sot_index = build_sot_index(sot_yaml)
 
-    template = generate_conformance_pack(rule_names, sot_yaml, sot_index)
-  
-    try:
-        with args.output.open("w", encoding="utf-8") as f:
-            yaml_rt.dump(template, f)
-    except OSError as e:
-        logger.error(f"Failed to write output to {args.output}: {e}")
-        sys.exit(1)
+    packs = batch_rules(rule_names, 30)
+    logger.info(f"Total requested rules: {len(rule_names)}")
+    logger.info(f"Total packs to generate: {len(packs)}")
 
-    logger.info(f"Conformance pack template written to {args.output}")
+    for idx, pack_rules in enumerate(packs, start=1):
+        out_path = output_path_for_part(args.output, idx)
+        logger.info(f"Generating pack {idx}/{len(packs)} with {len(pack_rules)} rules -> {out_path}")
+
+        template = build_pack_template(pack_rules, sot_index)
+
+        try:
+            with out_path.open("w", encoding="utf-8") as f:
+                yaml_rt.dump(template, f)
+        except OSError as e:
+            logger.error(f"Failed to write output to {out_path}: {e}")
+            sys.exit(1)
+
+        logger.info(f"Wrote {out_path}")
+
+    logger.info(f"Generated {len(packs)} conformance pack file(s) successfully.")
 
 
 if __name__ == "__main__":
