@@ -3,6 +3,11 @@ git fetch origin
 git pull --rebase origin main
 git push
 
+python /home/cloudshell-user/repos/config-rules-all/python/emitter.py --format /home/cloudshell-user/repos/config-rules-all/yaml/conformance-pack-format.yaml --output /home/cloudshell-user/output/y62-AWS-manifest.yaml
+
+mandatory parms are being commented out!!!!!!
+config-rules-all $ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/compute.json --t /home/cloudshell-user/output/y62-AWS-manifest.yaml --o ~/output/CP0728n.yml
+
 pip install python-hcl2
 
 https://github.com/niaid/terraform-aws-managed-config-rules.git
