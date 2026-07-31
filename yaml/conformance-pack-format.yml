@@ -8,13 +8,12 @@ Resources:
       #comment 2
       #comment 3
       Description: Checks if active IAM access keys are rotated (changed) within the number of days specified in maxAccessKeyAge...
+      InputParameters:
       Scope:
         ComplianceResourceTypes:
           - AWS::IAM::User
       Source:
         Owner: AWS
         SourceIdentifier: ACCESS_KEYS_ROTATED
-      InputParameters:
-      #comment 4
-        maxAccessKeyAge: 90
+     
   # …repeat for every rule…config-rules-all
