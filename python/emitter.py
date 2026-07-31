@@ -131,14 +131,22 @@ def normalize_managed_rules(managed_rules: dict) -> list[dict]:
     return normalized
 
 
+
+
 def normalize_parameter_variables_from_text(params_text: str) -> dict:
     var_pattern = re.compile(
         r'variable\s+"([A-Za-z0-9_]+)"\s*{(.*?)(?=^variable\s+"|\Z)',
         re.S | re.M,
     )
 
+    required_attr_pattern = re.compile(
+        r'^\s*([A-Za-z0-9_]+)\s*=\s*(string|number|bool|boolean)\s*(?:#.*)?$',
+        re.M,
+    )
+
     optional_attr_pattern = re.compile(
-        r'([A-Za-z0-9_]+)\s*=\s*optional\((string|number|bool|boolean)(?:,\s*([^)]+))?\)'
+        r'^\s*([A-Za-z0-9_]+)\s*=\s*optional\(\s*(string|number|bool|boolean)(?:\s*,\s*([^)]+))?\)\s*(?:#.*)?$',
+        re.M,
     )
 
     default_block_pattern = re.compile(
@@ -153,14 +161,32 @@ def normalize_parameter_variables_from_text(params_text: str) -> dict:
             continue
 
         attrs = []
-        type_block = re.search(r'type\s*=\s*object\(\s*{(.*?)}\s*\)', body, re.S)
+        # FIXED REGEX HERE
+        type_block = re.search(r'type\s*=\s*object\s*\(\s*{(.*?)}\s*\)', body, re.S)
         if type_block:
-            for key, typ, default in optional_attr_pattern.findall(type_block.group(1)):
+            type_text = type_block.group(1)
+
+            for key, typ in required_attr_pattern.findall(type_text):
                 attrs.append(
                     {
                         "name": key,
                         "type": typ,
-                        "default": default.strip() if default else None,
+                        "default": None,
+                        "required": True,
+                    }
+                )
+
+            for key, typ, default in optional_attr_pattern.findall(type_text):
+                default_value = default.strip() if default else None
+                # treat "null" as no default if desired
+                if default_value and default_value.lower() == "null":
+                    default_value = None
+                attrs.append(
+                    {
+                        "name": key,
+                        "type": typ,
+                        "default": default_value,
+                        "required": False,
                     }
                 )
 
@@ -180,6 +206,12 @@ def normalize_parameter_variables_from_text(params_text: str) -> dict:
         }
 
     return normalized
+
+
+
+
+
+     
 
 
 def logical_name(rule_name: str) -> str:
@@ -241,10 +273,10 @@ def placeholder_for_key(key: str) -> str:
 
     return '"optional_string"'
 
-
 def render_input_parameters(rule: dict, param_defs: dict) -> list[str]:
     input_var = rule.get("input_var")
 
+    # No input variable → no parameters
     if not input_var:
         return ["      InputParameters: {}"]
 
@@ -255,33 +287,44 @@ def render_input_parameters(rule: dict, param_defs: dict) -> list[str]:
     defaults = var_def.get("default", {})
     attrs = var_def.get("attrs", [])
 
-    required_keys = set(defaults.keys())
-    optional_attrs = []
-    for attr in attrs:
-        if attr["name"] not in required_keys:
-            optional_attrs.append(attr)
-
-    if not required_keys and not optional_attrs:
-        return ["      InputParameters: {}"]
+    # Still handle the true "no-parameters" case
+    #if not attrs and not defaults:
+    #    return ["      InputParameters: {}"]
 
     lines = ["      InputParameters:"]
 
+    # Always display attributes, whether required or optional
+    for attr in attrs:
+        key = attr["name"]
+
+        if key in defaults:
+            rendered = yaml_scalar(defaults[key])
+            if rendered is None:
+                rendered = placeholder_for_key(key)
+        elif attr.get("default") is not None and clean_hcl_string(str(attr["default"])).lower() != "null":
+            rendered = yaml_scalar(attr["default"])
+        else:
+            rendered = placeholder_for_key(key)
+
+        # No required/optional filtering: always output the parameter
+        lines.append(f"        {key}: {rendered}")
+
+    # Also display any default-only keys that are not in attrs
     for key, value in defaults.items():
+        if any(attr["name"] == key for attr in attrs):
+            continue
         rendered = yaml_scalar(value)
         if rendered is None:
             rendered = placeholder_for_key(key)
         lines.append(f"        {key}: {rendered}")
 
-    for attr in optional_attrs:
-        default = attr.get("default")
-        if default is not None and clean_hcl_string(default).lower() != "null":
-            rendered = yaml_scalar(default)
-        else:
-            rendered = placeholder_for_key(attr["name"])
-        lines.append(f"        # {attr['name']}: {rendered}")
-
     return lines
- 
+
+
+
+
+
+
 def render_rule(rule: dict, param_defs: dict) -> list[str]:
     lines = []
     lines.append(f"  {logical_name(rule['name'])}:")
@@ -303,7 +346,6 @@ def render_rule(rule: dict, param_defs: dict) -> list[str]:
     lines.extend(render_input_parameters(rule, param_defs))
     return lines
 
-
 def build_template(format_text: str, description: str, rules: list[dict], param_defs: dict) -> str:
     output = []
 
@@ -314,12 +356,16 @@ def build_template(format_text: str, description: str, rules: list[dict], param_
     output.append(f"Description: {yaml_quote(description)}")
     output.append("Resources:")
 
-    for rule in rules:
+    for i, rule in enumerate(rules):
+        # render the rule
         output.extend(render_rule(rule, param_defs))
-        output.append("")
+        # add a blank line after every rule except maybe the last one
+        # (YAML is fine either way; this guarantees a visual separation)
+        if i != len(rules) - 1:
+            output.append("")  # line break between config rule sections
 
-    return "\n".join(output).rstrip() + "\n"
-
+    # no need for rstrip() now; join will keep intended blank lines
+    return "\n".join(output) + "\n"
 
 def main():
     args = parse_args()
