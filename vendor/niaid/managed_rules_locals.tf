@@ -6009,7 +6009,7 @@ locals {
       severity             = "Medium"
     }
 ################################
-   eks_nodegroup_supported_version_check = {
+   eks-nodegroup-supported-version-check = {
       description          = "Input parameters for the eks-nodegroup-supported-version-check rule.."
       identifier           = "EKS_NODEGROUP_SUPPORTED_VERSION_CHECK"
       input_parameters     = var.eks_nodegroup_supported_version_check_parameters
