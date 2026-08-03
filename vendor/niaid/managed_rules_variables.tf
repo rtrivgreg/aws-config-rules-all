@@ -4,7 +4,7 @@ variable "access_keys_rotated_parameters" {
     maxAccessKeyAge = optional(number, 90)
   })
   default = {
-    maxAccessKeyAge = 91
+    maxAccessKeyAge = 90
   }
 
 }
