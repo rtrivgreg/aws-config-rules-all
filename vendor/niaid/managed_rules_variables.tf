@@ -1779,7 +1779,9 @@ variable "eks_cluster_oldest_supported_version_parameters" {
   type = object({
     oldestVersionSupported = optional(string, null)
   })
-  default = {}
+  default = {
+     oldestVersionSupported: "1.31"  
+  }
 }
 
 
@@ -1797,7 +1799,9 @@ variable "eks_cluster_supported_version_parameters" {
   type = object({
     oldestVersionSupported = optional(string, null)
   })
-  default = {}
+  default = {
+    oldestVersionSupported: "1.31"  
+  }
 }
 
 
