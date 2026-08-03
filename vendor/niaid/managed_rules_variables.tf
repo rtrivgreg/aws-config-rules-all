@@ -1780,7 +1780,7 @@ variable "eks_cluster_oldest_supported_version_parameters" {
     oldestVersionSupported = optional(string, null)
   })
   default = {
-     oldestVersionSupported: "1.31"  
+     oldestVersionSupported = "1.31"  
   }
 }
 
@@ -1800,7 +1800,7 @@ variable "eks_cluster_supported_version_parameters" {
     oldestVersionSupported = optional(string, null)
   })
   default = {
-     oldestVersionSupported: "1.31"  
+     oldestVersionSupported = "1.31"  
   }
 }
 
