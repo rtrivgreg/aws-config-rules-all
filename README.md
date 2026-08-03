@@ -11,6 +11,8 @@ python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules
 
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/compute.json --t ~/output/y62-AWS-manifest.yml --o ~/output/CP0728n.yml
 
+micro ~/output/y62-AWS-manifestz.yml
+
 python3 ~/gold/py/upack.py a1 ~/output/CP0727m-part01.yml
 
 pip install python-hcl2
