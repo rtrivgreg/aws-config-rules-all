@@ -7,7 +7,7 @@ git fetch origin
 git pull --rebase origin main
 git push
 
-python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules-all/yml/conformance-pack-format.yaml --output ~/output/y62-AWS-manifestz.yml
+python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifestz.yml
 
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/compute.json --t ~/output/y62-AWS-manifest.yml --o ~/output/CP0728n.yml
 
