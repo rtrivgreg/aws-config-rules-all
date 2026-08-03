@@ -1636,9 +1636,10 @@ variable "ecs_no_environment_secrets_parameters" {
   description = "Input parameters for the ecs-no-environment-secrets rule."
   type = object({
     secretKeys = required(string, null)
-    #secretKeys = string, null 
   })
-  default = {}
+  default = {
+            secretKeys = "required" 
+            }
 }
 
 
