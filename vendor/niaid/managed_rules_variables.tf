@@ -4156,8 +4156,7 @@ variable "eks_nodegroup_supported_version_check_parameters" {
     oldestVersionSupported  = optional(string, null)
   })
   default = {
-    oldestVersionSupported = "1.31" # Uses valid equals assignment to prevent parsing failure
-  }
+    oldestVersionSupported = 1.31 
 }
 
 
