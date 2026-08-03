@@ -6010,11 +6010,11 @@ locals {
     }
 ################################
    eks-nodegroup-supported-version-check = {
-      description          = "Input parameters for the eks-nodegroup-supported-version-check rule.."
+      description          = "Checks if an Amazon Elastic Kubernetes Service (EKS) nodegroup is running a supported Kubernetes version. This rule is NON_COMPLIANT if an EKS nodegroup is running an unsupported version (less than the parameter oldestVersionSupported"
       identifier           = "EKS_NODEGROUP_SUPPORTED_VERSION_CHECK"
       input_parameters     = var.eks_nodegroup_supported_version_check_parameters
       resource_types_scope = ["AWS::EKS::Nodegroup"]
-      severity             = "Medium"
+      severity             = "High"
     }
   }
 }
