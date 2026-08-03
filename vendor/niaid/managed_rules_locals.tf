@@ -6008,6 +6008,13 @@ locals {
       resource_types_scope = ["AWS::WorkSpaces::Workspace"]
       severity             = "Medium"
     }
-
+################################
+   eks_nodegroup_supported_version_check = {
+      description          = "Input parameters for the eks-nodegroup-supported-version-check rule.."
+      identifier           = "EKS_NODEGROUP_SUPPORTED_VERSION_CHECK"
+      input_parameters     = var.workspaces_workspace_tagged_parameters
+      resource_types_scope = ["AWS::EKS::Nodegroup"]
+      severity             = "Medium"
+    }
   }
 }
