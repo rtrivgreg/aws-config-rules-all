@@ -4148,3 +4148,16 @@ variable "workspaces_workspace_tagged_parameters" {
   })
   default = {}
 }
+
+######################### RG: aded below
+variable "eks_nodegroup_supported_version_check_parameters" {
+  description = "Input parameters for the eks-nodegroup-supported-version-check rule."
+  type = object({
+    oldestVersionSupported  = optional(string, null)
+  })
+  default = {
+    oldestVersionSupported = "1.31" # Uses valid equals assignment to prevent parsing failure
+  }
+}
+
+
