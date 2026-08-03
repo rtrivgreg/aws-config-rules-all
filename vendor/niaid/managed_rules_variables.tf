@@ -1635,7 +1635,7 @@ variable "ecs_fargate_latest_platform_version_parameters" {
 variable "ecs_no_environment_secrets_parameters" {
   description = "Input parameters for the ecs-no-environment-secrets rule."
   type = object({
-    secretKeys = optional(string, null)
+    secretKeys = required(string, null)
     #secretKeys = string, null 
   })
   default = {}
