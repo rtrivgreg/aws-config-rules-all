@@ -9,11 +9,14 @@ git push
 
 python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifestz.yml
 
-python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/compute.json --t ~/output/y62-AWS-manifest.yml --o ~/output/CP0728n.yml
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/compute.json --t ~/output/y62-AWS-manifest.yml --o ~/output/compute0803a.yml
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/containers.json --t ~/output/y62-AWS-manifest.yml --o ~/output/Container0803a.yml
 
 micro ~/output/y62-AWS-manifestz.yml
 
-python3 ~/gold/py/upack.py a1 ~/output/CP0727m-part01.yml
+python3 ~/gold/py/upack.py a1 ~/output/Container0803a-part01.yml
+python3 ~/gold/py/upack.py a1 ~/output/Container0803a-part02.yml
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/containers.json --t ~/output/y62-AWS-manifest.yml --o ~/output/Container0803a.yml
 
 pip install python-hcl2
 
