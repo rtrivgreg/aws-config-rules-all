@@ -1,9 +1,12 @@
-Y62 Conformance pack fabrication run begin (build 202608050:800)
-Build Summary: (3) conformance packs generated
+#Y62 Conformance pack fabrication run begin (build 202608050:800)
 
-compute.json->compute20260805-part01.yml, compute20260805-part02.yml, compute20260805-part03.yml, compute20260805-part04.yml
-containers.json->containers20260805-part01.yml, containers20260805-part02.yml
-storage.json->storage20260805-part01.yml, storage20260805-part02.yml
+#Build Summary: (3) conformance packs generated
+
+#compute.json->compute20260805-part01.yml, compute20260805-part02.yml, compute20260805-part03.yml, compute20260805-part04.yml
+
+#containers.json->containers20260805-part01.yml, containers20260805-part02.yml
+
+#storage.json->storage20260805-part01.yml, storage20260805-part02.yml
 
 Build Details:
 python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest08052026.yml
