@@ -2800,7 +2800,7 @@ variable "lambda_function_settings_check_parameters" {
     timeout    = optional(number, 3)
   })
   default = {
-    runtime: "python3.12,nodejs20.x"
+    runtime = "python3.12,nodejs20.x"
     memorySize = 128
     timeout    = 3
   }
