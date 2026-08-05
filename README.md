@@ -21,7 +21,7 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 
 python3 ~/gold/py/upack.py a1 ~/output/containers20260805-part02.yml
 
-# storage - CFG
+# storage - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/storage.json --t ~/output/y62-AWS-manifest08052026.yml --o ~/output/storage20260805.yml
 
 # storage - Upack
