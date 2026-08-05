@@ -17,9 +17,18 @@ python3 ~/gold/py/upack.py a1 ~/output/compute20260805-part04.yml
 # containers - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/containers.json --t ~/output/y62-AWS-manifest08052026.yml --o ~/output/containers20260805.yml
 
+# containers - Upack
+
+python3 ~/gold/py/upack.py a1 ~/output/containers20260805-part02.yml
+
 # storage - CFG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/storage.json --t ~/output/y62-AWS-manifest08052026.yml --o ~/output/storage20260805.yml
 
+# storage - Upack
+
+python3 ~/gold/py/upack.py a1 ~/output/storage20260805-part01.yml
+
+python3 ~/gold/py/upack.py a1 ~/output/storage20260805-part02.yml
 # 20260805 fabrication end
 
 
