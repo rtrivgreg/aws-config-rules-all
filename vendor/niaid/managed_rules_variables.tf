@@ -512,6 +512,8 @@ variable "aurora_last_backup_recovery_point_created_parameters" {
     recoveryPointAgeUnit  = optional(string, "days")
   })
   default = {
+    resourceTags          = ""
+    resourceId            = ""
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
   }
