@@ -6016,5 +6016,14 @@ locals {
       resource_types_scope = ["AWS::EKS::Nodegroup"]
       severity             = "High"
     }
+
+# 20260817
+rds-global-cluster-aurora-postgresql-supported-version = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_MYSQL_SUPPORTED_VERSION"
+      input_parameters     = var.minSupportedEngineVersion
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
   }
 }
