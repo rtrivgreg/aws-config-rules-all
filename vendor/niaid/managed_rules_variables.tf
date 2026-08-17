@@ -4159,4 +4159,12 @@ variable "eks_nodegroup_supported_version_check_parameters" {
     oldestVersionSupported = 1.31 
 }
 
+variable "rds_global_cluster_aurora_postgresql_supported_version" {
+  description = "Input parameters for the rds_global_cluster_aurora_postgresql_supported_version."
+  type = object({
+    minSupportedEngineVersion  = optional(string, null)
+  })
+  default = {
+    minSupportedEngineVersion = "8.0.mysql_aurora.3.04.0" 
+}
 
