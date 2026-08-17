@@ -512,10 +512,10 @@ variable "aurora_last_backup_recovery_point_created_parameters" {
     recoveryPointAgeUnit  = optional(string, "days")
   })
   default = {
-    resourceTags          = "abc"
-    resourceId            = "def"
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
+    resourceTags          = "optional_tags"
+    resourceId            = "optional_string"
   }
 
 }
@@ -528,7 +528,9 @@ variable "aurora_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+    maxRestoreTime = 1
+  }
 }
 
 
@@ -552,6 +554,8 @@ variable "aurora_resources_in_logically_air_gapped_vault_parameters" {
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
+    resourceTags          = "optional_tag_list"
+    resourceId            = "optional_string"
   }
 
 }
@@ -1166,6 +1170,8 @@ variable "dynamodb_last_backup_recovery_point_created_parameters" {
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
+    resourceTags          = "optional_tag_list"
+    resourceId            = "optional_string"
   }
 
 }
@@ -1178,7 +1184,9 @@ variable "dynamodb_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+    maxRestoreTime = 0
+  }
 }
 
 
@@ -1870,7 +1878,10 @@ variable "elasticache_supported_engine_version_parameters" {
     latestMemcachedVersion = optional(string, null)
     latestRedisVersion     = optional(string, null)
   })
-  default = {}
+  default = {
+    latestMemcachedVersion = "optional_string"
+    latestRedisVersion     = "optional_string"
+  }
 }
 
 
@@ -3092,7 +3103,9 @@ variable "rds_global_cluster_aurora_mysql_supported_version_parameters" {
   type = object({
     minSupportedEngineVersion = optional(string, null)
   })
-  default = {}
+  default = {
+    minSupportedEngineVersion = "optional_string"
+  }
 }
 
 
@@ -3125,6 +3138,8 @@ variable "rds_last_backup_recovery_point_created_parameters" {
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
+    resourceTags          = "optional_tag_list"
+    resourceId            = "optional_string"
   }
 
 }
@@ -3146,7 +3161,9 @@ variable "rds_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+    maxRestoreTime = 0
+  }
 }
 
 
