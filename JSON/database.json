@@ -71,7 +71,7 @@
 "rds-mysql-cluster-copy-tags-to-snapshot-check",
 "rds-mysql-instance-encrypted-in-transit",
 "rds-option-group-tagged",
-"rds-pgsql-cluster-copy-tags-to-snapshot-chec",
+"rds-pgsql-cluster-copy-tags-to-snapshot-check",
 "rds-postgres-instance-encrypted-in-transit",
 "rds-postgresql-logs-to-cloudwatch",
 "rds-proxy-tls-encryption",
