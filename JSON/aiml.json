@@ -8,7 +8,7 @@
 "api-gw-ssl-enabled",
 "api-gw-stage-tagged",
 "api-gw-xray-enabled",
-"api-gwv2-access-logs-enabled
+"api-gwv2-access-logs-enabled",
 "api-gwv2-authorization-type-configured",
 "appsync-associated-with-waf",
 
@@ -117,7 +117,7 @@
 "neptune-cluster-snapshot-public-prohibited",
 
 "netfw-deletion-protection-enabled",
-"netfw-logging-enabled
+"netfw-logging-enabled",
 "netfw-multi-az-enabled",
 "netfw-policy-default-action-fragment-packets",
 "netfw-policy-default-action-full-packets",
