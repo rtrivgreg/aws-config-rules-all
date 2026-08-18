@@ -506,15 +506,15 @@ variable "auditmanager_assessment_tagged_parameters" {
 variable "aurora_last_backup_recovery_point_created_parameters" {
   description = "Input parameters for the aurora-last-backup-recovery-point-created rule."
   type = object({
-    resourceTags          = optional(string, null)
-    resourceId            = optional(string, null)
     recoveryPointAgeValue = optional(number, 1)
     recoveryPointAgeUnit  = optional(string, "days")
+    resourceTags          = optional(string, null)
+    resourceId            = optional(string, null)
   })
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
-    resourceTags          = "optional_tags"
+    resourceTags          = "optional_tag_list"
     resourceId            = "optional_string"
   }
 
@@ -1185,7 +1185,7 @@ variable "dynamodb_meets_restore_time_target_parameters" {
     resourceId     = optional(string, null)
   })
   default = {
-    maxRestoreTime = 0
+    maxRestoreTime = '0'
   }
 }
 
@@ -1879,8 +1879,8 @@ variable "elasticache_supported_engine_version_parameters" {
     latestRedisVersion     = optional(string, null)
   })
   default = {
-    latestMemcachedVersion = "optional_string"
-    latestRedisVersion     = "optional_string"
+    latestMemcachedVersion = "required_string"
+    latestRedisVersion     = ""required_string"
   }
 }
 
@@ -3102,9 +3102,11 @@ variable "rds_global_cluster_aurora_mysql_supported_version_parameters" {
   description = "Input parameters for the rds-global-cluster-aurora-mysql-supported-version rule."
   type = object({
     minSupportedEngineVersion = optional(string, null)
+    longTermSupportVersion = optional(string, null)
   })
   default = {
-    minSupportedEngineVersion = "optional_string"
+    minSupportedEngineVersion = "required_string"
+    longTermSupportVersion = "optional_string"
   }
 }
 
