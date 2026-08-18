@@ -21,7 +21,7 @@ python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules
 ### Category creations
 #####################
 
-### applicationintegration - CPG
+### analytics - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/analytics.json --t ~/output/y62-AWS-manifest.yml --o ~/output/analytics.yml
 
 ### applicationintegration - CPG
