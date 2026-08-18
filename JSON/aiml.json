@@ -138,7 +138,7 @@
 "rds-snapshot-encrypted",
 "rds-snapshots-public-prohibited",
 "rds-storage-encrypted",
-"rds-resources-protected-by-backup-plan"",
+"rds-resources-protected-by-backup-plan",
 "s3-account-level-public-access-blocks-periodic",
 "s3-bucket-acl-prohibited",
 "s3-bucket-default-lock-enabled",
