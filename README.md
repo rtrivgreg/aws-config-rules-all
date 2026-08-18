@@ -36,6 +36,9 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 ### managementgovernance - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/managementgovernance.json --t ~/output/y62-AWS-manifest.yml --o ~/output/managementgovernance.yml
 
+### mlai - CPG
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/mlai.json --t ~/output/y62-AWS-manifest.yml --o ~/output/mlai.yml
+
 ### migrationtransfer - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/migrationtransfer.json --t ~/output/y62-AWS-manifest.yml --o ~/output/migrationtransfer.yml
 
@@ -46,11 +49,13 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 #####################
 ### ALL - Upack (AWS Config deploy)
 python3 ~/gold/py/upack.py a1 ~/output/analytics.yml
-python3 ~/gold/py/upack.py a1 ~/output/compute20260805-part01.yml
+python3 ~/gold/py/upack.py a1 ~/output/compute-part01.yml
+python3 ~/gold/py/upack.py a1 ~/output/database-part02.yml
 
-python3 ~/gold/py/upack.py a1 ~/output/database20260818v-part02.yml
+python3 ~/gold/py/upack.py a1 ~/output/managementgovernance-part01.yml
+python3 ~/gold/py/upack.py a1 ~/output/managementgovernance-part02.yml
 
-python3 ~/gold/py/upack.py a1 ~/output/securityidentitycompliance2026017u-part01.yml
+python3 ~/gold/py/upack.py a1 ~/output/securityidentitycompliance-part01.yml
 
 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
 
