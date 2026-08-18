@@ -4177,7 +4177,7 @@ variable "eks_nodegroup_supported_version_check_parameters" {
     oldestVersionSupported  = optional(string, null)
   })
   default = {
-    oldestVersionSupported = 1.31 
+    oldestVersionSupported = 1.31
 }
 
 variable "rds_global_cluster_aurora_postgresql_supported_version" {
@@ -4187,7 +4187,7 @@ variable "rds_global_cluster_aurora_postgresql_supported_version" {
     longTermSupportVersion = optional(string, null)
   })
   default = {
-    minSupportedEngineVersion = "8.0.mysql_aurora.3.04.0" 
-    longTermSupportVersion =  Optional_string
+    minSupportedEngineVersion = "8.0.mysql_aurora.3.04.0"
+    longTermSupportVersion =  "optional_string"
 }
 
