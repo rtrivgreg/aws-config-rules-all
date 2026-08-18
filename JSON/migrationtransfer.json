@@ -1,0 +1,13 @@
+[
+"dms-auto-minor-version-upgrade-check",
+"dms-endpoint-ssl-configured",
+"dms-endpoint-tagged",
+"dms-mongo-db-authentication-enabled",
+"dms-neptune-iam-authorization-enabled",
+"dms-redis-tls-enabled",
+"dms-replication-instance-multi-az-enabled",
+"dms-replication-not-public",
+"dms-replication-task-sourcedb-logging",
+"dms-replication-task-tagged",
+"dms-replication-task-targetdb-logging"
+]
