@@ -1880,7 +1880,7 @@ variable "elasticache_supported_engine_version_parameters" {
   })
   default = {
     latestMemcachedVersion = "required_string"
-    latestRedisVersion     = ""required_string"
+    latestRedisVersion     = "required_string"
   }
 }
 
@@ -4187,5 +4187,6 @@ variable "rds_global_cluster_aurora_postgresql_supported_version" {
   })
   default = {
     minSupportedEngineVersion = "8.0.mysql_aurora.3.04.0" 
+    longTermSupportVersion: Optional_string
 }
 
