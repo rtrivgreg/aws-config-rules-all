@@ -6025,5 +6025,121 @@ locals {
       resource_types_scope = ["AWS::RDS::GlobalCluster"]
       severity             = "High"
     }
+# 20260818B
+  bedrock-data-source-encryption-enabled = {
+      description          = "Checks whether Amazon Bedrock data sources have encryption at rest enabled using a customer managed KMS key."
+      identifier           = "BEDROCK_DATA_SOURCE_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::Bedrock::DataSource"]
+      severity             = "High"
+    } 
+  bedrockagentcore-browsercustom-network-mode-not-public = {
+      description          = "Checks whether Amazon Bedrock Agents custom browser tools are not configured with public network mode."
+      identifier           = "BEDROCKAGENTCORE_BROWSERCUSTOM_NETWORK_MODE_NOT_PUBLIC"
+      resource_types_scope = ["AWS::Bedrock::Agent"]
+      severity             = "High"
+    }
+  bedrockagentcore-browsercustom-recording-enabled = {
+      description          = "Checks whether Amazon Bedrock Agents custom browser tools have session recording enabled."
+      identifier           = "BEDROCKAGENTCORE_BROWSER_CUSTOM_RECORDING_ENABLED"
+      resource_types_scope = ["AWS::Bedrock::Agent"]
+      severity             = "High"
+    }
+  bedrockagentcore-codeinterpreter-networkmode-check = {
+      description          = "Checks whether the Amazon Bedrock Agents code interpreter tool is not configured with public network access."
+      identifier           = "BEDROCKAGENTCORE_CODE_INTERPRETER_NETWORKMODE_CHECK"
+      resource_types_scope = ["AWS::Bedrock::Agent"]
+      severity             = "High"
+    }
+  bedrockagentcore-gateway-authorizer-enabled = {
+      description          = "Checks whether an authorizer is enabled on Amazon Bedrock Agents knowledge base gateways."
+      identifier           = "BEDROCKAGENTCORE_GATEWAY_AUTHORIZER_ENABLED"
+      resource_types_scope = ["AWS::Bedrock::Agent"]
+      severity             = "High"
+    }
+  bedrockagentcore-gateway-encryption-enabled = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "BEDROCKAGENTCORE_GATEWAY_ENCRYPTION_ENABLED"
+      resource_types_scope = ["AWS::Bedrock::Agent"]
+      severity             = "High"
+    }
+  bedrockagentcore-runtime-private-network-required = {
+      description          = "Checks whether Amazon Bedrock Agents runtime is configured to use only private network connectivity."
+      identifier           = "BEDROCKAGENTCORE_RUNTIME_PRIVATE_NETWORK_REQUIRED"
+      resource_types_scope = ["AWS::Bedrock::Agent"]
+      severity             = "High"
+    }
+#20260818E
+  sagemaker-endpoint-config-kms-key-required = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    } 
+  sagemaker-inf-experiment-data-storage-kms-encrypted = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-inf-experiment-instance-storage-kms-encrypted = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-model-explainability-job-network-isolation = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-model-quality-job-definition-isolation = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-model-quality-job-encrypt-in-transit = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-monitoring-schedule-traffic-encryption = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-notebook-instance-storage-vol-kms-encrypted = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-featuregroup-encryption-at-rest = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-featuregroup-online-store-encryption = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-model-multicontainer-private-registry = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
+  sagemaker-model-private-registry-required = {
+      description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
+      identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
+      resource_types_scope = ["AWS::RDS::GlobalCluster"]
+      severity             = "High"
+    }
   }
 }
