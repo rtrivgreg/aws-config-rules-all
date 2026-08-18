@@ -42,11 +42,14 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 
 #####################
 ### ALL - Upack (AWS Config deploy)
+python3 ~/gold/py/upack.py a1 ~/output/analytics.yml
 python3 ~/gold/py/upack.py a1 ~/output/compute20260805-part01.yml
 
 python3 ~/gold/py/upack.py a1 ~/output/database20260818v-part02.yml
 
 python3 ~/gold/py/upack.py a1 ~/output/securityidentitycompliance2026017u-part01.yml
+
+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
 
 # 20260805 Y62 Conformance pack fabrication run end
 
