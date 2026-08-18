@@ -22,6 +22,9 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 ### database - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/database.json --t ~/output/y62-AWS-manifest08182026.yml --o ~/output/database2026018b.yml
 
+### migrationtransfer - CPG
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/migrationtransfer.json --t ~/output/y62-AWS-manifest08182026.yml --o ~/output/migrationtransfer.yml
+
 ### securityidentitycompliance.json - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/securityidentitycompliance.json --t ~/output/y62-AWS-manifest08172026.yml --o ~/output/securityidentitycompliance2026017u.yml
 
