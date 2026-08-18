@@ -22,6 +22,9 @@ python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules
 #####################
 
 ### applicationintegration - CPG
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/analytics.json --t ~/output/y62-AWS-manifest.yml --o ~/output/analytics.yml
+
+### applicationintegration - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/applicationintegration.json --t ~/output/y62-AWS-manifest.yml --o ~/output/applicationintegration.yml
 
 ### compute - CPG
