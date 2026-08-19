@@ -6025,13 +6025,14 @@ locals {
       resource_types_scope = ["AWS::RDS::GlobalCluster"]
       severity             = "High"
     }
-# 20260818B
+# 20260818
   bedrock-data-source-encryption-enabled = {
       description          = "Checks whether Amazon Bedrock data sources have encryption at rest enabled using a customer managed KMS key."
       identifier           = "BEDROCK_DATA_SOURCE_ENCRYPTION_ENABLED"
       resource_types_scope = ["AWS::Bedrock::DataSource"]
       severity             = "High"
     } 
+# 20260819
   bedrockagentcore-browsercustom-network-mode-not-public = {
       description          = "Checks whether Amazon Bedrock Agents custom browser tools are not configured with public network mode."
       identifier           = "BEDROCKAGENTCORE_BROWSERCUSTOM_NETWORK_MODE_NOT_PUBLIC"
@@ -6040,13 +6041,13 @@ locals {
     }
   bedrockagentcore-browsercustom-recording-enabled = {
       description          = "Checks whether Amazon Bedrock Agents custom browser tools have session recording enabled."
-      identifier           = "BEDROCKAGENTCORE_BROWSER_CUSTOM_RECORDING_ENABLED"
+      identifier           = "BEDROCKAGENTCORE_BROWSERCUSTOM_RECORDING_ENABLED"
       resource_types_scope = ["AWS::Bedrock::Agent"]
       severity             = "High"
     }
   bedrockagentcore-codeinterpreter-networkmode-check = {
       description          = "Checks whether the Amazon Bedrock Agents code interpreter tool is not configured with public network access."
-      identifier           = "BEDROCKAGENTCORE_CODE_INTERPRETER_NETWORKMODE_CHECK"
+      identifier           = "BEDROCKAGENTCORE_CODEINTERPRETER_NETWORKMODE_CHECK"
       resource_types_scope = ["AWS::Bedrock::Agent"]
       severity             = "High"
     }
@@ -6068,7 +6069,7 @@ locals {
       resource_types_scope = ["AWS::Bedrock::Agent"]
       severity             = "High"
     }
-#20260818E
+
   sagemaker-endpoint-config-kms-key-required = {
       description          = "Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version."
       identifier           = "RDS_GLOBAL_CLUSTER_AURORA_POSTGRESQL_SUPPORTED_VERSION"
