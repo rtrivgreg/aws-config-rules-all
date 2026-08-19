@@ -529,7 +529,7 @@ variable "aurora_meets_restore_time_target_parameters" {
     resourceId     = optional(string, null)
   })
   default = {
-    maxRestoreTime = 1
+    maxRestoreTime = 0
   }
 }
 
@@ -1251,7 +1251,9 @@ variable "ebs_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+    maxRestoreTime = 0
+  }
 }
 
 
@@ -1450,7 +1452,9 @@ variable "ec2_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+    maxRestoreTime = 0 
+  }
 }
 
 
@@ -1731,7 +1735,9 @@ variable "efs_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+     maxRestoreTime = 0
+  }
 }
 
 
@@ -2158,7 +2164,9 @@ variable "fsx_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+     maxRestoreTime = 0
+  }
 }
 
 
