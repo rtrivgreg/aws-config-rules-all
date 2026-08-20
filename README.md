@@ -47,6 +47,9 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 
 ### securityidentitycompliance.json - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/securityidentitycompliance.json --t ~/output/y62-AWS-manifest.yml --o ~/output/securityidentitycompliance.yml
+
+### storage.json - CPG
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/storage.json --t ~/output/y62-AWS-manifest.yml --o ~/output/storage.yml
 #####################
 
 #####################
