@@ -1,0 +1,327 @@
+Resources:
+  # ==========================================
+  # AWS BACKUP RULES
+  # ==========================================
+  BackupPlanMinFreqAndMinRetentionCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-plan-min-frequency-and-min-retention-check
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_PLAN_MIN_FREQUENCY_AND_MIN_RETENTION_CHECK
+      InputParameters:
+        # Demanding an unachievable 1-minute backup frequency forces non-compliance
+        requiredFrequencyUnit: "hours"
+        requiredFrequencyValue: "0"
+
+  BackupRecoveryPointEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-recovery-point-encrypted
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_RECOVERY_POINT_ENCRYPTED
+      # Native boolean check: targets existing recovery points and fails if not matching
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::Backup::RecoveryPoint"
+
+  BackupRecoveryPointManualDeletionDisabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-recovery-point-manual-deletion-disabled
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_RECOVERY_POINT_MANUAL_DELETION_DISABLED
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::Backup::RecoveryPoint"
+
+  BackupRecoveryPointMinimumRetentionCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: backup-recovery-point-minimum-retention-check
+      Source:
+        Owner: AWS
+        SourceIdentifier: BACKUP_RECOVERY_POINT_MINIMUM_RETENTION_CHECK
+      InputParameters:
+        # Demanding a 100-year retention forces failures on active recovery points
+        requiredMinRetentionDays: "36500"
+
+  EbsInBackupPlan:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-in-backup-plan
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_IN_BACKUP_PLAN
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::Volume"
+
+  EbsLastBackupRecoveryPointCreated:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-last-backup-recovery-point-created
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_LAST_BACKUP_RECOVERY_POINT_CREATED
+      InputParameters:
+        # Demanding a backup recovery point created within the last 1 minute
+        recoveryPointAgeValue: "1"
+        recoveryPointAgeUnit: "minutes"
+
+  EbsMeetsRestoreTimeTarget:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-meets-restore-time-target
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_MEETS_RESTORE_TIME_TARGET
+      InputParameters:
+        # Setting an impossible 1-second restore target
+        recoveryTimeTargetInSec: "1"
+
+  EbsResourcesInLogicallyAirGappedVault:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-resources-in-logically-air-gapped-vault
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::Volume"
+
+  EbsResourcesProtectedByBackupPlan:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-resources-protected-by-backup-plan
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::Volume"
+
+  # ==========================================
+  # CLOUDTRAIL RULES
+  # ==========================================
+  CloudtrailAllReadS3DataEventCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-all-read-s3-data-event-check
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_ALL_READ_S3_DATA_EVENT_CHECK
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::CloudTrail::Trail"
+
+  CloudtrailAllWriteS3DataEventCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-all-write-s3-data-event-check
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_ALL_WRITE_S3_DATA_EVENT_CHECK
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::CloudTrail::Trail"
+
+  # ==========================================
+  # EC2 & EBS COMPLIANCE RULES
+  # ==========================================
+  EbsOptimizedInstance:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-optimized-instance
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_OPTIMIZED_INSTANCE
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::Instance"
+
+  EbsSnapshotBlockPublicAccess:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-snapshot-block-public-access
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_SNAPSHOT_BLOCK_PUBLIC_ACCESS
+      # Evaluates account-level EC2 configurations directly
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::Volume"
+
+  EbsSnapshotPublicRestorableCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ebs-snapshot-public-restorable-check
+      Source:
+        Owner: AWS
+        SourceIdentifier: EBS_SNAPSHOT_PUBLIC_RESTORABLE_CHECK
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::Snapshot"
+
+  Ec2EbsEncryptionByDefault:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-ebs-encryption-by-default
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_EBS_ENCRYPTION_BY_DEFAULT
+      # Evaluates the active region account settings
+
+  Ec2LaunchTemplatesEbsVolumeEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-launch-templates-ebs-volume-encrypted
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_LAUNCH_TEMPLATES_EBS_VOLUME_ENCRYPTED
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::LaunchTemplate"
+
+  Ec2SpotFleetRequestCtEncryptionAtRest:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: ec2-spot-fleet-request-ct-encryption-at-rest
+      Source:
+        Owner: AWS
+        SourceIdentifier: EC2_SPOT_FLEET_REQUEST_CT_ENCRYPTION_AT_REST
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::SpotFleetRequest"
+
+  EncryptedVolumes:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: encrypted-volumes
+      Source:
+        Owner: AWS
+        SourceIdentifier: ENCRYPTED_VOLUMES
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EC2::Volume"
+
+  # ==========================================
+  # EFS COMPLIANCE RULES
+  # ==========================================
+  EfsAccessPointEnforceRootDirectory:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-access-point-enforce-root-directory
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_ACCESS_POINT_ENFORCE_ROOT_DIRECTORY
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::AccessPoint"
+
+  EfsAccessPointEnforceUserIdentity:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-access-point-enforce-user-identity
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_ACCESS_POINT_ENFORCE_USER_IDENTITY
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::AccessPoint"
+
+  EfsAutomaticBackupsEnabled:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-automatic-backups-enabled
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_AUTOMATIC_BACKUPS_ENABLED
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::FileSystem"
+
+  EfsEncryptedCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-encrypted-check
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_ENCRYPTED_CHECK
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::FileSystem"
+
+  EfsFilesystemCtEncrypted:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-filesystem-ct-encrypted
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_FILESYSTEM_CT_ENCRYPTED
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::FileSystem"
+
+  EfsInBackupPlan:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-in-backup-plan
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_IN_BACKUP_PLAN
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::FileSystem"
+
+  EfsMountTargetPublicAccessible:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-mount-target-public-accessible
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_MOUNT_TARGET_PUBLIC_ACCESSIBLE
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::MountTarget"
+
+  EfsResourcesProtectedByBackupPlan:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: efs-resources-protected-by-backup-plan
+      Source:
+        Owner: AWS
+        SourceIdentifier: EFS_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::EFS::FileSystem"
+
+  # ==========================================
+  # FSX COMPLIANCE RULES
+  # ==========================================
+  FsxLustreCopyTagsToBackups:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: fsx-lustre-copy-tags-to-backups
+      Source:
+        Owner: AWS
+        SourceIdentifier: FSX_LUSTRE_COPY_TAGS_TO_BACKUPS
+      Scope:
+        ComplianceResourceTypes:
+          - "AWS::FSx::FileSystem"
+
+  FsxOntapDeploymentTypeCheck:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: fsx-ontap-deployment-type-check
+      Source:
+        Owner: AWS
+        SourceIdentifier: FSX_ONTAP_DEPLOYMENT_TYPE_CHECK
+      InputParameters:
+        # Passing an invalid deployment type forces all ONTAP setups to fail compliance
+        deploymentTypes: "INVALID_DUMMY_DEPLOYMENT_TYPE"
+
+  FsxOpenzfsCopyTagsEnabled:
