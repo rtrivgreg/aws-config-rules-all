@@ -1,0 +1,20 @@
+S3LifecyclePolicyCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: s3-lifecycle-policy-check
+      Description: Checks if a lifecycle rule is configured for an Amazon Simple Storage Service (Amazon S3) bucket. The rule is NON_COMPLIANT if there is no active lifecycle configuration rules or the configuration does not match with the parameter values.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::S3::Bucket
+          #- "AWS::IAM::Role"  
+        #ComplianceResourceId: "deliberately-broken-dummy-resource-id-99999"  
+      Source:
+        Owner: AWS
+        SourceIdentifier: S3_LIFECYCLE_POLICY_CHECK
+      InputParameters:
+        targetTransitionDays: 30
+        #targetExpirationDays: 90
+        targetTransitionStorageClass: "STANDARD_IA"
+        #targetPrefix: ""
+        #bucketNames: ""
+        targetExpirationDays: "99999"
