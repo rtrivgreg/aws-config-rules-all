@@ -5279,7 +5279,7 @@ locals {
     }
 
     s3-lifecycle-policy-check = {
-      description          = "targetTransitionDays(30), targetExpirationDays(90), targetTransitionStorageClass("STANDARD_IA"), targetPrefix(optional_string), bucketNames(optional_string). Input parameters for the s3-lifecycle-policy-check rule."
+      description          = "targetTransitionDays(30), targetExpirationDays(90), targetTransitionStorageClass(STANDARD_IA), targetPrefix(optional_string), bucketNames(optional_string). Input parameters for the s3-lifecycle-policy-check rule."
       identifier           = "S3_LIFECYCLE_POLICY_CHECK"
       input_parameters     = var.s3_lifecycle_policy_check_parameters
       resource_types_scope = ["AWS::S3::Bucket"]
