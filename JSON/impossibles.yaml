@@ -325,3 +325,314 @@ Resources:
         deploymentTypes: "INVALID_DUMMY_DEPLOYMENT_TYPE"
 
   FsxOpenzfsCopyTagsEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: fsx-openzfs-copy-tags-enabled
+Source:
+Owner: AWS
+SourceIdentifier: FSX_OPENZFS_COPY_TAGS_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::FSx::FileSystem"
+FsxResourcesProtectedByBackupPlan:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: fsx-resources-protected-by-backup-plan
+Source:
+Owner: AWS
+SourceIdentifier: FSX_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+Scope:
+ComplianceResourceTypes:
+- "AWS::FSx::FileSystem"
+FsxWindowsDeploymentTypeCheck:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: fsx-windows-deployment-type-check
+Source:
+Owner: AWS
+SourceIdentifier: FSX_WINDOWS_DEPLOYMENT_TYPE_CHECK
+InputParameters:
+# Passing an unsupported deployment layout targets non-compliance
+deploymentTypes: "INVALID_WINDOWS_TYPE"
+==========================================
+S3 COMPLIANCE RULES
+==========================================
+S3AccessPointInVpcOnly:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-access-point-in-vpc-only
+Source:
+Owner: AWS
+SourceIdentifier: S3_ACCESS_POINT_IN_VPC_ONLY
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::AccessPoint"
+S3AccessPointPublicAccessBlocks:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-access-point-public-access-blocks
+Source:
+Owner: AWS
+SourceIdentifier: S3_ACCESS_POINT_PUBLIC_ACCESS_BLOCKS
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::AccessPoint"
+S3AccountLevelPublicAccessBlocksPeriodic:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-account-level-public-access-blocks-periodic
+Source:
+Owner: AWS
+SourceIdentifier: S3_ACCOUNT_LEVEL_PUBLIC_ACCESS_BLOCKS_PERIODIC
+# Runs periodically against your overall S3 account configurations
+S3BucketAclProhibited:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-acl-prohibited
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_ACL_PROHIBITED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketBlacklistedActionsProhibited:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-blacklisted-actions-prohibited
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_BLACKLISTED_ACTIONS_PROHIBITED
+InputParameters:
+# Blacklisting the standard '' wildcard forces policy evaluations to register non-compliance
+blacklistedActions: ""
+S3BucketCrossRegionReplicationEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-cross-region-replication-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_CROSS_REGION_REPLICATION_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketDefaultLockEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-default-lock-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_DEFAULT_LOCK_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketLevelPublicAccessProhibited:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-level-public-access-prohibited
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_LEVEL_PUBLIC_ACCESS_PROHIBITED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketLoggingEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-logging-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_LOGGING_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketMfaDeleteEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-mfa-delete-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_MFA_DELETE_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketPolicyGranteeCheck:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-policy-grantee-check
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_POLICY_GRANTEE_CHECK
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketPolicyNotMorePermissive:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-policy-not-more-permissive
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_POLICY_NOT_MORE_PERMISSIVE
+InputParameters:
+# Demanding control alignment to a completely blank, restrictive policy control template
+controlPolicyTemplate: "{}"
+S3BucketPublicReadProhibited:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-public-read-prohibited
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_PUBLIC_READ_PROHIBITED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketPublicWriteProhibited:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-public-write-prohibited
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_PUBLIC_WRITE_PROHIBITED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketReplicationEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-replication-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_REPLICATION_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketServerSideEncryptionEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-server-side-encryption-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketSslRequestsOnly:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-ssl-requests-only
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_SSL_REQUESTS_ONLY
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3BucketTagged:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-tagged
+Source:
+Owner: AWS
+SourceIdentifier: REQUIRED_TAGS
+InputParameters:
+# Demanding an unassigned tag structure triggers immediate compliance evaluation failures
+tag1Key: "MANDATORY_TESTING_OVERRIDE_FAIL_KEY_XYZ"
+S3BucketVersioningEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-bucket-versioning-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_BUCKET_VERSIONING_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3DefaultEncryptionKms:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-default-encryption-kms
+Source:
+Owner: AWS
+SourceIdentifier: S3_DEFAULT_ENCRYPTION_KMS
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3EventNotificationsEnabled:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-event-notifications-enabled
+Source:
+Owner: AWS
+SourceIdentifier: S3_EVENT_NOTIFICATIONS_ENABLED
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3expressDirBucketLifecycleRulesCheck:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3express-dir-bucket-lifecycle-rules-check
+Source:
+Owner: AWS
+SourceIdentifier: S3EXPRESS_DIR_BUCKET_LIFECYCLE_RULES_CHECK
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3Express::DirectoryBucket"
+S3LastBackupRecoveryPointCreated:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-last-backup-recovery-point-created
+Source:
+Owner: AWS
+SourceIdentifier: S3_LAST_BACKUP_RECOVERY_POINT_CREATED
+InputParameters:
+recoveryPointAgeValue: "1"
+recoveryPointAgeUnit: "minutes"
+S3LifecyclePolicyCheck:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-lifecycle-policy-check
+Source:
+Owner: AWS
+SourceIdentifier: S3_LIFECYCLE_POLICY_CHECK
+InputParameters:
+# Demanding an impossible bucket retention baseline timeline
+targetExpirationDays: "99999"
+S3MeetsRestoreTimeTarget:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-meets-restore-time-target
+Source:
+Owner: AWS
+SourceIdentifier: S3_MEETS_RESTORE_TIME_TARGET
+InputParameters:
+recoveryTimeTargetInSec: "1"
+S3ResourcesInLogicallyAirGappedVault:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-resources-in-logically-air-gapped-vault
+Source:
+Owner: AWS
+SourceIdentifier: S3_RESOURCES_IN_LOGICALLY_AIR_GAPPED_VAULT
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3ResourcesProtectedByBackupPlan:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-resources-protected-by-backup-plan
+Source:
+Owner: AWS
+SourceIdentifier: S3_RESOURCES_PROTECTED_BY_BACKUP_PLAN
+Scope:
+ComplianceResourceTypes:
+- "AWS::S3::Bucket"
+S3VersionLifecyclePolicyCheck:
+Type: AWS::Config::ConfigRule
+Properties:
+ConfigRuleName: s3-version-lifecycle-policy-check
+Source:
+Owner: AWS
+SourceIdentifier: S3_VERSION_LIFECYCLE_POLICY_CHECK
+InputParameters:
+# Forcing a mismatch against standard production noncurrent lifecycle versions
+targetNoncurrentVersionExpirationDays: "99999"
+
+  
