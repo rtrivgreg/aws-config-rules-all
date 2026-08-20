@@ -3681,7 +3681,7 @@ variable "s3_last_backup_recovery_point_created_parameters" {
 
 
 variable "s3_lifecycle_policy_check_parameters" {
-  description = "Input parameters for the s3-lifecycle-policy-check rule."
+  description = "targetTransitionDays(30), targetExpirationDays(90), targetTransitionStorageClass("STANDARD_IA"), targetPrefix(optional_string), bucketNames(optional_string). Input parameters for the s3-lifecycle-policy-check rule."
   type = object({
     targetTransitionDays         = optional(number, null)
     targetExpirationDays         = optional(number, null)
