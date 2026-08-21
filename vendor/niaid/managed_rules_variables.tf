@@ -2180,7 +2180,9 @@ variable "fsx_openzfs_deployment_type_check_parameters" {
   type = object({
     deploymentTypes = optional(string, null)
   })
-  default = {}
+  default = {
+    deploymentTypes = "MULTI_AZ_1"
+  }
 }
 
 
@@ -2204,7 +2206,9 @@ variable "fsx_windows_deployment_type_check_parameters" {
   type = object({
     deploymentTypes = optional(string, null)
   })
-  default = {}
+  default = {
+    deploymentTypes = 
+  }
 }
 
 
