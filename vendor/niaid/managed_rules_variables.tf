@@ -514,8 +514,6 @@ variable "aurora_last_backup_recovery_point_created_parameters" {
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
-    resourceTags          = "optional_tag_list"
-    resourceId            = "optional_string"
   }
 
 }
@@ -554,8 +552,6 @@ variable "aurora_resources_in_logically_air_gapped_vault_parameters" {
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
-    resourceTags          = "optional_tag_list"
-    resourceId            = "optional_string"
   }
 
 }
@@ -1170,8 +1166,6 @@ variable "dynamodb_last_backup_recovery_point_created_parameters" {
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
-    resourceTags          = "optional_tag_list"
-    resourceId            = "optional_string"
   }
 
 }
@@ -3113,8 +3107,6 @@ variable "rds_global_cluster_aurora_mysql_supported_version_parameters" {
     longTermSupportVersion = optional(string, null)
   })
   default = {
-    minSupportedEngineVersion = "required_string"
-    longTermSupportVersion = "optional_string"
   }
 }
 
@@ -3148,8 +3140,6 @@ variable "rds_last_backup_recovery_point_created_parameters" {
   default = {
     recoveryPointAgeValue = 1
     recoveryPointAgeUnit  = "days"
-    resourceTags          = "optional_tag_list"
-    resourceId            = "optional_string"
   }
 
 }
@@ -4200,6 +4190,5 @@ variable "rds_global_cluster_aurora_postgresql_supported_version" {
   })
   default = {
     minSupportedEngineVersion = "8.0.mysql_aurora.3.04.0"
-    longTermSupportVersion =  "optional_string"
 }
 
