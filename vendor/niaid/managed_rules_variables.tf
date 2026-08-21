@@ -3702,7 +3702,9 @@ variable "s3_meets_restore_time_target_parameters" {
     resourceTags   = optional(string, null)
     resourceId     = optional(string, null)
   })
-  default = {}
+  default = {
+    maxRestoreTime = 60
+  }
 }
 
 
