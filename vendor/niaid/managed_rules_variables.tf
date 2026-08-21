@@ -3676,7 +3676,7 @@ variable "s3_lifecycle_policy_check_parameters" {
     targetTransitionDays         = optional(number, null)
     targetExpirationDays         = optional(number, null)
     targetTransitionStorageClass = optional(string, null)
-    #targetPrefix                 = optional(string, null)
+    targetPrefix                 = optional(string, null)
     #bucketNames                  = optional(string, null)
   })
   default = {
