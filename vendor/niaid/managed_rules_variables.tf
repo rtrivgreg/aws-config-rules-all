@@ -2169,7 +2169,9 @@ variable "fsx_ontap_deployment_type_check_parameters" {
   type = object({
     deploymentTypes = optional(string, null)
   })
-  default = {}
+  default = {
+    deploymentTypes = "MULTI_AZ_1"
+  }
 }
 
 
@@ -3604,7 +3606,9 @@ variable "s3_bucket_policy_not_more_permissive_parameters" {
   type = object({
     controlPolicy = optional(string, null)
   })
-  default = {}
+  default = {
+    controlPolicy =  '{"Statement":[{"Sid":"ControlAccountAccess","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::111122223333:root"},"Action":"s3:*","Resource":["arn:aws:s3:::example-bucket","arn:aws:s3:::example-bucket/*"]}]}'
+  }
 }
 
 
