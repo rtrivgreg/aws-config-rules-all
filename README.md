@@ -68,5 +68,36 @@ python3 ~/gold/py/upack.py a1 ~/output/securityidentitycompliance-part01.yml
 
 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
 
+
+
+
+printf "%-40s | %-10s | %-20s | %-20s\n" "VIRTUAL ENVIRONMENT PATH" "SIZE" "CREATION DATE" "LAST USED DATE" && \
+printf "%-40s-+-%-10s-+-%-20s-+-%-20s\n" "----------------------------------------" "----------" "--------------------" "--------------------" && \
+find ~ -maxdepth 5 -type f -name "pyvenv.cfg" 2>/dev/null | while read -r cfg; do
+    venv_dir=$(dirname "$cfg")
+
+    #view all envs
+    # 1. Total Disk Space Usage
+    size=$(du -sh "$venv_dir" | awk '{print $1}')
+    
+    # 2. Date of Creation (Metadata status change time)
+    created=$(stat -c "%y" "$cfg" | cut -d'.' -f1)
+    
+    # 3. Date of Last Use (Latest access time among binary files like python/pip)
+    last_used=$(find "$venv_dir/bin" -type f -exec stat -c "%X %x" {} + 2>/dev/null | sort -nr | head -n1 | cut -d' ' -f2-3 | cut -d'.' -f1)
+    
+    # Fallback if binary scan is blank
+    if [ -z "$last_used" ]; then last_used=$(stat -c "%x" "$cfg" | cut -d'.' -f1); fi
+    
+    # Truncate long paths cleanly for the visual layout
+    display_path=$venv_dir
+    if [ ${#display_path} -gt 40 ]; then display_path="...${display_path: -37}"; fi
+    
+    printf "%-40s | %-10s | %-20s | %-20s\n" "$display_path" "$size" "$created" "$last_used"
+done
+
+
+
+
 # 20260805 Y62 Conformance pack fabrication run end
 
