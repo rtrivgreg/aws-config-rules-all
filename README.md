@@ -96,6 +96,9 @@ find ~ -maxdepth 5 -type f -name "pyvenv.cfg" 2>/dev/null | while read -r cfg; d
     printf "%-40s | %-10s | %-20s | %-20s\n" "$display_path" "$size" "$created" "$last_used"
 done
 
+ACTIVATE an ENV
+source /home/ubuntu/repos/Y62DB/.venv/bin/activate
+
 
 
 
