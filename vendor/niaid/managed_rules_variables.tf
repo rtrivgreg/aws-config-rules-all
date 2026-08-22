@@ -3554,11 +3554,11 @@ variable "s3_account_level_public_access_blocks_periodic_parameters" {
   default = {}
 }
 
-
+#RG
 variable "s3_bucket_blacklisted_actions_prohibited_parameters" {
   description = "Input parameters for the s3-bucket-blacklisted-actions-prohibited rule."
   type = object({
-    blacklistedActionPattern = optional(string, null)
+    blacklistedActionPattern = optional(string, "s3:DeleteObject,s3:PutBucketPolicy,s3:DeleteBucket")
   })
   default = {}
 }
