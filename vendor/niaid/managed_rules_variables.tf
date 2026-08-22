@@ -2170,7 +2170,7 @@ variable "fsx_ontap_deployment_type_check_parameters" {
     deploymentTypes = optional(string, null)
   })
   default = {
-    deploymentTypes = "MULTI_AZ_1"
+    deploymentTypes = "MULTI_AZ_1,SINGLE_AZ_1"
   }
 }
 
@@ -2181,7 +2181,7 @@ variable "fsx_openzfs_deployment_type_check_parameters" {
     deploymentTypes = optional(string, null)
   })
   default = {
-    deploymentTypes = "MULTI_AZ_1"
+    deploymentTypes = "MULTI_AZ_1,SINGLE_AZ_1"
   }
 }
 
@@ -2207,7 +2207,7 @@ variable "fsx_windows_deployment_type_check_parameters" {
     deploymentTypes = optional(string, null)
   })
   default = {
-    deploymentTypes = "MULTI_AZ_1"
+    deploymentTypes = "MULTI_AZ_1,SINGLE_AZ_1"
   }
 }
 
