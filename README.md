@@ -81,6 +81,12 @@ printf "%-40s-+-%-10s-+-%-20s-+-%-20s\n" "--------------------------------------
 find ~ -maxdepth 5 -type f -name "pyvenv.cfg" 2>/dev/null | while read -r cfg; do
     venv_dir=$(dirname "$cfg")
 
+
+python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml
+
+
+python3 ~/repos/config-rules-all/python/emitter.py --managed-rules-locals ~/repos/config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/config-rules-all/vendor/niaid/managed_rules_variables.tf --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml --description "Y62 NIAID ` Config Production Baseline"
+
     #view all envs
     # 1. Total Disk Space Usage
     size=$(du -sh "$venv_dir" | awk '{print $1}')
