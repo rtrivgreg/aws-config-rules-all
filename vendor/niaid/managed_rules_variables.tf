@@ -3578,7 +3578,9 @@ variable "s3_bucket_level_public_access_prohibited_parameters" {
   type = object({
     excludedPublicBuckets = optional(string, null)
   })
-  default = {}
+  default = {
+    excludedPublicBuckets = "y62c"  #optional
+  }
 }
 
 
