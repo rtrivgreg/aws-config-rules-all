@@ -2207,7 +2207,7 @@ variable "fsx_windows_deployment_type_check_parameters" {
     deploymentTypes = optional(string, null)
   })
   default = {
-    deploymentTypes = 
+    deploymentTypes = "MULTI_AZ_1"
   }
 }
 
