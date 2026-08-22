@@ -56,13 +56,17 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 #####################
 ### ALL - Upack (AWS Config deploy)
 python3 ~/repos/config-rules-all/python/upack.py a1 ~/output/analytics.yml
+
 python3 ~/repos/config-rules-all/python/upack.py a1 ~/output/compute-part01.yml
+
 python3 ~/repos/config-rules-all/python/upack.py a1 ~/output/database-part02.yml
 
 python3 ~/repos/config-rules-all/python/upack.py a1 ~/output/managementgovernance-part01.yml
+
 python3 ~/repos/config-rules-all/python/upack.py a2 ~/output/managementgovernance-part02.yml
 
 python3 ~/repos/config-rules-all/python/upack.py s1 ~/output/storage-part01.yml
+
 python3 ~/repos/config-rules-all/python/upack.py s2 ~/output/storage-part02.yml
 
 python3 ~/gold/py/upack.py a1 ~/output/securityidentitycompliance-part01.yml
