@@ -3610,7 +3610,7 @@ variable "s3_bucket_policy_grantee_check_parameters" {
 variable "s3_bucket_policy_not_more_permissive_parameters" {
   description = "Input parameters for the s3-bucket-policy-not-more-permissive rule."
   type = object({
-    controlPolicy = optional(string, null)
+    controlPolicy = optional(string, '{"Statement":[{"Sid":"ControlAccountAccess","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::111122223333:root"},"Action":"s3:*","Resource":["arn:aws:s3:::example-bucket","arn:aws:s3:::example-bucket/*"]}]}')
   })
   default = {
     controlPolicy =  '{"Statement":[{"Sid":"ControlAccountAccess","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::111122223333:root"},"Action":"s3:*","Resource":["arn:aws:s3:::example-bucket","arn:aws:s3:::example-bucket/*"]}]}'
