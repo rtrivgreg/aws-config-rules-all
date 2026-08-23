@@ -1,25 +1,13 @@
-# Y62 SitC Conformance pack fabrication run begin (build 202608050:800)
+# config-rules-all 
+Y62 Config Rule Build Suite
 
-**Build Summary: (n) conformance packs generated**
-
-compute.json->compute20260805-part01.yml, compute20260805-part02.yml, compute20260805-part03.yml, compute20260805-part04.yml
-
-containers.json->containers20260805-part01.yml, containers20260805-part02.yml
-
-storage.json->storage20260805-part01.yml, storage20260805-part02.yml
-
-**Build generation and deploy Details**
-
-#####################
-### Manifest creation
-#####################
+Manifest
 
 python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml
 
+Category creations
 
-#####################
-### Category creations
-#####################
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/storage.json --t ~/output/y62-AWS-manifest.yml --o ~/output/storage.yml
 
 ### aiml - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/aiml.json --t ~/output/y62-AWS-manifest.yml --o ~/output/aiml.yml
@@ -48,13 +36,9 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 ### securityidentitycompliance.json - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/securityidentitycompliance.json --t ~/output/y62-AWS-manifest.yml --o ~/output/securityidentitycompliance.yml
 
-### storage.json - CPG
-python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/storage.json --t ~/output/y62-AWS-manifest.yml --o ~/output/storage.yml
+# Deploy
+ALL - Upack (AWS Config deploy)
 
-#####################
-
-#####################
-### ALL - Upack (AWS Config deploy)
 python3 ~/repos/config-rules-all/python/upack.py a1 ~/output/analytics.yml
 
 python3 ~/repos/config-rules-all/python/upack.py a1 ~/output/compute-part01.yml
