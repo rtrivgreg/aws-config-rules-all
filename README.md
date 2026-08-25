@@ -1,6 +1,8 @@
 # config-rules-all 
 Y62 Config Rule Build Suite
 
+source /Users/sunyanggregoire/code/.venv/bin/activate  
+
 Next push
 source /home/ubuntu/repos/Y62DB/.venv/bin/activate
 git pull &&
