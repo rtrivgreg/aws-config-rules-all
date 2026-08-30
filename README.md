@@ -1,10 +1,8 @@
-# config-rules-all 
+# aws-config-rules-all 
 Y62 Config Rule Build Suite
-
 source /Users/sunyanggregoire/code/.venv/bin/activate  
-
-Next push
 source /home/ubuntu/repos/Y62DB/.venv/bin/activate
+
 git pull &&
 
 python3 ~/repos/config-rules-all/python/emitter.py --managed-rules-locals ~/repos/config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/config-rules-
@@ -50,6 +48,10 @@ python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON
 
 ### securityidentitycompliance.json - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/securityidentitycompliance.json --t ~/output/y62-AWS-manifest.yml --o ~/output/securityidentitycompliance.yml
+
+python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/storage.json --t ~/output/y62-AWS-manifest.yml --o ~/output/storage.yml 
+
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/storage.json -o ~/output/storagez.yml
 
 # Deploy
 ALL - Upack (AWS Config deploy)
