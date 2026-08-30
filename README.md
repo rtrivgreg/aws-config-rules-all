@@ -7,9 +7,17 @@
 ---
 ## `python/cpg.py`
 
-`cpgNG.py` generates deployable AWS Config Conformance Pack YAML files from a JSON array of AWS-managed Config rule names and a YAML source-of-truth manifest. It preserves available rule descriptions, scopes, source identifiers, and input parameters; generates minimal definitions for rules missing from the source of truth; derives CloudFormation logical IDs; normalizes descriptions; and divides the requested rules into pack files containing no more than 30 rules each. Command-line options specify the source-of-truth YAML file, rules JSON file, and output filename.
+`cpg.py` generates deployable AWS Config Conformance Pack YAML files from a JSON array of AWS-managed Config rule names and a YAML source-of-truth manifest. It preserves available rule descriptions, scopes, source identifiers, and input parameters; generates minimal definitions for rules missing from the source of truth; derives CloudFormation logical IDs; normalizes descriptions; and divides the requested rules into pack files containing no more than 30 rules each. Command-line options specify the source-of-truth YAML file, rules JSON file, and output filename.
 
 ---
+## `python/upack.py`
+`python/upack.py` deploys a local YAML template as an AWS Config Conformance Pack. It accepts a conformance-pack name and template-file path, reads the template, submits it to AWS Config through `PutConformancePack`, and polls the deployment status every 10 seconds until creation succeeds or fails. The utility handles temporarily unavailable status information, reports current deployment states and AWS failure reasons, rejects unexpected deletion states, and displays the completion time and total deployment duration.
+
+---
+## `python/emitter.py`
+`python/emitter.py` generates an AWS Config Conformance Pack YAML truth manifest from NIAID Terraform managed-rule metadata. It parses rule definitions from `managed_rules_locals.tf` and parameter schemas and defaults from `managed_rules_variables.tf`, then converts them into `AWS::Config::ConfigRule` resources containing descriptions, resource scopes, AWS source identifiers, and string-formatted input parameters. It distinguishes required parameters from optional metadata, enforces AWS Config’s 256-character rule-description limit, validates referenced variables and defaults, derives CloudFormation logical IDs, and writes the completed YAML using a supplied format file and template description. Optional command-line controls support rule-count limiting and diagnostic output.
+
+--
 
 # CPG aws-config-rules-all  
 NG (DynamoDB)
