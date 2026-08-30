@@ -1,26 +1,30 @@
-# aws-config-rules-all 
-Y62 Config Rule Build Suite
-source /Users/sunyanggregoire/code/.venv/bin/activate  
-source /home/ubuntu/repos/Y62DB/.venv/bin/activate
+# aws-config-rules-all  Y62 Config Rule Build Suite
 
-git pull &&
+CPG NG (DynamoDB)
 
-python3 ~/repos/config-rules-all/python/emitter.py --managed-rules-locals ~/repos/config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/config-rules-
-all/vendor/niaid/managed_rules_variables.tf --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml --description "Y62 NIAID AWS Config Production Baseline" &&
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/analytics.json -o ~/output/analytics.yml
 
-python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/storage.json --t ~/output/y62-AWS-manifest.yml --o ~/output/storage.yml &&
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/mlai.json -o ~/output/mlai.yml
 
-python3 ~/repos/config-rules-all/python/upack.py s1 ~/output/storage-part01.yml &&
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/compute.json -o ~/output/storageNG.yml
 
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/containers.json -o ~/output/storage.yml
+
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/storage.json -o ~/output/storageNG.yml
+
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/storage.json -o ~/output/storageNG.yml
+
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/storage.json -o ~/output/storageNG.yml
+
+python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/securityidentitycompliance.json -o ~/output/securityidentitycompliance.yml
+
+python3 ~/repos/config-rules-all/python/upack.py s1 ~/output/storage-part01.yml 
 python3 ~/repos/config-rules-all/python/upack.py s2 ~/output/storage-part02.yml 
+<HR>
 
-All Artifacts
-
-Manifest
-
-python3 ~/repos/config-rules-all/python/emitter.py --managed-rules-locals ~/repos/config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/config-rules-all/vendor/niaid/managed_rules_variables.tf --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml --description "Y62 NIAID AWS Config Production Baseline" &&
-
-Categories
+G1 EMITTER (generate yaml manifest)
+python3 ~/repos/config-rules-all/python/emitter.py --managed-rules-locals ~/repos/config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/config-rules-
+all/vendor/niaid/managed_rules_variables.tf --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml --description "Y62 NIAID AWS Config Production Baseline"
 
 ### aiml - CPG
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/aiml.json --t ~/output/y62-AWS-manifest.yml --o ~/output/aiml.yml
@@ -72,47 +76,13 @@ python3 ~/repos/config-rules-all/python/upack.py s2 ~/output/storage-part02.yml
 
 python3 ~/gold/py/upack.py a1 ~/output/securityidentitycompliance-part01.yml
 
-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
-
-
-
-
-printf "%-40s | %-10s | %-20s | %-20s\n" "VIRTUAL ENVIRONMENT PATH" "SIZE" "CREATION DATE" "LAST USED DATE" && \
-printf "%-40s-+-%-10s-+-%-20s-+-%-20s\n" "----------------------------------------" "----------" "--------------------" "--------------------" && \
-find ~ -maxdepth 5 -type f -name "pyvenv.cfg" 2>/dev/null | while read -r cfg; do
-    venv_dir=$(dirname "$cfg")
-
-
-python3 ~/repos/config-rules-all/python/emitter.py --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml
-
-
-python3 ~/repos/config-rules-all/python/emitter.py --managed-rules-locals ~/repos/config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/config-rules-all/vendor/niaid/managed_rules_variables.tf --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml --description "Y62 NIAID ` Config Production Baseline"
-
-    #view all envs
-    # 1. Total Disk Space Usage
-    size=$(du -sh "$venv_dir" | awk '{print $1}')
-    
-    # 2. Date of Creation (Metadata status change time)
-    created=$(stat -c "%y" "$cfg" | cut -d'.' -f1)
-    
-    # 3. Date of Last Use (Latest access time among binary files like python/pip)
-    last_used=$(find "$venv_dir/bin" -type f -exec stat -c "%X %x" {} + 2>/dev/null | sort -nr | head -n1 | cut -d' ' -f2-3 | cut -d'.' -f1)
-    
-    # Fallback if binary scan is blank
-    if [ -z "$last_used" ]; then last_used=$(stat -c "%x" "$cfg" | cut -d'.' -f1); fi
-    
-    # Truncate long paths cleanly for the visual layout
-    display_path=$venv_dir
-    if [ ${#display_path} -gt 40 ]; then display_path="...${display_path: -37}"; fi
-    
-    printf "%-40s | %-10s | %-20s | %-20s\n" "$display_path" "$size" "$created" "$last_used"
-done
-
-ACTIVATE an ENV
+PREFLIGHT
+git pull 
+source /home/ubuntu/repos/Y62DB/.venv/bin/activate
+source /Users/sunyanggregoire/code/.venv/bin/activate  
 source /home/ubuntu/repos/Y62DB/.venv/bin/activate
 
 
 
 
-# 20260805 Y62 Conformance pack fabrication run end
 
