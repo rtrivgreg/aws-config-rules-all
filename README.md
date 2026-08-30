@@ -1,6 +1,5 @@
 # CPG aws-config-rules-all  
-
-CPG NG (DynamoDB)
+NG (DynamoDB)
 
 python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/applicationintegration.json -o ~/output/applicationintegration.yml
 
