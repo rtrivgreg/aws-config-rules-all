@@ -1,3 +1,11 @@
+# AWS Config Conformance Pack Generator
+
+## `python/cpgNG.py`
+
+`cpgNG.py` generates deployable AWS Config Conformance Pack YAML files from a JSON list of AWS-managed Config rule names, using the Y62DB DynamoDB catalog as its source of truth. It retrieves rule profiles, parameter definitions, scopes, descriptions, and optional group-specific parameter bindings; constructs valid `AWS::Config::ConfigRule` resources; and divides output into packs containing no more than 30 rules. When a requested rule is absent from DynamoDB, it generates a minimal rule definition so pack generation can continue. Command-line options specify the rules JSON file, output filename, DynamoDB table and region, and optional organizational group and binding.
+
+---
+
 # CPG aws-config-rules-all  
 NG (DynamoDB)
 
