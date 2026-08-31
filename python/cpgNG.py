@@ -16,7 +16,7 @@ This version (cpgNG.py):
   - --rules-json and --output retain the same semantics
   - Pack YAML is a deployable baseline: required parameters plus optional
     parameters explicitly set by a group binding
-  - A sidecar JSON inventory is written next to each pack part
+  - A sidecar CSV inventory is written next to each pack part
 
 DynamoDB expectations (see Y62DB schemas/access-patterns.md and loader):
   Table (default: y62db-config-rule-catalog)
@@ -29,6 +29,7 @@ DynamoDB expectations (see Y62DB schemas/access-patterns.md and loader):
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import logging
 import os
@@ -220,7 +221,7 @@ def output_path_for_part(output_path: Path, part_num: int) -> Path:
 
 
 def sidecar_path_for_pack(pack_path: Path) -> Path:
-    return pack_path.with_suffix(".json")
+    return pack_path.with_suffix(".csv")
 
 
 def dump_yaml(data: Dict[str, Any], path: Path) -> None:
@@ -243,9 +244,43 @@ def dump_yaml(data: Dict[str, Any], path: Path) -> None:
         sys.exit(1)
 
 
-def dump_sidecar(data: Dict[str, Any], path: Path) -> None:
+SIDECAR_COLUMNS = (
+    "name",
+    "description",
+    "scope",
+    "parameter_name",
+    "data_type",
+    "required",
+    "catalog_default",
+    "binding_value",
+    "emitted",
+)
+
+OPTIONAL_FIELDS_PREFIX = "OPTIONAL FIELDS EXIST "
+
+
+def rule_has_optional_parameters(parameters: List[Dict[str, Any]]) -> bool:
+    return any(not bool(row.get("required")) for row in parameters)
+
+
+def sidecar_description(description: Optional[str], parameters: List[Dict[str, Any]]) -> str:
+    text = _normalize_description_value(description) if isinstance(description, str) and description.strip() else ""
+    if not rule_has_optional_parameters(parameters):
+        return text
+    if text.startswith(OPTIONAL_FIELDS_PREFIX):
+        return text
+    if text:
+        return f"{OPTIONAL_FIELDS_PREFIX}{text}"
+    return OPTIONAL_FIELDS_PREFIX.rstrip()
+
+
+def dump_sidecar(rows: List[Dict[str, str]], path: Path) -> None:
     try:
-        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+        with path.open("w", encoding="utf-8-sig", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=list(SIDECAR_COLUMNS), extrasaction="ignore")
+            writer.writeheader()
+            for row in rows:
+                writer.writerow({column: row.get(column, "") for column in SIDECAR_COLUMNS})
     except OSError as e:
         logger.error(f"Failed to write sidecar to {path}: {e}")
         sys.exit(1)
@@ -549,34 +584,52 @@ def build_pack_template(
     return template
 
 
-def build_sidecar_document(
-    pack_path: Path,
+def build_sidecar_rows(
     rule_names: List[str],
     sot_index: Dict[str, Dict[str, Any]],
-) -> Dict[str, Any]:
-    rules: List[Dict[str, Any]] = []
+) -> List[Dict[str, str]]:
+    rows: List[Dict[str, str]] = []
     for rule_name in rule_names:
         entry = sot_index.get(rule_name) or {}
-        description = entry.get("description")
-        if isinstance(description, str) and description.strip():
-            description = _normalize_description_value(description)
-        else:
-            description = None
+        parameters = list(entry.get("parameters") or [])
+        description = sidecar_description(entry.get("description"), parameters)
         scope = entry.get("scope")
         if not isinstance(scope, list):
             scope = []
-        rules.append(
-            {
-                "name": rule_name,
-                "description": description,
-                "scope": [str(item) for item in scope],
-                "parameters": list(entry.get("parameters") or []),
-            }
-        )
-    return {
-        "pack": pack_path.name,
-        "rules": rules,
-    }
+        scope_text = ";".join(str(item) for item in scope)
+        if not parameters:
+            rows.append(
+                {
+                    "name": rule_name,
+                    "description": description,
+                    "scope": scope_text,
+                    "parameter_name": "",
+                    "data_type": "",
+                    "required": "",
+                    "catalog_default": "",
+                    "binding_value": "",
+                    "emitted": "",
+                }
+            )
+            continue
+        for param in parameters:
+            required = param.get("required")
+            catalog_default = param.get("catalog_default")
+            binding_value = param.get("binding_value")
+            rows.append(
+                {
+                    "name": rule_name,
+                    "description": description,
+                    "scope": scope_text,
+                    "parameter_name": str(param.get("name") or ""),
+                    "data_type": str(param.get("data_type") or ""),
+                    "required": "true" if required else "false",
+                    "catalog_default": "" if catalog_default is None else str(catalog_default),
+                    "binding_value": "" if binding_value is None else str(binding_value),
+                    "emitted": str(param.get("emitted") or ""),
+                }
+            )
+    return rows
 
 
 def main() -> None:
@@ -657,7 +710,7 @@ def main() -> None:
 
         template = build_pack_template(pack_rules, sot_index)
         dump_yaml(template, out_path)
-        dump_sidecar(build_sidecar_document(out_path, pack_rules, sot_index), side_path)
+        dump_sidecar(build_sidecar_rows(pack_rules, sot_index), side_path)
 
         logger.info(f"Wrote {out_path}")
         logger.info(f"Wrote {side_path}")
