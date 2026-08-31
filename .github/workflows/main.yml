@@ -1,0 +1,24 @@
+name: Test DynamoDB OIDC Read Access
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-ddb:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials through OIDC
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: arn:aws:iam::418295699841:role/GitHubDDBReadonlyAnalyst
+          aws-region: us-east-1
+
+      - name: Test DynamoDB read access
+        run: |
+          aws dynamodb describe-table \
+            --table-name y62db-config-rule-catalog
