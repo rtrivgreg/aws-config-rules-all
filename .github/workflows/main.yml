@@ -1,24 +1,32 @@
 name: Test DynamoDB OIDC Read Access
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:
 
 permissions:
-  id-token: write
-  contents: read
+  id-token: write
+  contents: read
 
 jobs:
-  test-ddb:
-    runs-on: ubuntu-latest
+  test-ddb:
+    runs-on: ubuntu-latest
 
-    steps:
-      - name: Configure AWS credentials through OIDC
-        uses: aws-actions/configure-aws-credentials@v5
-        with:
-          role-to-assume: arn:aws:iam::418295699841:role/GitHubDDBReadonlyAnalyst
-          aws-region: us-east-1
+    steps:
+      - name: Show GitHub OIDC claims
+        uses: github/actions-oidc-debugger@main
+        with:
+          audience: sts.amazonaws.com
 
-      - name: Test DynamoDB read access
-        run: |
-          aws dynamodb describe-table \
-            --table-name y62db-config-rule-catalog
+      - name: Configure AWS credentials through OIDC
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::418295699841:role/GitHubDDBReadonlyAnalyst
+          aws-region: us-east-1
+
+      - name: Confirm assumed AWS identity
+        run: aws sts get-caller-identity
+
+      - name: Test DynamoDB read access
+        run: |
+          aws dynamodb describe-table \
+            --table-name y62db-config-rule-catalog
