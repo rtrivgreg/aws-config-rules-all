@@ -116,6 +116,33 @@ def derive_source_identifier_from_name(config_rule_name: str) -> str:
     return config_rule_name.replace("-", "_").upper()
 
 
+# Render order for AWS::Config::ConfigRule Properties:
+#   1 ConfigRuleName
+#   4 Description
+#   5 Scope
+#   3 InputParameters
+#   2 Source
+PROPERTY_ORDER = (
+    "ConfigRuleName",
+    "Description",
+    "Scope",
+    "InputParameters",
+    "Source",
+)
+
+
+def order_properties(props: Dict[str, Any]) -> Dict[str, Any]:
+    """Return Properties with a stable render order; unknown keys follow."""
+    ordered: Dict[str, Any] = {}
+    for key in PROPERTY_ORDER:
+        if key in props:
+            ordered[key] = props[key]
+    for key, value in props.items():
+        if key not in ordered:
+            ordered[key] = value
+    return ordered
+
+
 def ensure_input_parameters_map(resource: Dict[str, Any]) -> None:
     props = resource.get("Properties")
     if not isinstance(props, dict):
@@ -155,6 +182,7 @@ def mutate_resource_in_place(rule_name: str, resource: Dict[str, Any]) -> None:
         }
 
     ensure_input_parameters_map(resource)
+    resource["Properties"] = order_properties(resource["Properties"])
 
 
 def resolve_source_identifier(rule_name: str, resource: Optional[Dict[str, Any]]) -> str:
@@ -351,11 +379,11 @@ def fetch_rule_from_dynamodb(
 
     props: Dict[str, Any] = {
         "ConfigRuleName": rule_id,
+        "InputParameters": input_parameters,
         "Source": {
             "Owner": "AWS",
             "SourceIdentifier": source_identifier,
         },
-        "InputParameters": input_parameters,
     }
 
     if description:
@@ -366,7 +394,7 @@ def fetch_rule_from_dynamodb(
 
     return {
         "Type": "AWS::Config::ConfigRule",
-        "Properties": props,
+        "Properties": order_properties(props),
     }
 
 
@@ -441,14 +469,14 @@ def build_pack_template(
             )
             resources[logical_id] = {
                 "Type": "AWS::Config::ConfigRule",
-                "Properties": {
+                "Properties": order_properties({
                     "ConfigRuleName": rule_name,
+                    "InputParameters": {},
                     "Source": {
                         "Owner": "AWS",
                         "SourceIdentifier": derive_source_identifier_from_name(rule_name),
                     },
-                    "InputParameters": {},
-                },
+                }),
             }
 
     template = {
