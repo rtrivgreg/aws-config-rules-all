@@ -256,7 +256,7 @@ SIDECAR_COLUMNS = (
     "emitted",
 )
 
-OPTIONAL_FIELDS_PREFIX = "OPTIONAL FIELDS EXIST "
+OPTIONAL_FIELDS_PREFIX = "(OPTIONAL FIELDS EXIST)"
 
 
 def rule_has_optional_parameters(parameters: List[Dict[str, Any]]) -> bool:
