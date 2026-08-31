@@ -14,8 +14,9 @@ Original (cpg.py):
 This version (cpgNG.py):
   - --table / --region / optional --group / --binding  → DynamoDB catalog
   - --rules-json and --output retain the same semantics
-  - All transformation, batching, logical-ID derivation, and YAML emission
-    logic is preserved.
+  - Pack YAML is a deployable baseline: required parameters plus optional
+    parameters explicitly set by a group binding
+  - A sidecar JSON inventory is written next to each pack part
 
 DynamoDB expectations (see Y62DB schemas/access-patterns.md and loader):
   Table (default: y62db-config-rule-catalog)
@@ -33,7 +34,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import boto3
 import yaml
@@ -46,10 +47,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
-# ---------------------------------------------------------------------------
-# YAML dumper (identical to cpg.py)
-# ---------------------------------------------------------------------------
 
 class BlankLineDumper(yaml.SafeDumper):
     pass
@@ -71,10 +68,6 @@ BlankLineDumper.add_representer(dict, _dict_representer)
 BlankLineDumper.add_representer(str, _str_representer)
 BlankLineDumper.increase_indent = _increase_indent
 
-
-# ---------------------------------------------------------------------------
-# Shared helpers (identical to cpg.py)
-# ---------------------------------------------------------------------------
 
 def load_rules_json(path: Path) -> List[str]:
     try:
@@ -116,12 +109,6 @@ def derive_source_identifier_from_name(config_rule_name: str) -> str:
     return config_rule_name.replace("-", "_").upper()
 
 
-# Render order for AWS::Config::ConfigRule Properties:
-#   1 ConfigRuleName
-#   2 Description
-#   3 Scope
-#   5 Source
-#   4 InputParameters
 PROPERTY_ORDER = (
     "ConfigRuleName",
     "Description",
@@ -130,9 +117,10 @@ PROPERTY_ORDER = (
     "InputParameters",
 )
 
+PLACEHOLDER_DEFAULTS = frozenset({"99999"})
+
 
 def order_properties(props: Dict[str, Any]) -> Dict[str, Any]:
-    """Return Properties with a stable render order; unknown keys follow."""
     ordered: Dict[str, Any] = {}
     for key in PROPERTY_ORDER:
         if key in props:
@@ -231,6 +219,10 @@ def output_path_for_part(output_path: Path, part_num: int) -> Path:
     return output_path.with_name(f"{output_path.stem}-part{part_num:02d}{output_path.suffix}")
 
 
+def sidecar_path_for_pack(pack_path: Path) -> Path:
+    return pack_path.with_suffix(".json")
+
+
 def dump_yaml(data: Dict[str, Any], path: Path) -> None:
     try:
         with path.open("w", encoding="utf-8") as f:
@@ -251,20 +243,127 @@ def dump_yaml(data: Dict[str, Any], path: Path) -> None:
         sys.exit(1)
 
 
-# ---------------------------------------------------------------------------
-# DynamoDB data-source layer  (replaces load_yaml + build_sot_index)
-# ---------------------------------------------------------------------------
+def dump_sidecar(data: Dict[str, Any], path: Path) -> None:
+    try:
+        path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    except OSError as e:
+        logger.error(f"Failed to write sidecar to {path}: {e}")
+        sys.exit(1)
+
+
+def _truthy_flag(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value == 1
+    if isinstance(value, str):
+        return value.strip().lower() in {"true", "yes", "1", "required"}
+    return False
+
+
+def parameter_is_required(param_def: Dict[str, Any]) -> bool:
+    if "required" in param_def:
+        return _truthy_flag(param_def.get("required"))
+    if "is_required" in param_def:
+        return _truthy_flag(param_def.get("is_required"))
+    return False
+
+
+def _stringify_param(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    text = str(value)
+    if text == "":
+        return None
+    return text
+
+
+def _is_placeholder(value: Optional[str]) -> bool:
+    return value is not None and value in PLACEHOLDER_DEFAULTS
+
+
+def select_emitted_value(
+    *,
+    required: bool,
+    catalog_default: Optional[str],
+    binding_value: Optional[str],
+) -> Optional[str]:
+    if binding_value is not None and not _is_placeholder(binding_value):
+        return binding_value
+    if required and catalog_default is not None and not _is_placeholder(catalog_default):
+        return catalog_default
+    return None
+
+
+def build_parameter_inventory(
+    param_defs: List[Dict[str, Any]],
+    binding_payload: Dict[str, Any],
+) -> Tuple[Dict[str, str], List[Dict[str, Any]]]:
+    input_parameters: Dict[str, str] = {}
+    inventory: List[Dict[str, Any]] = []
+
+    seen: set[str] = set()
+    for param_def in param_defs:
+        name = param_def.get("parameter_name")
+        if not name:
+            continue
+        name = str(name)
+        seen.add(name)
+
+        required = parameter_is_required(param_def)
+        catalog_default = _stringify_param(param_def.get("default_value"))
+        binding_value = _stringify_param(binding_payload.get(name)) if name in binding_payload else None
+        emitted = select_emitted_value(
+            required=required,
+            catalog_default=catalog_default,
+            binding_value=binding_value,
+        )
+        if emitted is not None:
+            input_parameters[name] = emitted
+
+        data_type = param_def.get("data_type") or param_def.get("type") or "string"
+        inventory.append(
+            {
+                "name": name,
+                "data_type": str(data_type),
+                "required": required,
+                "catalog_default": catalog_default,
+                "binding_value": binding_value,
+                "emitted": emitted if emitted is not None else "omitted",
+            }
+        )
+
+    for name, raw in binding_payload.items():
+        key = str(name)
+        if key in seen:
+            continue
+        binding_value = _stringify_param(raw)
+        emitted = select_emitted_value(
+            required=False,
+            catalog_default=None,
+            binding_value=binding_value,
+        )
+        if emitted is not None:
+            input_parameters[key] = emitted
+        inventory.append(
+            {
+                "name": key,
+                "data_type": "string",
+                "required": False,
+                "catalog_default": None,
+                "binding_value": binding_value,
+                "emitted": emitted if emitted is not None else "omitted",
+            }
+        )
+
+    return input_parameters, inventory
+
 
 DEFAULT_TABLE = os.environ.get("CONFIG_RULE_CATALOG_TABLE", "y62db-config-rule-catalog")
 DEFAULT_BINDING = "default"
 
 
 def _get_dynamodb_table(table_name: str, region: Optional[str] = None):
-    """Return a boto3 DynamoDB Table resource.
-
-    Region is taken from --region, then AWS_DEFAULT_REGION / AWS_REGION,
-    otherwise the default boto3 resolution chain.
-    """
     kwargs: Dict[str, Any] = {}
     if region:
         kwargs["region_name"] = region
@@ -290,25 +389,7 @@ def fetch_rule_from_dynamodb(
     group: Optional[str] = None,
     binding: str = DEFAULT_BINDING,
 ) -> Optional[Dict[str, Any]]:
-    """
-    Load one rule's catalog data from DynamoDB and synthesize the same
-    resource shape that the original YAML Source-of-Truth provided.
-
-    Returns a dict shaped like:
-      {
-        "Type": "AWS::Config::ConfigRule",
-        "Properties": {
-          "ConfigRuleName": ...,
-          "Description": ...,
-          "Scope": {"ComplianceResourceTypes": [...]},   # if scopes present
-          "Source": {"Owner": "AWS", "SourceIdentifier": ...},
-          "InputParameters": {...}
-        }
-      }
-    or None if no RULE_PROFILE exists for the rule_id.
-    """
     try:
-        # 1. RULE_PROFILE
         profile_resp = table.get_item(
             Key={"pk": _pk(rule_id), "sk": _profile_sk(rule_id)}
         )
@@ -316,7 +397,6 @@ def fetch_rule_from_dynamodb(
         if not profile:
             return None
 
-        # 2. PARAMETER_DEF items (defaults)
         param_resp = table.query(
             KeyConditionExpression="pk = :pk AND begins_with(sk, :prefix)",
             ExpressionAttributeValues={
@@ -326,7 +406,6 @@ def fetch_rule_from_dynamodb(
         )
         param_defs = param_resp.get("Items", [])
 
-        # 3. Optional RULE_BINDING for group-specific parameter values
         binding_payload: Dict[str, Any] = {}
         if group:
             bind_resp = table.get_item(
@@ -334,12 +413,9 @@ def fetch_rule_from_dynamodb(
             )
             bind_item = bind_resp.get("Item")
             if bind_item:
-                # payload may contain parameter_values or be the values themselves
                 payload = bind_item.get("payload") or {}
                 if isinstance(payload, dict):
-                    # Prefer an explicit parameter_values key if present
                     binding_payload = payload.get("parameter_values") or payload
-                    # Strip non-parameter metadata keys that the API stores
                     for meta in ("status", "version", "scope_values", "created_by"):
                         binding_payload.pop(meta, None)
 
@@ -347,35 +423,22 @@ def fetch_rule_from_dynamodb(
         logger.error(f"DynamoDB error while fetching rule '{rule_id}': {e}")
         sys.exit(1)
 
-    # --- synthesize the CloudFormation resource ---
     source_identifier = (profile.get("source_identifier") or "").strip()
     if not source_identifier:
         source_identifier = derive_source_identifier_from_name(rule_id)
 
     description = (profile.get("description") or "").strip()
 
-    # Scopes: stored as a list / string-set on RULE_PROFILE
     scopes = profile.get("scopes") or []
     if isinstance(scopes, set):
         scopes = sorted(scopes)
     elif not isinstance(scopes, list):
         scopes = []
 
-    # InputParameters: start from PARAMETER_DEF defaults, then overlay binding
-    input_parameters: Dict[str, str] = {}
-    for p in param_defs:
-        name = p.get("parameter_name")
-        if not name:
-            continue
-        default = p.get("default_value")
-        if default is not None and str(default) != "":
-            input_parameters[name] = str(default)
-
-    # Binding values take precedence
-    for k, v in binding_payload.items():
-        if v is None:
-            continue
-        input_parameters[str(k)] = str(v)
+    input_parameters, inventory = build_parameter_inventory(
+        list(param_defs or []),
+        binding_payload,
+    )
 
     props: Dict[str, Any] = {
         "ConfigRuleName": rule_id,
@@ -393,8 +456,11 @@ def fetch_rule_from_dynamodb(
         props["Scope"] = {"ComplianceResourceTypes": list(scopes)}
 
     return {
-        "Type": "AWS::Config::ConfigRule",
-        "Properties": order_properties(props),
+        "resource": {
+            "Type": "AWS::Config::ConfigRule",
+            "Properties": order_properties(props),
+        },
+        "parameters": inventory,
     }
 
 
@@ -404,15 +470,11 @@ def build_sot_index_from_dynamodb(
     group: Optional[str] = None,
     binding: str = DEFAULT_BINDING,
 ) -> Dict[str, Dict[str, Any]]:
-    """
-    Build the same index shape that build_sot_index() produced from YAML:
-      { config_rule_name: resource_dict, ... }
-    """
     index: Dict[str, Dict[str, Any]] = {}
     for rule_name in rule_names:
-        resource = fetch_rule_from_dynamodb(table, rule_name, group=group, binding=binding)
-        if resource is not None:
-            index[rule_name] = resource
+        entry = fetch_rule_from_dynamodb(table, rule_name, group=group, binding=binding)
+        if entry is not None:
+            index[rule_name] = entry
         else:
             logger.info(
                 f"No RULE_PROFILE found in DynamoDB for '{rule_name}'; "
@@ -420,10 +482,6 @@ def build_sot_index_from_dynamodb(
             )
     return index
 
-
-# ---------------------------------------------------------------------------
-# Pack construction (identical logic to cpg.py)
-# ---------------------------------------------------------------------------
 
 def build_pack_template(
     rule_names: List[str],
@@ -433,20 +491,20 @@ def build_pack_template(
 
     for rule_name in rule_names:
         logical_id = derive_logical_id(rule_name)
-        existing_resource = sot_index.get(rule_name)
+        existing_entry = sot_index.get(rule_name)
+        existing_resource = None
+        if existing_entry is not None:
+            existing_resource = existing_entry.get("resource", existing_entry)
 
         if logical_id in resources:
             logger.error(f"Duplicate logical ID generated: {logical_id}")
             sys.exit(1)
 
         if existing_resource is not None:
-            # Work on a shallow copy so we don't mutate the shared index entry
-            # across multiple packs if the same rule appears more than once.
             resource = {
                 "Type": existing_resource.get("Type"),
                 "Properties": dict(existing_resource.get("Properties") or {}),
             }
-            # Deep-copy nested maps we mutate
             props = resource["Properties"]
             if "Source" in props and isinstance(props["Source"], dict):
                 props["Source"] = dict(props["Source"])
@@ -489,9 +547,25 @@ def build_pack_template(
     return template
 
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
+def build_sidecar_document(
+    pack_path: Path,
+    rule_names: List[str],
+    sot_index: Dict[str, Dict[str, Any]],
+) -> Dict[str, Any]:
+    rules: List[Dict[str, Any]] = []
+    for rule_name in rule_names:
+        entry = sot_index.get(rule_name) or {}
+        rules.append(
+            {
+                "rule_name": rule_name,
+                "parameters": list(entry.get("parameters") or []),
+            }
+        )
+    return {
+        "pack": pack_path.name,
+        "rules": rules,
+    }
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -515,7 +589,6 @@ def main() -> None:
         default=Path("cpout01.yml"),
         help="Output conformance pack YAML basename (default: cpout01.yml).",
     )
-    # DynamoDB-specific arguments (replace --truth-file)
     parser.add_argument(
         "--table",
         default=DEFAULT_TABLE,
@@ -551,7 +624,6 @@ def main() -> None:
                 + (f" in region '{args.region}'" if args.region else ""))
     table = _get_dynamodb_table(args.table, args.region)
 
-    # Build the in-memory SOT index from DynamoDB (replaces load_yaml + build_sot_index)
     sot_index = build_sot_index_from_dynamodb(
         table,
         rule_names,
@@ -566,14 +638,17 @@ def main() -> None:
 
     for idx, pack_rules in enumerate(packs, start=1):
         out_path = output_path_for_part(args.output, idx)
+        side_path = sidecar_path_for_pack(out_path)
         logger.info(
             f"Generating pack {idx}/{len(packs)} with {len(pack_rules)} rules -> {out_path}"
         )
 
         template = build_pack_template(pack_rules, sot_index)
         dump_yaml(template, out_path)
+        dump_sidecar(build_sidecar_document(out_path, pack_rules, sot_index), side_path)
 
         logger.info(f"Wrote {out_path}")
+        logger.info(f"Wrote {side_path}")
 
     logger.info(f"Generated {len(packs)} conformance pack file(s) successfully.")
 
