@@ -7,6 +7,7 @@ Covers:
   - InputParameters always emitted as a mapping
   - cpgNG PARAMETER_DEF defaults and RULE_BINDING overrides
   - fallback minimal rule when catalog data is missing
+  - required vs optional emit rules and per-part sidecar JSON
 
 Run from the repository root:
   pytest tests/test_parameter_validation.py -v
@@ -24,10 +25,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-# ---------------------------------------------------------------------------
-# Paths
-# ---------------------------------------------------------------------------
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PYTHON_DIR = REPO_ROOT / "python"
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -40,10 +37,6 @@ DESCRIPTION = (
     "is 90 days."
 )
 
-
-# ---------------------------------------------------------------------------
-# Module loading
-# ---------------------------------------------------------------------------
 
 def _load_module(name: str, path: Path):
     spec = importlib.util.spec_from_file_location(name, path)
@@ -63,10 +56,6 @@ def cpg():
 def cpgNG():
     return _load_module("cpgNG_param_val", PYTHON_DIR / "cpgNG.py")
 
-
-# ---------------------------------------------------------------------------
-# load_rules_json validation (shared behavior)
-# ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize("mod_name", ["cpg", "cpgNG"])
 def test_load_rules_json_rejects_non_list(mod_name, cpg, cpgNG, tmp_path):
@@ -130,10 +119,6 @@ def test_load_rules_json_rejects_invalid_json(mod_name, cpg, cpgNG, tmp_path):
     assert exc.value.code == 1
 
 
-# ---------------------------------------------------------------------------
-# cpg.py: InputParameters normalization via truth YAML
-# ---------------------------------------------------------------------------
-
 def _run_cpg_with_truth(cpg, tmp_path: Path, truth: Dict[str, Any], rules: List[str]) -> Dict[str, Any]:
     rules_path = tmp_path / "rules.json"
     truth_path = tmp_path / "truth.yml"
@@ -158,7 +143,6 @@ def _run_cpg_with_truth(cpg, tmp_path: Path, truth: Dict[str, Any], rules: List[
 
 
 def test_cpg_input_parameters_null_becomes_empty_map(cpg, tmp_path):
-    """InputParameters: null in SOT must become {} in the pack."""
     truth = {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Resources": {
@@ -181,7 +165,6 @@ def test_cpg_input_parameters_null_becomes_empty_map(cpg, tmp_path):
 
 
 def test_cpg_input_parameters_missing_becomes_empty_map(cpg, tmp_path):
-    """Missing InputParameters key must be inserted as {}."""
     truth = {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Resources": {
@@ -204,7 +187,6 @@ def test_cpg_input_parameters_missing_becomes_empty_map(cpg, tmp_path):
 
 
 def test_cpg_input_parameters_non_dict_becomes_empty_map(cpg, tmp_path):
-    """Non-mapping InputParameters (e.g. a string) must be replaced with {}."""
     truth = {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Resources": {
@@ -248,17 +230,12 @@ def test_cpg_input_parameters_preserved_when_valid_map(cpg, tmp_path):
     assert props["InputParameters"] == {"maxAccessKeyAge": "90"}
 
 
-# ---------------------------------------------------------------------------
-# cpgNG.py: PARAMETER_DEF defaults and binding overrides
-# ---------------------------------------------------------------------------
-
 def _mock_table(
     *,
     profile: Optional[Dict[str, Any]] = None,
     param_defs: Optional[List[Dict[str, Any]]] = None,
     binding_item: Optional[Dict[str, Any]] = None,
 ) -> MagicMock:
-    """Configurable DynamoDB Table mock for cpgNG parameter tests."""
     table = MagicMock()
 
     def get_item(Key):
@@ -328,13 +305,25 @@ def test_cpgNG_parameter_def_defaults_appear_in_input_parameters(cpgNG, tmp_path
                 "pk": f"RULE#{RULE_ID}",
                 "sk": "PARAMDEF#maxAccessKeyAge",
                 "parameter_name": "maxAccessKeyAge",
+                "data_type": "string",
+                "required": True,
                 "default_value": "90",
             },
             {
                 "pk": f"RULE#{RULE_ID}",
                 "sk": "PARAMDEF#emptyDefault",
                 "parameter_name": "emptyDefault",
-                "default_value": "",  # should be skipped
+                "data_type": "string",
+                "required": False,
+                "default_value": "",
+            },
+            {
+                "pk": f"RULE#{RULE_ID}",
+                "sk": "PARAMDEF#optionalWithDefault",
+                "parameter_name": "optionalWithDefault",
+                "data_type": "string",
+                "required": False,
+                "default_value": "catalog-only",
             },
         ],
     )
@@ -342,6 +331,7 @@ def test_cpgNG_parameter_def_defaults_appear_in_input_parameters(cpgNG, tmp_path
     props = doc["Resources"]["AccessKeysRotatedRule"]["Properties"]
     assert props["InputParameters"] == {"maxAccessKeyAge": "90"}
     assert "emptyDefault" not in props["InputParameters"]
+    assert "optionalWithDefault" not in props["InputParameters"]
 
 
 def test_cpgNG_binding_overrides_parameter_defaults(cpgNG, tmp_path):
@@ -352,6 +342,8 @@ def test_cpgNG_binding_overrides_parameter_defaults(cpgNG, tmp_path):
                 "pk": f"RULE#{RULE_ID}",
                 "sk": "PARAMDEF#maxAccessKeyAge",
                 "parameter_name": "maxAccessKeyAge",
+                "data_type": "string",
+                "required": True,
                 "default_value": "90",
             }
         ],
@@ -377,7 +369,6 @@ def test_cpgNG_binding_overrides_parameter_defaults(cpgNG, tmp_path):
 
 
 def test_cpgNG_binding_payload_without_parameter_values_key(cpgNG, tmp_path):
-    """When payload has no parameter_values key, treat payload itself as values."""
     table = _mock_table(
         profile=_default_profile(),
         param_defs=[
@@ -385,6 +376,8 @@ def test_cpgNG_binding_payload_without_parameter_values_key(cpgNG, tmp_path):
                 "pk": f"RULE#{RULE_ID}",
                 "sk": "PARAMDEF#maxAccessKeyAge",
                 "parameter_name": "maxAccessKeyAge",
+                "data_type": "string",
+                "required": True,
                 "default_value": "90",
             }
         ],
@@ -406,12 +399,10 @@ def test_cpgNG_binding_payload_without_parameter_values_key(cpgNG, tmp_path):
         extra_argv=["--group", "niaid"],
     )
     props = doc["Resources"]["AccessKeysRotatedRule"]["Properties"]
-    # status/version stripped; maxAccessKeyAge overridden
     assert props["InputParameters"] == {"maxAccessKeyAge": "45"}
 
 
 def test_cpgNG_missing_profile_yields_minimal_rule_with_empty_params(cpgNG, tmp_path):
-    """No RULE_PROFILE → minimal ConfigRule with empty InputParameters."""
     table = _mock_table(profile=None, param_defs=[])
     doc = _run_cpgNG(cpgNG, tmp_path, [RULE_ID], table)
     props = doc["Resources"]["AccessKeysRotatedRule"]["Properties"]
@@ -430,3 +421,98 @@ def test_cpgNG_input_parameters_always_a_dict(cpgNG, tmp_path):
     doc = _run_cpgNG(cpgNG, tmp_path, [RULE_ID], table)
     props = doc["Resources"]["AccessKeysRotatedRule"]["Properties"]
     assert isinstance(props["InputParameters"], dict)
+
+
+def test_cpgNG_optional_catalog_default_omitted_unless_bound(cpgNG, tmp_path):
+    table = _mock_table(
+        profile=_default_profile(),
+        param_defs=[
+            {
+                "pk": f"RULE#{RULE_ID}",
+                "sk": "PARAMDEF#optionalWithDefault",
+                "parameter_name": "optionalWithDefault",
+                "data_type": "string",
+                "required": False,
+                "default_value": "catalog-only",
+            }
+        ],
+        binding_item={
+            "pk": f"RULE#{RULE_ID}",
+            "sk": "GROUP#niaid#BINDING#default",
+            "payload": {
+                "parameter_values": {"optionalWithDefault": "pinned"},
+            },
+        },
+    )
+    unbound = _run_cpgNG(cpgNG, tmp_path, [RULE_ID], table)
+    assert unbound["Resources"]["AccessKeysRotatedRule"]["Properties"]["InputParameters"] == {}
+
+    bound_dir = tmp_path / "bound"
+    bound_dir.mkdir()
+    bound = _run_cpgNG(
+        cpgNG,
+        bound_dir,
+        [RULE_ID],
+        table,
+        extra_argv=["--group", "niaid", "--binding", "default"],
+    )
+    assert bound["Resources"]["AccessKeysRotatedRule"]["Properties"]["InputParameters"] == {
+        "optionalWithDefault": "pinned"
+    }
+
+
+def test_cpgNG_placeholder_default_is_omitted(cpgNG, tmp_path):
+    table = _mock_table(
+        profile=_default_profile(),
+        param_defs=[
+            {
+                "pk": f"RULE#{RULE_ID}",
+                "sk": "PARAMDEF#targetExpirationDays",
+                "parameter_name": "targetExpirationDays",
+                "data_type": "string",
+                "required": True,
+                "default_value": "99999",
+            }
+        ],
+    )
+    doc = _run_cpgNG(cpgNG, tmp_path, [RULE_ID], table)
+    props = doc["Resources"]["AccessKeysRotatedRule"]["Properties"]
+    assert props["InputParameters"] == {}
+
+
+def test_cpgNG_writes_parameter_sidecar(cpgNG, tmp_path):
+    table = _mock_table(
+        profile=_default_profile(),
+        param_defs=[
+            {
+                "pk": f"RULE#{RULE_ID}",
+                "sk": "PARAMDEF#maxAccessKeyAge",
+                "parameter_name": "maxAccessKeyAge",
+                "data_type": "string",
+                "required": True,
+                "default_value": "90",
+            },
+            {
+                "pk": f"RULE#{RULE_ID}",
+                "sk": "PARAMDEF#optionalWithDefault",
+                "parameter_name": "optionalWithDefault",
+                "data_type": "number",
+                "required": False,
+                "default_value": "7",
+            },
+        ],
+    )
+    _run_cpgNG(cpgNG, tmp_path, [RULE_ID], table)
+    sidecar = tmp_path / "ng_out-part01.json"
+    assert sidecar.is_file()
+    payload = json.loads(sidecar.read_text(encoding="utf-8"))
+    assert payload["pack"] == "ng_out-part01.yml"
+    assert payload["rules"][0]["rule_name"] == RULE_ID
+    by_name = {row["name"]: row for row in payload["rules"][0]["parameters"]}
+    assert by_name["maxAccessKeyAge"]["required"] is True
+    assert by_name["maxAccessKeyAge"]["emitted"] == "90"
+    assert by_name["maxAccessKeyAge"]["catalog_default"] == "90"
+    assert by_name["maxAccessKeyAge"]["binding_value"] is None
+    assert by_name["optionalWithDefault"]["required"] is False
+    assert by_name["optionalWithDefault"]["data_type"] == "number"
+    assert by_name["optionalWithDefault"]["emitted"] == "omitted"
