@@ -28,28 +28,28 @@ source /home/ubuntu/repos/Y62DB/.venv/bin/activate
 source /Users/sunyanggregoire/code/.venv/bin/activate  
 source /home/ubuntu/repos/Y62DB/.venv/bin/activate
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/applicationintegration.json -o ~/output/applicationintegration.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/applicationintegration.json -o ~/output/applicationintegration.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/analytics.json -o ~/output/analytics.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/analytics.json -o ~/output/analytics.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/compute.json -o ~/output/compute.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/compute.json -o ~/output/compute.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/containers.json -o ~/output/containers.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/containers.json -o ~/output/containers.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/database.json -o ~/output/database.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/database.json -o ~/output/database.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/managementgovernance.json -o ~/output/managementgovernance.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/managementgovernance.json -o ~/output/managementgovernance.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/migrationtransfer.json -o ~/output/migrationtransfer.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/migrationtransfer.json -o ~/output/migrationtransfer.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/mlai.json -o ~/output/mlai.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/mlai.json -o ~/output/mlai.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/securityidentitycompliance.json -o ~/output/securityidentitycompliance.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/securityidentitycompliance.json -o ~/output/securityidentitycompliance.yml
 
-python3 ~/repos/config-rules-all/python/cpgNG.py -r ~/repos/config-rules-all/JSON/storage.json -o ~/output/storage.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/storage.json -o ~/output/storage.yml
 
-python3 ~/repos/config-rules-all/python/upack.py s1 ~/output/storage-part01.yml 
-python3 ~/repos/config-rules-all/python/upack.py s2 ~/output/storage-part02.yml 
+python3 ~/repos/aws-config-rules-all/python/upack.py s1 ~/output/storage-part01.yml 
+python3 ~/repos/aws-config-rules-all/python/upack.py s2 ~/output/storage-part02.yml 
 <HR>
 
 EMITTER (generate yaml manifest)
