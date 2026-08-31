@@ -53,8 +53,8 @@ python3 ~/repos/config-rules-all/python/upack.py s2 ~/output/storage-part02.yml
 <HR>
 
 EMITTER (generate yaml manifest)
-python3 ~/repos/config-rules-all/python/emitter.py --managed-rules-locals ~/repos/config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/config-rules-
-all/vendor/niaid/managed_rules_variables.tf --format ~/repos/config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml --description "Y62 NIAID AWS Config Production Baseline"
+python3 ~/repos/aws-config-rules-all/python/emitter.py --managed-rules-locals ~/repos/aws-config-rules-all/vendor/niaid/managed_rules_locals.tf --managed-rules-variables ~/repos/aws-config-rules-
+all/vendor/niaid/managed_rules_variables.tf --format ~/repos/aws-config-rules-all/yaml/conformance-pack-format.yml --output ~/output/y62-AWS-manifest.yml --description "Y62 NIAID AWS Config Production Baseline"
 
 python3 ~/repos/config-rules-all/python/cpg.py --r ~/repos/config-rules-all/JSON/mlai.json --t ~/output/y62-AWS-manifest.yml --o ~/output/mlai.yml
 
