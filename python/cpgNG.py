@@ -461,6 +461,8 @@ def fetch_rule_from_dynamodb(
             "Properties": order_properties(props),
         },
         "parameters": inventory,
+        "description": _normalize_description_value(description) if description else None,
+        "scope": [str(item) for item in scopes],
     }
 
 
@@ -555,9 +557,19 @@ def build_sidecar_document(
     rules: List[Dict[str, Any]] = []
     for rule_name in rule_names:
         entry = sot_index.get(rule_name) or {}
+        description = entry.get("description")
+        if isinstance(description, str) and description.strip():
+            description = _normalize_description_value(description)
+        else:
+            description = None
+        scope = entry.get("scope")
+        if not isinstance(scope, list):
+            scope = []
         rules.append(
             {
-                "rule_name": rule_name,
+                "name": rule_name,
+                "description": description,
+                "scope": [str(item) for item in scope],
                 "parameters": list(entry.get("parameters") or []),
             }
         )
