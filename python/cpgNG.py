@@ -484,8 +484,9 @@ def fetch_rule_from_dynamodb(
         },
     }
 
-    if description:
-        props["Description"] = description
+    annotated = sidecar_description(description or None, inventory)
+    if annotated:
+        props["Description"] = annotated
 
     if scopes:
         props["Scope"] = {"ComplianceResourceTypes": list(scopes)}
