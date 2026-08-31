@@ -507,8 +507,12 @@ def test_cpgNG_writes_parameter_sidecar(cpgNG, tmp_path):
     assert sidecar.is_file()
     payload = json.loads(sidecar.read_text(encoding="utf-8"))
     assert payload["pack"] == "ng_out-part01.yml"
-    assert payload["rules"][0]["rule_name"] == RULE_ID
-    by_name = {row["name"]: row for row in payload["rules"][0]["parameters"]}
+    rule = payload["rules"][0]
+    assert list(rule.keys()) == ["name", "description", "scope", "parameters"]
+    assert rule["name"] == RULE_ID
+    assert rule["description"] == DESCRIPTION
+    assert rule["scope"] == ["AWS::IAM::User"]
+    by_name = {row["name"]: row for row in rule["parameters"]}
     assert by_name["maxAccessKeyAge"]["required"] is True
     assert by_name["maxAccessKeyAge"]["emitted"] == "90"
     assert by_name["maxAccessKeyAge"]["catalog_default"] == "90"
