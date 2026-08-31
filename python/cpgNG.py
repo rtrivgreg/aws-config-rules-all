@@ -118,16 +118,16 @@ def derive_source_identifier_from_name(config_rule_name: str) -> str:
 
 # Render order for AWS::Config::ConfigRule Properties:
 #   1 ConfigRuleName
-#   4 Description
-#   5 Scope
-#   3 InputParameters
-#   2 Source
+#   2 Description
+#   3 Scope
+#   5 Source
+#   4 InputParameters
 PROPERTY_ORDER = (
     "ConfigRuleName",
     "Description",
     "Scope",
-    "InputParameters",
     "Source",
+    "InputParameters",
 )
 
 
