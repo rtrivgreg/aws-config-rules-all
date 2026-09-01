@@ -192,6 +192,29 @@ def _normalize_description_value(value: str) -> str:
     return " ".join(value.split())
 
 
+CONFIG_RULE_DESCRIPTION_MAX = 256
+
+
+def clamp_config_rule_description(
+    value: Optional[str],
+    limit: int = CONFIG_RULE_DESCRIPTION_MAX,
+) -> str:
+    """Normalize and cap a Config rule Description to the AWS Config limit."""
+    text = _normalize_description_value(value) if isinstance(value, str) else ""
+    if not text:
+        return ""
+    if len(text) <= limit:
+        return text
+    if limit <= 3:
+        return text[:limit]
+    return text[: limit - 3].rstrip() + "..."
+
+
+def pack_description(description: Optional[str]) -> str:
+    """Official catalog text only for pack YAML. Never include the CSV prefix."""
+    return clamp_config_rule_description(description)
+
+
 def normalize_descriptions(template: Dict[str, Any]) -> None:
     top_desc = template.get("Description")
     if isinstance(top_desc, str):
@@ -209,7 +232,7 @@ def normalize_descriptions(template: Dict[str, Any]) -> None:
             continue
         desc = props.get("Description")
         if isinstance(desc, str):
-            props["Description"] = _normalize_description_value(desc)
+            props["Description"] = clamp_config_rule_description(desc)
 
 
 def batch_rules(rule_names: List[str], batch_size: int = 30) -> List[List[str]]:
@@ -481,9 +504,11 @@ def fetch_rule_from_dynamodb(
         },
     }
 
-    annotated = sidecar_description(description or None, inventory)
-    if annotated:
-        props["Description"] = annotated
+    # Pack Description is official catalog text only (AWS Config max 256).
+    # Optional-parameter marker belongs on the sidecar CSV, not the rule.
+    clamped = pack_description(description or None)
+    if clamped:
+        props["Description"] = clamped
 
     if scopes:
         props["Scope"] = {"ComplianceResourceTypes": list(scopes)}
