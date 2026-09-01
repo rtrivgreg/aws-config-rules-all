@@ -48,6 +48,6 @@ jobs:
         with:
           name: database-conformance-pack
           path: |
-            generated/storage-part*.yml
-            generated/storage-part*.csv
+            generated/database-part*.yml
+            generated/database-part*.csv
           if-no-files-found: error
