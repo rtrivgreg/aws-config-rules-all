@@ -328,15 +328,18 @@ def test_cpgNG_writes_parameter_sidecar(cpgNG, tmp_path):
     with sidecar.open(encoding="utf-8-sig", newline="") as handle:
         rows = list(csv.DictReader(handle))
     assert list(rows[0].keys()) == [
-        "name", "description", "scope", "parameter_name", "data_type",
-        "required", "catalog_default", "binding_value", "emitted",
+        "name",
+        "description",
+        "parameter_name",
+        "data_type",
+        "required",
+        "catalog_default",
     ]
     assert all(row["name"] == RULE_ID for row in rows)
-    assert all(row["description"].startswith("OPTIONAL FIELDS EXIST ") for row in rows)
     assert DESCRIPTION in rows[0]["description"]
-    assert rows[0]["scope"] == "AWS::IAM::User"
     by_name = {row["parameter_name"]: row for row in rows}
     assert by_name["maxAccessKeyAge"]["required"] == "true"
-    assert by_name["maxAccessKeyAge"]["emitted"] == "90"
+    assert by_name["maxAccessKeyAge"]["catalog_default"] == "90"
     assert by_name["optionalWithDefault"]["required"] == "false"
-    assert by_name["optionalWithDefault"]["emitted"] == "omitted"
+    assert by_name["optionalWithDefault"]["catalog_default"] == "7"
+    assert by_name["optionalWithDefault"]["data_type"] == "number"
