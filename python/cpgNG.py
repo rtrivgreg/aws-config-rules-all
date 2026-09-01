@@ -247,13 +247,10 @@ def dump_yaml(data: Dict[str, Any], path: Path) -> None:
 SIDECAR_COLUMNS = (
     "name",
     "description",
-    "scope",
     "parameter_name",
     "data_type",
     "required",
     "catalog_default",
-    "binding_value",
-    "emitted",
 )
 
 OPTIONAL_FIELDS_PREFIX = "(OPTIONAL PARAMETERS EXIST)"
@@ -594,40 +591,29 @@ def build_sidecar_rows(
         entry = sot_index.get(rule_name) or {}
         parameters = list(entry.get("parameters") or [])
         description = sidecar_description(entry.get("description"), parameters)
-        scope = entry.get("scope")
-        if not isinstance(scope, list):
-            scope = []
-        scope_text = ";".join(str(item) for item in scope)
         if not parameters:
             rows.append(
                 {
                     "name": rule_name,
                     "description": description,
-                    "scope": scope_text,
                     "parameter_name": "",
                     "data_type": "",
                     "required": "",
                     "catalog_default": "",
-                    "binding_value": "",
-                    "emitted": "",
                 }
             )
             continue
         for param in parameters:
             required = param.get("required")
             catalog_default = param.get("catalog_default")
-            binding_value = param.get("binding_value")
             rows.append(
                 {
                     "name": rule_name,
                     "description": description,
-                    "scope": scope_text,
                     "parameter_name": str(param.get("name") or ""),
                     "data_type": str(param.get("data_type") or ""),
                     "required": "true" if required else "false",
                     "catalog_default": "" if catalog_default is None else str(catalog_default),
-                    "binding_value": "" if binding_value is None else str(binding_value),
-                    "emitted": str(param.get("emitted") or ""),
                 }
             )
     return rows
