@@ -249,6 +249,17 @@ def output_path_for_part(output_path: Path, part_num: int) -> Path:
 def sidecar_path_for_pack(pack_path: Path) -> Path:
     return pack_path.with_suffix(".csv")
 
+PACK_DESCRIPTION_BASE = (
+    "Conformance Pack generated from curated list of AWS Config Managed Rules"
+)
+
+
+def pack_root_description(sidecar_path: Path) -> str:
+    return (
+        f"{PACK_DESCRIPTION_BASE} "
+        f"(Optional parameters specified in {sidecar_path.name})"
+    )
+
 
 def dump_yaml(data: Dict[str, Any], path: Path) -> None:
     try:
@@ -549,6 +560,7 @@ def build_sot_index_from_dynamodb(
 def build_pack_template(
     rule_names: List[str],
     sot_index: Dict[str, Dict[str, Any]],
+    sidecar_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     resources: Dict[str, Any] = {}
 
@@ -600,11 +612,19 @@ def build_pack_template(
                 }),
             }
 
-    template = {
+    #template = {
+        #"AWSTemplateFormatVersion": "2010-09-09",
+        #"Description": "Conformance Pack generated from curated list of AWS Config Managed Rules",
+        #"Resources": resources,
+    #}
+      template = {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "Conformance Pack generated from curated list of AWS Config Managed Rules",
         "Resources": resources,
     }
+
+    normalize_descriptions(template)
+    return template
 
     normalize_descriptions(template)
     return template
@@ -722,8 +742,7 @@ def main() -> None:
         logger.info(
             f"Generating pack {idx}/{len(packs)} with {len(pack_rules)} rules -> {out_path}"
         )
-
-        template = build_pack_template(pack_rules, sot_index)
+        template = build_pack_template(pack_rules, sot_index, sidecar_path=side_path)
         dump_yaml(template, out_path)
         dump_sidecar(build_sidecar_rows(pack_rules, sot_index), side_path)
 
