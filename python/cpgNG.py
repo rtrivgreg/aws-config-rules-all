@@ -61,8 +61,9 @@ def _dict_representer(dumper: yaml.Dumper, data: dict) -> yaml.nodes.MappingNode
 #    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
 def _str_representer(dumper, data: str):
-    return dumper.represent_scalar("tag:yaml.org,2002:str", data, style='"')  
-
+    if any(token in data for token in (": ", "'", '"', "#", "{", "}", "[", "]", ",")):
+        return dumper.represent_scalar("tag:yaml.org,2002:str", data, style='"')
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
 
 def _increase_indent(self, flow=False, indentless=False):
     return super(BlankLineDumper, self).increase_indent(flow, False)
