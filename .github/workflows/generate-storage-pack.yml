@@ -1,4 +1,4 @@
-name: Generate Storage Conformance Pack
+name: Generate storage Conformance Pack
 
 on:
   workflow_dispatch:
