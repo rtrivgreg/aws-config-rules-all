@@ -44,10 +44,14 @@ jobs:
       - name: Show generated files
         run: ls -lah generated
 
+      - name: Set artifact stamp
+        id: stamp
+        run: echo "tag=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: database-conformance-pack
+          name: conformance-pack-conformance-pack-test-${{ steps.stamp.outputs.tag }}
           path: |
             generated/database-part*.yml
             generated/database-part*.csv
