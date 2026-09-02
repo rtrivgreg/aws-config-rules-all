@@ -91,6 +91,69 @@ python3 ~/repos/config-rules-all/python/upack.py a2 ~/output/managementgovernanc
 
 python3 ~/repos/config-rules-all/python/upack.py s1 ~/output/storage-part01.yml
 
+Update:
+NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+aws dynamodb put-item \
+  --table-name y62db-config-rule-catalog \
+  --region us-east-1 \
+  --condition-expression 'attribute_not_exists(pk)' \
+  --item "{
+    \"pk\": {
+      \"S\": \"RULE#rds-meets-restore-time-target\"
+    },
+    \"sk\": {
+      \"S\": \"GROUP#26y#BINDING#default\"
+    },
+    \"gsi1pk\": {
+      \"S\": \"GROUP#26y\"
+    },
+    \"gsi1sk\": {
+      \"S\": \"RULE#rds-meets-restore-time-target#BINDING#default\"
+    },
+    \"payload\": {
+      \"M\": {
+        \"version\": {
+          \"N\": \"1\"
+        },
+        \"status\": {
+          \"S\": \"ACTIVE\"
+        },
+        \"maxRestoreTime\": {
+          \"N\": \"60\"
+        }
+      }
+    },
+    \"created_at\": {
+      \"S\": \"$NOW\"
+    },
+    \"updated_at\": {
+      \"S\": \"$NOW\"
+    }
+  }"
+
+  confirm created
+aws dynamodb get-item \
+  --table-name y62db-config-rule-catalog \
+  --region us-east-1 \
+  --key '{
+    "pk": {"S": "RULE#rds-meets-restore-time-target"},
+    "sk": {"S": "GROUP#26y#BINDING#default"}
+  }'
+
+  generate pack
+  printf '%s\n' \
+  '["rds-meets-restore-time-target"]' \
+  > /tmp/26y-rds-test.json
+
+python3 ./cpgNG.py \
+  --rules-json /tmp/26y-rds-test.json \
+  --table y62db-config-rule-catalog \
+  --region us-east-1 \
+  --group 26y \
+  --binding default \
+  --output /tmp/26y-rds-test.yml
+  
 python3 ~/repos/config-rules-all/python/upack.py s2 ~/output/storage-part02.yml
 
 python3 ~/gold/py/upack.py a1 ~/output/securityidentitycompliance-part01.yml
