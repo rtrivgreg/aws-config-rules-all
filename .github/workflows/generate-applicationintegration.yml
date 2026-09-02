@@ -1,1 +1,53 @@
+name: Generate Database Conformance Pack
 
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  generate-pack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install boto3 PyYAML
+
+      - name: Configure AWS credentials through OIDC
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          role-to-assume: arn:aws:iam::418295699841:role/GitHubDDBReadonlyAnalyst
+          aws-region: us-east-1
+
+      - name: Generate database conformance pack
+        run: |
+          mkdir -p generated
+          python3 python/cpgNG.py \
+            -r JSON/database.json \
+            -o generated/database.yml \
+            --table y62db-config-rule-catalog \
+            --region us-east-1
+
+      - name: Show generated files
+        run: ls -lah generated
+
+      - name: Upload generated conformance-pack artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-conformance-pack
+          path: |
+            generated/database-part*.yml
+            generated/database-part*.csv
+          if-no-files-found: error
