@@ -50,7 +50,7 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: conformance-pack-test-${{ steps.stamp.outputs.tag }}
+          name: storage-conformance-pack-test-${{ steps.stamp.outputs.tag }}
           path: |
             generated/storage-part*.yml
             generated/storage-part*.csv
