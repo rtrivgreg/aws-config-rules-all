@@ -1,4 +1,4 @@
-name: Generate Database Conformance Pack
+name: Generate migrationtransfer Conformance Pack
 
 on:
   workflow_dispatch:
@@ -31,12 +31,12 @@ jobs:
           role-to-assume: arn:aws:iam::418295699841:role/GitHubDDBReadonlyAnalyst
           aws-region: us-east-1
 
-      - name: Generate database conformance pack
+      - name: Generate migrationtransfer conformance pack
         run: |
           mkdir -p generated
           python3 python/cpgNG.py \
-            -r JSON/database.json \
-            -o generated/database.yml \
+            -r JSON/migrationtransfer.json \
+            -o generated/migrationtransfer.yml \
             --table y62db-config-rule-catalog \
             --region us-east-1
 
@@ -46,8 +46,8 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: database-conformance-pack
+          name: migrationtransfer-conformance-pack
           path: |
-            generated/database-part*.yml
-            generated/database-part*.csv
+            generated/migrationtransfer-part*.yml
+            generated/migrationtransfer-part*.csv
           if-no-files-found: error
