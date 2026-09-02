@@ -612,23 +612,18 @@ def build_pack_template(
                 }),
             }
 
-    #template = {
-        #"AWSTemplateFormatVersion": "2010-09-09",
-        #"Description": "Conformance Pack generated from curated list of AWS Config Managed Rules",
-        #"Resources": resources,
-    #}
-      template = {
+    description = PACK_DESCRIPTION_BASE
+    if sidecar_path is not None:
+        description = pack_root_description(sidecar_path)
+
+    template = {
         "AWSTemplateFormatVersion": "2010-09-09",
-        "Description": "Conformance Pack generated from curated list of AWS Config Managed Rules",
+        "Description": description,
         "Resources": resources,
     }
 
     normalize_descriptions(template)
     return template
-
-    normalize_descriptions(template)
-    return template
-
 
 def build_sidecar_rows(
     rule_names: List[str],
