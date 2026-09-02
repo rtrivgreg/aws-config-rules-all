@@ -57,8 +57,11 @@ def _dict_representer(dumper: yaml.Dumper, data: dict) -> yaml.nodes.MappingNode
     return dumper.represent_dict(data)
 
 
-def _str_representer(dumper: yaml.Dumper, data: str) -> yaml.nodes.ScalarNode:
-    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+#def _str_representer(dumper: yaml.Dumper, data: str) -> yaml.nodes.ScalarNode:
+#    return dumper.represent_scalar("tag:yaml.org,2002:str", data)
+
+def _str_representer(dumper, data: str):
+    return dumper.represent_scalar("tag:yaml.org,2002:str", data, style='"')  
 
 
 def _increase_indent(self, flow=False, indentless=False):
