@@ -51,7 +51,7 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: conformance-pack-conformance-pack-test-${{ steps.stamp.outputs.tag }}
+          name: database-conformance-pack-test-${{ steps.stamp.outputs.tag }}
           path: |
             generated/database-part*.yml
             generated/database-part*.csv
