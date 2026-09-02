@@ -38,7 +38,7 @@ jobs:
             -r JSON/compute.json \
             -o generated/compute.yml \
             --table y62db-config-rule-catalog \
-            --region us-east-1
+            --region us-east-1 \
             --group 26y \
             --binding default 
 
