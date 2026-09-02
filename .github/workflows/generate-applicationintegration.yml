@@ -1,4 +1,4 @@
-name: Generate generate-applicationintegration Conformance Pack
+name: Generate applicationintegration Conformance Pack
 
 on:
   workflow_dispatch:
@@ -31,12 +31,12 @@ jobs:
           role-to-assume: arn:aws:iam::418295699841:role/GitHubDDBReadonlyAnalyst
           aws-region: us-east-1
 
-      - name: Generate generate-applicationintegration conformance pack
+      - name: Generate applicationintegration conformance pack
         run: |
           mkdir -p generated
           python3 python/cpgNG.py \
-            -r JSON/generate-applicationintegration.json \
-            -o generated/generate-applicationintegration.yml \
+            -r JSON/applicationintegration.json \
+            -o generated/applicationintegration.yml \
             --table y62db-config-rule-catalog \
             --region us-east-1
 
@@ -46,8 +46,8 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: generate-applicationintegration-conformance-pack
+          name: applicationintegration-conformance-pack
           path: |
-            generated/generate-applicationintegration-part*.yml
-            generated/generate-applicationintegration-part*.csv
+            generated/applicationintegration-part*.yml
+            generated/applicationintegration-part*.csv
           if-no-files-found: error
