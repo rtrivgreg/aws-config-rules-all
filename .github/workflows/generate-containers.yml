@@ -52,7 +52,7 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: containers${{ steps.stamp.outputs.tag }}-QC4
+          name: containers${{ steps.stamp.outputs.tag }}-QC1
           path: |
             generated/containers-part*.yml
             generated/containers-part*.csv
