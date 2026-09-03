@@ -50,10 +50,19 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           #name: storage${{ steps.stamp.outputs.tag }}-QCA
-          name: migrationtransfer${{ steps.stamp.outputs.tag }}-test
+          name: migrationtransfer${{ steps.stamp.outputs.tag }}-QC1
           path: |
-            generated/storage-part*.yml
-            generated/storage-part*.csv
+            generated/migrationtransfer-part*.yml
+            generated/migrationtransfer-part*.csv
+          if-no-files-found: error
+
+      - name: Upload test conformance-pack artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: database${{ steps.stamp.outputs.tag }}-test
+          path: |
+            generated/database-part*.yml
+            generated/database-part*.csv
           if-no-files-found: error
 
 
