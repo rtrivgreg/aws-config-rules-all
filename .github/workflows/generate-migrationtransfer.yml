@@ -59,7 +59,7 @@ jobs:
       - name: Upload test conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: database${{ steps.stamp.outputs.tag }}-test
+          name: migrationtransfer${{ steps.stamp.outputs.tag }}-test
           path: |
             generated/migrationtransfer-part*.yml
             generated/migrationtransfer-part*.csv
