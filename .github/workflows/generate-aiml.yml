@@ -45,11 +45,24 @@ jobs:
       - name: Show generated files
         run: ls -lah generated
 
+      - name: Set artifact stamp
+        id: stamp
+        run: echo "tag=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
+
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: aiml-conformance-pack
+          name: aiml${{ steps.stamp.outputs.tag }}-QC1
           path: |
             generated/aiml-part*.yml
             generated/aiml-part*.csv
           if-no-files-found: error
+
+      - name: Upload test conformance-pack artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: aiml${{ steps.stamp.outputs.tag }}-test
+          path: |
+            generated/aiml-part*.yml
+            generated/aiml-part*.csv
+          if-no-files-found: error    
