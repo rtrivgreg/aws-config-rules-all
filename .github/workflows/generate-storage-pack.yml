@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           #name: storage${{ steps.stamp.outputs.tag }}-QCA
-          name: storage${{ steps.stamp.outputs.tag }}-QC1
+          name: storage${{ steps.stamp.outputs.tag }}-QC4
           path: |
             generated/storage-part*.yml
             generated/storage-part*.csv
