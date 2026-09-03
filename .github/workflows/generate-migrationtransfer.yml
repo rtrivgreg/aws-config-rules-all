@@ -42,14 +42,21 @@ jobs:
             --group 26y \
             --binding default 
 
-      - name: Show generated files
-        run: ls -lah generated
+      - name: Set artifact stamp
+        id: stamp
+        run: echo "tag=$(date -u +%Y%m%d)" >> "$GITHUB_OUTPUT"
 
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: migrationtransfer-conformance-pack
+          #name: storage${{ steps.stamp.outputs.tag }}-QCA
+          name: migrationtransfer${{ steps.stamp.outputs.tag }}-test
           path: |
-            generated/migrationtransfer-part*.yml
-            generated/migrationtransfer-part*.csv
+            generated/storage-part*.yml
+            generated/storage-part*.csv
           if-no-files-found: error
+
+
+
+
+      
