@@ -42,7 +42,8 @@ python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules
 
 python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/migrationtransfer.json -o ~/output/migrationtransfer.yml
 
-python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/mlai.json -o ~/output/mlai.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/aiml.json -o ~/output/aiml.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/bs.json -o ~/output/bs.yml
 
 python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/securityidentitycompliance.json -o ~/output/securityidentitycompliance.yml
 
