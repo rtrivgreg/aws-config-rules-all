@@ -52,7 +52,7 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: compute${{ steps.stamp.outputs.tag }}-QC4
+          name: compute${{ steps.stamp.outputs.tag }}-QC1
           path: |
             generated/compute-part*.yml
             generated/compute-part*.csv
