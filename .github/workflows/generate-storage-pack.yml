@@ -53,6 +53,15 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           #name: storage${{ steps.stamp.outputs.tag }}-QCA
+          name: storage${{ steps.stamp.outputs.tag }}-QC1
+          path: |
+            generated/storage-part*.yml
+            generated/storage-part*.csv
+          if-no-files-found: error
+
+      - name: Upload test conformance-pack artifacts
+        uses: actions/upload-artifact@v4
+        with:
           name: storage${{ steps.stamp.outputs.tag }}-test
           path: |
             generated/storage-part*.yml
