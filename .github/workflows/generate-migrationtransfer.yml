@@ -61,8 +61,8 @@ jobs:
         with:
           name: database${{ steps.stamp.outputs.tag }}-test
           path: |
-            generated/database-part*.yml
-            generated/database-part*.csv
+            generated/migrationtransfer-part*.yml
+            generated/migrationtransfer-part*.csv
           if-no-files-found: error
 
 
