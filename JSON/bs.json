@@ -1,3 +1,4 @@
+[
 "bedrock-agentcore-memory-encryption-enabled",
 "bedrock-agentcore-memory-event-expiry-duration",
 "bedrock-data-source-encryption-enabled",
@@ -41,4 +42,5 @@
 "sagemaker-notebook-instance-kms-key-configured",
 "sagemaker-notebook-instance-platform-version",
 "sagemaker-notebook-instance-root-access-check",
-"sagemaker-notebook-no-direct-internet-access",
+"sagemaker-notebook-no-direct-internet-access"
+]
