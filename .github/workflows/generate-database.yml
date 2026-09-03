@@ -51,9 +51,16 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
+          name: database${{ steps.stamp.outputs.tag }}-QC4
+          path: |
+            generated/database-part*.yml
+            generated/database-part*.csv
+          if-no-files-found: error
+
+      - name: Upload generated conformance-pack artifacts
+        uses: actions/upload-artifact@v4
+        with:
           name: database${{ steps.stamp.outputs.tag }}-test
-          #name: database${{ steps.stamp.outputs.tag }}-QC4
-          #name: database${{ steps.stamp.outputs.tag }}-test
           path: |
             generated/database-part*.yml
             generated/database-part*.csv
