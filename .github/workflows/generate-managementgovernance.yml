@@ -52,7 +52,7 @@ jobs:
       - name: Upload generated conformance-pack artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: managementgovernance${{ steps.stamp.outputs.tag }}-QC1
+          name: managementgovernance${{ steps.stamp.outputs.tag }}-QC2
           path: |
             generated/managementgovernance-part*.yml
             generated/managementgovernance-part*.csv
