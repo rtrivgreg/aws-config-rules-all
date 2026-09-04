@@ -226,3 +226,65 @@ def test_cli_usage(upackNG, capsys):
     rc = upackNG.main([])
     assert rc == 1
     assert "Usage:" in capsys.readouterr().out
+
+
+EXPIRY_PACK = """\
+AWSTemplateFormatVersion: '2010-09-09'
+Description: fixture
+Resources:
+  BedrockAgentcoreMemoryEventExpiryDurationRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrock-agentcore-memory-event-expiry-duration
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCK_AGENTCORE_MEMORY_EVENT_EXPIRY_DURATION
+      InputParameters:
+        eventExpiryDuration: '30'
+"""
+
+
+def test_error_log_includes_create_and_update_cli(upackNG, tmp_path):
+    src = tmp_path / "expiry.yml"
+    src.write_text(EXPIRY_PACK, encoding="utf-8")
+
+    def fake_deploy(pack_name, template_path):
+        text = Path(template_path).read_text(encoding="utf-8")
+        if "BedrockAgentcoreMemoryEventExpiryDurationRule" in text:
+            return (
+                False,
+                "InvalidParameterValueException: Invalid parameter values for rule "
+                "bedrock-agentcore-memory-event-expiry-duration",
+            )
+        return True, "CREATE_COMPLETE"
+
+    result = upackNG.run_loop(
+        "expiry-test",
+        src,
+        artifacts_dir=tmp_path / "artifacts",
+        deploy_fn=fake_deploy,
+    )
+    errors = result.errors_path.read_text(encoding="utf-8")
+    assert "aws dynamodb put-item" in errors
+    assert "aws dynamodb update-item" in errors
+    assert "RULE#bedrock-agentcore-memory-event-expiry-duration" in errors
+    assert "GROUP#26y#BINDING#default" in errors
+    assert "y62db-config-rule-catalog" in errors
+    assert "eventExpiryDuration" in errors
+    assert "30" in errors
+    assert "suggested catalog repair (not executed)" in errors
+    assert [rec.config_rule_name for rec in result.stripped] == [
+        "bedrock-agentcore-memory-event-expiry-duration"
+    ]
+
+
+def test_infer_todo_param_when_unknown(upackNG, pack_yaml):
+    rule = pack_yaml.RuleRef(
+        logical_id="BedrockDataSourceEncryptionEnabledRule",
+        config_rule_name="bedrock-data-source-encryption-enabled",
+        source_identifier="BEDROCK_DATA_SOURCE_ENCRYPTION_ENABLED",
+    )
+    name, value, dtype = upackNG.infer_repair_parameter("something failed", rule)
+    assert name == "TODO_PARAM"
+    assert value == "TODO_VALUE"
+    assert dtype == "S"
