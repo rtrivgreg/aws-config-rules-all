@@ -85,12 +85,16 @@ WELL_KNOWN_REQUIRED_PARAMS = {
         "ec2-managedinstance-applications-blacklisted",
         "ec2-managedinstance-applications-required",
     ),
+    "inventorynames": ("ec2-managedinstance-inventory-blacklisted",),
     "platformtype": (
         "ec2-managedinstance-platform-check",
         "ec2-managedinstance-applications-blacklisted",
         "ec2-managedinstance-applications-required",
         "ec2-managedinstance-inventory-blacklisted",
     ),
+    "amiids": ("approved-amis-by-id",),
+    "amitags": ("approved-amis-by-tag",),
+    "instancetype": ("desired-instance-type",),
 }
 
 
@@ -230,6 +234,14 @@ def extract_required_parameter(error_text: str) -> Optional[str]:
     return parts[0] if parts else None
 
 
+def _param_stem(param: str) -> str:
+    stem = param.lower().replace("_", "").replace("-", "")
+    for suffix in ("names", "name", "types", "type", "ids", "id", "keys", "key"):
+        if stem.endswith(suffix) and len(stem) - len(suffix) >= 4:
+            return stem[: -len(suffix)]
+    return stem
+
+
 def _map_missing_required_parameter(
     param: str, rules: Sequence[RuleRef]
 ) -> Optional[RuleRef]:
@@ -257,6 +269,18 @@ def _map_missing_required_parameter(
                 ordered.append(rule)
         if ordered:
             return ordered[0]
+
+    stem = _param_stem(param.split(",")[0] if param else "")
+    if len(stem) >= 4:
+        stem_hits = []
+        for rule in rules:
+            compact = (
+                rule.config_rule_name + " " + rule.logical_id + " " + rule.source_identifier
+            ).replace("-", "").replace("_", "").lower()
+            if stem in compact:
+                stem_hits.append(rule)
+        if len(stem_hits) == 1:
+            return stem_hits[0]
 
     hits = []
     for rule in rules:
