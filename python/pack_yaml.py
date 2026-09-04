@@ -80,6 +80,7 @@ WELL_KNOWN_REQUIRED_PARAMS = {
         "eks-cluster-oldest-supported-version",
         "eks-nodegroup-supported-version-check",
     ),
+    "metricname,resourcetype": ("cloudwatch-alarm-resource-check",),
 }
 
 
@@ -206,11 +207,17 @@ def remove_rule_block(text: str, logical_id: str) -> str:
     return new_text
 
 
-def extract_required_parameter(error_text: str) -> Optional[str]:
+def extract_required_parameters(error_text: str) -> List[str]:
     match = REQUIRED_PARAM_RE.search(error_text or "")
     if not match:
-        return None
-    return (match.group("bracket") or match.group("bare") or "").strip() or None
+        return []
+    raw = (match.group("bracket") or match.group("bare") or "").strip()
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+def extract_required_parameter(error_text: str) -> Optional[str]:
+    parts = extract_required_parameters(error_text)
+    return parts[0] if parts else None
 
 
 def _map_missing_required_parameter(
@@ -218,6 +225,9 @@ def _map_missing_required_parameter(
 ) -> Optional[RuleRef]:
     param_l = param.lower()
     known = WELL_KNOWN_REQUIRED_PARAMS.get(param_l) or ()
+    if not known:
+        combo = ",".join(sorted(p.strip().lower() for p in param.split(",") if p.strip()))
+        known = WELL_KNOWN_REQUIRED_PARAMS.get(combo) or ()
     if isinstance(known, str):
         known = (known,)
     if known:
@@ -330,9 +340,12 @@ def map_error_to_rule(error_text: str, rules: Sequence[RuleRef]) -> MappingResul
             f"candidates: {', '.join(result.candidates)}"
         )
 
-    required = extract_required_parameter(error_text)
-    if required:
-        result.tokens = [required] + [t for t in result.tokens if t.lower() != required.lower()]
+    required_parts = extract_required_parameters(error_text)
+    if required_parts:
+        required = ",".join(required_parts)
+        result.tokens = required_parts + [
+            t for t in result.tokens if t.lower() not in {p.lower() for p in required_parts}
+        ]
         mapped = _map_missing_required_parameter(required, rules)
         if mapped is not None:
             result.rule = mapped
