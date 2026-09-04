@@ -65,6 +65,18 @@ COMMON_ERROR_TOKENS = frozenset(
 )
 
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z0-9_-]{2,}")
+REQUIRED_PARAM_RE = re.compile(
+    r"required parameter\s*\[(?P<bracket>[^\]]+)\]"
+    r"|required parameter\s+(?P<bare>[A-Za-z][A-Za-z0-9_-]*)",
+    re.IGNORECASE,
+)
+
+# Missing required params are absent from YAML InputParameters, so they cannot
+# be matched as keys already on the rule. Map well-known names instead.
+WELL_KNOWN_REQUIRED_PARAMS = {
+    "secretkeys": "ecs-no-environment-secrets",
+    "oldestversionsupported": "eks-nodegroup-supported-version-check",
+}
 
 
 @dataclass(frozen=True)
@@ -74,6 +86,7 @@ class RuleRef:
     source_identifier: str = ""
     parameter_keys: Tuple[str, ...] = ()
     parameter_values: Tuple[Tuple[str, str], ...] = ()
+    description: str = ""
 
     def search_fields(self) -> Sequence[str]:
         fields = [self.logical_id, self.config_rule_name, self.source_identifier]
@@ -140,6 +153,7 @@ def index_rules(text: str) -> List[RuleRef]:
                 source_identifier=str(source.get("SourceIdentifier") or ""),
                 parameter_keys=param_keys,
                 parameter_values=param_values,
+                description=str(props.get("Description") or ""),
             )
         )
     return rules
@@ -186,6 +200,49 @@ def remove_rule_block(text: str, logical_id: str) -> str:
     new_text = text[:start] + text[end:]
     new_text = re.sub(r"\n{3,}", "\n\n", new_text)
     return new_text
+
+
+def extract_required_parameter(error_text: str) -> Optional[str]:
+    match = REQUIRED_PARAM_RE.search(error_text or "")
+    if not match:
+        return None
+    return (match.group("bracket") or match.group("bare") or "").strip() or None
+
+
+def _map_missing_required_parameter(
+    param: str, rules: Sequence[RuleRef]
+) -> Optional[RuleRef]:
+    param_l = param.lower()
+    known = WELL_KNOWN_REQUIRED_PARAMS.get(param_l)
+    if known:
+        hits = [r for r in rules if r.config_rule_name.lower() == known]
+        if len(hits) == 1:
+            return hits[0]
+        hits = [r for r in rules if known.replace("-", "") in r.logical_id.lower()]
+        if len(hits) == 1:
+            return hits[0]
+
+    hits = []
+    for rule in rules:
+        blob = " ".join(
+            [
+                rule.logical_id,
+                rule.config_rule_name,
+                rule.source_identifier,
+                rule.description,
+                " ".join(rule.parameter_keys),
+            ]
+        ).lower()
+        if param_l in blob.replace("-", "").replace("_", "") or param_l in blob:
+            hits.append(rule)
+            continue
+        compact_name = rule.config_rule_name.replace("-", "").replace("_", "").lower()
+        compact_param = param_l.replace("_", "")
+        if compact_param and compact_param in compact_name:
+            hits.append(rule)
+    if len(hits) == 1:
+        return hits[0]
+    return None
 
 
 def extract_error_tokens(error_text: str) -> List[str]:
@@ -256,6 +313,16 @@ def map_error_to_rule(error_text: str, rules: Sequence[RuleRef]) -> MappingResul
             "Ambiguous parameter-key match for error; "
             f"candidates: {', '.join(result.candidates)}"
         )
+
+    required = extract_required_parameter(error_text)
+    if required:
+        result.tokens = [required] + [t for t in result.tokens if t.lower() != required.lower()]
+        mapped = _map_missing_required_parameter(required, rules)
+        if mapped is not None:
+            result.rule = mapped
+            result.matched_on = "missing_required_parameter"
+            result.candidates = [mapped.logical_id]
+            return result
 
     substring_hits: List[Tuple[RuleRef, str]] = []
     for token in tokens:
