@@ -18,6 +18,29 @@
 `python/emitter.py` generates an AWS Config Conformance Pack YAML truth manifest from NIAID Terraform managed-rule metadata. It parses rule definitions from `managed_rules_locals.tf` and parameter schemas and defaults from `managed_rules_variables.tf`, then converts them into `AWS::Config::ConfigRule` resources containing descriptions, resource scopes, AWS source identifiers, and string-formatted input parameters. It distinguishes required parameters from optional metadata, enforces AWS Config’s 256-character rule-description limit, validates referenced variables and defaults, derives CloudFormation logical IDs, and writes the completed YAML using a supplied format file and template description. Optional command-line controls support rule-count limiting and diagnostic output.
 
 --
+securityidentity
+aiml
+analytics
+compute
+
+
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/aiml.json -o ~/repos/aws-config-rules-all/tests/artifacts/aiml.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/container.json -o ~/repos/aws-config-rules-all/tests/artifacts/container.yml
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/compute.json -o ~/repos/aws-config-rules-all/tests/artifacts/compute.yml
+python3 python/upackNG.py A1P2 tests/aiml-part01.yml
+python3 python/upackNG.py A1P2 tests/container-part01.yml
+
+Here is a list of AWS config rules that are not ingesting properly because they have missing default parameters.
+Generate cli command for me the admin to update the Dynamodb database and confirm with a read operation. 
+cloudwatch-alarm-resource-check missing_required_parameter
+
+eks-cluster-oldest-supported-version
+
+eks-nodegroup-supported-version-check
+eks-cluster-oldest-supported-version
+eks-cluster-supported-version
+ecs-no-environment-secrets
+
 
 # CPG aws-config-rules-all  
 NG (DynamoDB)
