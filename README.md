@@ -28,6 +28,9 @@ source /home/ubuntu/repos/Y62DB/.venv/bin/activate
 source /Users/sunyanggregoire/code/.venv/bin/activate  
 source /home/ubuntu/repos/Y62DB/.venv/bin/activate
 
+
+python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/aiml.json -o ~/output/aiml.yml
+
 python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/applicationintegration.json -o ~/output/applicationintegration.yml
 
 python3 ~/repos/aws-config-rules-all/python/cpgNG.py -r ~/repos/aws-config-rules-all/JSON/analytics.json -o ~/output/analytics.yml
