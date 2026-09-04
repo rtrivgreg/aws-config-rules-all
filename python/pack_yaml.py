@@ -99,6 +99,8 @@ WELL_KNOWN_REQUIRED_PARAMS = {
         "lambda-function-application-log-level-check",
         "lambda-function-system-log-level-check",
     ),
+    "servicenames": ("vpc-endpoint-enabled",),
+    "servicename": ("service-vpc-endpoint-enabled",),
 }
 
 
@@ -283,7 +285,7 @@ def _map_missing_required_parameter(
             ).replace("-", "").replace("_", "").lower()
             if stem in compact:
                 stem_hits.append(rule)
-        if stem_hits:
+        if len(stem_hits) == 1:
             return stem_hits[0]
 
     hits = []
