@@ -85,6 +85,12 @@ WELL_KNOWN_REQUIRED_PARAMS = {
         "ec2-managedinstance-applications-blacklisted",
         "ec2-managedinstance-applications-required",
     ),
+    "platformtype": (
+        "ec2-managedinstance-platform-check",
+        "ec2-managedinstance-applications-blacklisted",
+        "ec2-managedinstance-applications-required",
+        "ec2-managedinstance-inventory-blacklisted",
+    ),
 }
 
 
