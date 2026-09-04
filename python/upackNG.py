@@ -40,6 +40,10 @@ def _client_error_type():
 
 REPO_ROOT = PYTHON_DIR.parent
 DEFAULT_ARTIFACTS_DIR = REPO_ROOT / "tests" / "artifacts"
+DEFAULT_TABLE = "y62db-config-rule-catalog"
+DEFAULT_REGION = "us-east-1"
+DEFAULT_GROUP = "26y"
+DEFAULT_BINDING = "default"
 
 DeployFn = Callable[[str, Path], Tuple[bool, str]]
 
@@ -152,6 +156,94 @@ def deploy_with_upack(pack_name: str, template_path: Path) -> Tuple[bool, str]:
     return False, f"Unexpected conformance pack state: {state} {reason}".strip()
 
 
+def _is_numeric(value: str) -> bool:
+    try:
+        float(value)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def _duration_like(name: str) -> bool:
+    lowered = (name or "").lower()
+    return any(token in lowered for token in ("duration", "expiry", "expire", "days", "age"))
+
+
+def infer_repair_parameter(error_text: str, rule: pack_yaml.RuleRef) -> Tuple[str, str, str]:
+    """Return (parameter_name, create_value, dynamodb_type)."""
+    values = dict(rule.parameter_values)
+    tokens = list(pack_yaml.extract_error_tokens(error_text))
+    name = None
+    for token in tokens:
+        for key in rule.parameter_keys:
+            if token.lower() == key.lower():
+                name = key
+                break
+        if name:
+            break
+    if name is None and len(rule.parameter_keys) == 1:
+        name = rule.parameter_keys[0]
+    if name is None:
+        return "TODO_PARAM", "TODO_VALUE", "S"
+
+    raw = values.get(name, "")
+    if raw == "" and _duration_like(name):
+        raw = "30"
+    if raw == "":
+        raw = "TODO_VALUE"
+    dtype = "N" if _is_numeric(raw) or _duration_like(name) else "S"
+    if raw == "TODO_VALUE":
+        dtype = "S"
+    return name, raw, dtype
+
+
+def update_sample_value(param_name: str, create_value: str, dtype: str) -> str:
+    if dtype == "N" and _duration_like(param_name):
+        return "90"
+    return create_value
+
+
+def render_catalog_cli(
+    config_rule_name: str,
+    param_name: str,
+    create_value: str,
+    dtype: str,
+    *,
+    table: str = DEFAULT_TABLE,
+    region: str = DEFAULT_REGION,
+    group: str = DEFAULT_GROUP,
+    binding: str = DEFAULT_BINDING,
+) -> str:
+    rule_id = config_rule_name or "TODO_RULE"
+    pk = f"RULE#{rule_id}"
+    sk = f"GROUP#{group}#BINDING#{binding}"
+    gsi1sk = f"RULE#{rule_id}#BINDING#{binding}"
+    update_value = update_sample_value(param_name, create_value, dtype)
+    placeholder_note = ""
+    if param_name == "TODO_PARAM":
+        placeholder_note = (
+            "# parameter could not be inferred from the error or YAML; edit TODO_PARAM\n"
+        )
+    create = f'''# CREATE
+NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+aws dynamodb put-item \\
+  --table-name {table} \\
+  --region {region} \\
+  --condition-expression "attribute_not_exists(pk) AND attribute_not_exists(sk)" \\
+  --item "{{\n    \"pk\": {{\"S\": \"{pk}\"}},\n    \"sk\": {{\"S\": \"{sk}\"}},\n    \"gsi1pk\": {{\"S\": \"GROUP#{group}\"}},\n    \"gsi1sk\": {{\"S\": \"{gsi1sk}\"}},\n    \"payload\": {{\"M\": {{\n      \"version\": {{\"N\": \"1\"}},\n      \"status\": {{\"S\": \"ACTIVE\"}},\n      \"{param_name}\": {{\"{dtype}\": \"{create_value}\"}}\n    }}}},\n    \"created_at\": {{\"S\": \"$NOW\"}},\n    \"updated_at\": {{\"S\": \"$NOW\"}}\n  }}"'''
+    update = f'''# UPDATE
+NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+aws dynamodb update-item \\
+  --table-name {table} \\
+  --region {region} \\
+  --key '{{\n    "pk": {{"S": "{pk}"}},\n    "sk": {{"S": "{sk}"}}\n  }}' \\
+  --update-expression "SET payload.{param_name} = :d, payload.version = :ver, updated_at = :now" \\
+  --condition-expression "attribute_exists(pk) AND attribute_exists(sk)" \\
+  --expression-attribute-values '{{\n    ":d": {{"{dtype}": "{update_value}"}},\n    ":ver": {{"N": "2"}},\n    ":now": {{"S": "'"$NOW"'"}}\n  }}' \\
+  --return-values ALL_NEW'''
+    return placeholder_note + create + "\n\n" + update
+
+
 def artifact_paths(template_path: Path, artifacts_dir: Path) -> Tuple[Path, Path, Path]:
     stem = template_path.stem
     artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -221,6 +313,17 @@ def run_loop(
 
         rule = mapping.rule
         assert rule is not None
+        param_name, create_value, dtype = infer_repair_parameter(error_text, rule)
+        cli = render_catalog_cli(rule.config_rule_name, param_name, create_value, dtype)
+        _append(
+            errors_path,
+            (
+                f"\n# mapped: {rule.logical_id}  {rule.config_rule_name}  "
+                f"matched_on={mapping.matched_on}\n"
+                "# suggested catalog repair (not executed)\n"
+                f"{cli}\n"
+            ),
+        )
         if rule.logical_id in seen:
             raise UnmappableError(
                 f"Mapped rule '{rule.logical_id}' was already stripped; refusing to retry"
@@ -242,7 +345,7 @@ def run_loop(
             stripped_path,
             (
                 f"{iteration}\t{rule.logical_id}\t{rule.config_rule_name}\t"
-                f"{mapping.matched_on}\t{error_text.splitlines()[0]}\n"
+                f"{mapping.matched_on}\t{param_name}\t{error_text.splitlines()[0]}\n"
             ),
         )
         print(

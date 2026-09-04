@@ -73,6 +73,7 @@ class RuleRef:
     config_rule_name: str = ""
     source_identifier: str = ""
     parameter_keys: Tuple[str, ...] = ()
+    parameter_values: Tuple[Tuple[str, str], ...] = ()
 
     def search_fields(self) -> Sequence[str]:
         fields = [self.logical_id, self.config_rule_name, self.source_identifier]
@@ -124,13 +125,21 @@ def index_rules(text: str) -> List[RuleRef]:
         props = body.get("Properties") or {}
         source = props.get("Source") or {}
         params = props.get("InputParameters") or {}
-        param_keys = tuple(params.keys()) if isinstance(params, dict) else ()
+        if isinstance(params, dict):
+            param_keys = tuple(str(k) for k in params.keys())
+            param_values = tuple(
+                (str(k), "" if v is None else str(v)) for k, v in params.items()
+            )
+        else:
+            param_keys = ()
+            param_values = ()
         rules.append(
             RuleRef(
                 logical_id=str(logical_id),
                 config_rule_name=str(props.get("ConfigRuleName") or ""),
                 source_identifier=str(source.get("SourceIdentifier") or ""),
                 parameter_keys=param_keys,
+                parameter_values=param_values,
             )
         )
     return rules
