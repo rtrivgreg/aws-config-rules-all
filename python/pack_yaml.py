@@ -95,6 +95,10 @@ WELL_KNOWN_REQUIRED_PARAMS = {
     "amiids": ("approved-amis-by-id",),
     "amitags": ("approved-amis-by-tag",),
     "instancetype": ("desired-instance-type",),
+    "loglevel": (
+        "lambda-function-application-log-level-check",
+        "lambda-function-system-log-level-check",
+    ),
 }
 
 
@@ -279,7 +283,7 @@ def _map_missing_required_parameter(
             ).replace("-", "").replace("_", "").lower()
             if stem in compact:
                 stem_hits.append(rule)
-        if len(stem_hits) == 1:
+        if stem_hits:
             return stem_hits[0]
 
     hits = []
@@ -300,7 +304,7 @@ def _map_missing_required_parameter(
         compact_param = param_l.replace("_", "")
         if compact_param and compact_param in compact_name:
             hits.append(rule)
-    if len(hits) == 1:
+    if hits:
         return hits[0]
     return None
 
@@ -387,9 +391,12 @@ def map_error_to_rule(error_text: str, rules: Sequence[RuleRef]) -> MappingResul
             result.candidates = [mapped.logical_id]
             return result
 
+    required_l = {p.lower() for p in extract_required_parameters(error_text)}
     substring_hits: List[Tuple[RuleRef, str]] = []
     for token in tokens:
         if len(token) < 8:
+            continue
+        if token.lower() in required_l:
             continue
         token_l = token.lower()
         for rule in rules:
