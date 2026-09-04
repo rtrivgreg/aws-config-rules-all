@@ -81,6 +81,10 @@ WELL_KNOWN_REQUIRED_PARAMS = {
         "eks-nodegroup-supported-version-check",
     ),
     "metricname,resourcetype": ("cloudwatch-alarm-resource-check",),
+    "applicationnames": (
+        "ec2-managedinstance-applications-blacklisted",
+        "ec2-managedinstance-applications-required",
+    ),
 }
 
 
