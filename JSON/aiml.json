@@ -1,5 +1,5 @@
 [
-"alb-waf-enabled-wafv2",
+"alb-waf-enabled",
 "api-gw-associated-with-waf",
 "api-gw-cache-enabled-and-encrypted",
 "api-gw-endpoint-type-check",
