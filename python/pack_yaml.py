@@ -71,11 +71,15 @@ REQUIRED_PARAM_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Missing required params are absent from YAML InputParameters, so they cannot
-# be matched as keys already on the rule. Map well-known names instead.
+# One AWS error can apply to several remaining rules that share a required
+# parameter. Map to every known owner and strip one remaining rule per loop.
 WELL_KNOWN_REQUIRED_PARAMS = {
-    "secretkeys": "ecs-no-environment-secrets",
-    "oldestversionsupported": "eks-nodegroup-supported-version-check",
+    "secretkeys": ("ecs-no-environment-secrets",),
+    "oldestversionsupported": (
+        "eks-cluster-supported-version",
+        "eks-cluster-oldest-supported-version",
+        "eks-nodegroup-supported-version-check",
+    ),
 }
 
 
@@ -213,14 +217,26 @@ def _map_missing_required_parameter(
     param: str, rules: Sequence[RuleRef]
 ) -> Optional[RuleRef]:
     param_l = param.lower()
-    known = WELL_KNOWN_REQUIRED_PARAMS.get(param_l)
+    known = WELL_KNOWN_REQUIRED_PARAMS.get(param_l) or ()
+    if isinstance(known, str):
+        known = (known,)
     if known:
-        hits = [r for r in rules if r.config_rule_name.lower() == known]
-        if len(hits) == 1:
-            return hits[0]
-        hits = [r for r in rules if known.replace("-", "") in r.logical_id.lower()]
-        if len(hits) == 1:
-            return hits[0]
+        remaining = []
+        for name in known:
+            remaining.extend(
+                r
+                for r in rules
+                if r.config_rule_name.lower() == name
+                or name.replace("-", "") in r.logical_id.lower()
+            )
+        seen_ids = set()
+        ordered = []
+        for rule in rules:
+            if rule in remaining and rule.logical_id not in seen_ids:
+                seen_ids.add(rule.logical_id)
+                ordered.append(rule)
+        if ordered:
+            return ordered[0]
 
     hits = []
     for rule in rules:
