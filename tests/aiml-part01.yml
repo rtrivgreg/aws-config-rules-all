@@ -1,0 +1,358 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Conformance Pack generated from curated list of AWS Config Managed Rules (Optional parameters specified in aiml-part01.csv)
+Resources:
+  AlbWafEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: alb-waf-enabled
+      Description: "Checks if Web Application Firewall (WAF) is enabled on Application Load Balancers (ALBs). This rule is NON_COMPLIANT if key: waf.enabled is set to false."
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ElasticLoadBalancingV2::LoadBalancer
+      Source:
+        Owner: AWS
+        SourceIdentifier: ALB_WAF_ENABLED
+      InputParameters: {}
+  ApiGwAssociatedWithWafRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-associated-with-waf
+      Description: Checks if an Amazon API Gateway API stage is using an AWS WAF web access control list (web ACL). The rule is NON_COMPLIANT if an AWS WAF Web ACL is not used or if a used AWS Web ACL does not match what is listed in the rule parameter.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::Stage
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_ASSOCIATED_WITH_WAF
+      InputParameters: {}
+  ApiGwCacheEnabledAndEncryptedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-cache-enabled-and-encrypted
+      Description: Checks if all methods in Amazon API Gateway stages have cache enabled and cache encrypted. The rule is NON_COMPLIANT if any method in an Amazon API Gateway stage is not configured to cache or the cache is not encrypted.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::Stage
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_CACHE_ENABLED_AND_ENCRYPTED
+      InputParameters: {}
+  ApiGwEndpointTypeCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-endpoint-type-check
+      Description: Checks if Amazon API Gateway APIs are of the type specified in the rule parameter endpointConfigurationType. The rule returns NON_COMPLIANT if the REST API does not match the endpoint type configured in the rule parameter.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::RestApi
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_ENDPOINT_TYPE_CHECK
+      InputParameters:
+        endpointConfigurationTypes: PRIVATE
+  ApiGwExecutionLoggingEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-execution-logging-enabled
+      Description: "Checks if all methods in Amazon API Gateway stages have logging enabled. The rule is NON_COMPLIANT if logging is not enabled, or if loggingLevel is neither ERROR nor INFO."
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::Stage
+          - AWS::ApiGatewayV2::Stage
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_EXECUTION_LOGGING_ENABLED
+      InputParameters:
+        loggingLevel: "ERROR,INFO"
+  ApiGwRestApiTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-rest-api-tagged
+      Description: "Checks if AWS ApiGateway REST API resources resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::RestApi
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_REST_API_TAGGED
+      InputParameters: {}
+  ApiGwSslEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-ssl-enabled
+      Description: Checks if a REST API stage uses an SSL certificate. The rule is NON_COMPLIANT if the REST API stage does not have an associated SSL certificate.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::Stage
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_SSL_ENABLED
+      InputParameters: {}
+  ApiGwStageTaggedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-stage-tagged
+      Description: "Checks if AWS ApiGateway stage resources resources have tags. Optionally, you can specify tag keys. The rule is NON_COMPLIANT if there are no tags or if the specified tag keys are not present. The rule does not check for tags starting with aws: ."
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::Stage
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_STAGE_TAGGED
+      InputParameters: {}
+  ApiGwXrayEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gw-xray-enabled
+      Description: Checks if AWS X-Ray tracing is enabled on Amazon API Gateway REST APIs. The rule is COMPLIANT if X-Ray tracing is enabled and NON_COMPLIANT otherwise.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGateway::Stage
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GW_XRAY_ENABLED
+      InputParameters: {}
+  ApiGwv2AccessLogsEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gwv2-access-logs-enabled
+      Description: Checks if Amazon API Gateway V2 stages have access logging enabled. The rule is NON_COMPLIANT if accessLogSettings is not present in Stage configuration.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGatewayV2::Stage
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GWV2_ACCESS_LOGS_ENABLED
+      InputParameters: {}
+  ApiGwv2AuthorizationTypeConfiguredRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: api-gwv2-authorization-type-configured
+      Description: Checks if Amazon API Gatewayv2 API routes have an authorization type set. This rule is NON_COMPLIANT if the authorization type is NONE.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::ApiGatewayV2::Route
+      Source:
+        Owner: AWS
+        SourceIdentifier: API_GWV2_AUTHORIZATION_TYPE_CONFIGURED
+      InputParameters: {}
+  AppsyncAssociatedWithWafRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: appsync-associated-with-waf
+      Description: Checks if AWS AppSync APIs are associated with AWS WAFv2 web access control lists (ACLs). The rule is NON_COMPLIANT for an AWS AppSync API if it is not associated with a web ACL.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::AppSync::GraphQLApi
+      Source:
+        Owner: AWS
+        SourceIdentifier: APPSYNC_ASSOCIATED_WITH_WAF
+      InputParameters: {}
+  BedrockAgentcoreMemoryEncryptionEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrock-agentcore-memory-encryption-enabled
+      Description: Checks whether Amazon Bedrock AgentCore Memory uses a customer-managed KMS key for encryption. The rule is NON_COMPLIANT if AgentCore Memory does not have EncryptionKeyArn configured.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::BedrockAgentCore::Memory
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCK_AGENTCORE_MEMORY_ENCRYPTION_ENABLED
+      InputParameters: {}
+  BedrockAgentcoreMemoryEventExpiryDurationRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrock-agentcore-memory-event-expiry-duration
+      Description: Checks whether Amazon Bedrock AgentCore Memory event expiry duration meets the specified duration. The rule is NON_COMPLIANT if EventExpiryDuration is missing or greater than the configured maximum.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::BedrockAgentCore::Memory
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCK_AGENTCORE_MEMORY_EVENT_EXPIRY_DURATION
+      InputParameters:
+        eventExpiryDuration: '30'
+  BedrockDataSourceEncryptionEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrock-data-source-encryption-enabled
+      Description: Checks whether Amazon Bedrock data sources have encryption at rest enabled using a customer managed KMS key.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Bedrock::DataSource
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCK_DATA_SOURCE_ENCRYPTION_ENABLED
+      InputParameters: {}
+  BedrockagentcoreBrowsercustomNetworkModeNotPublicRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrockagentcore-browsercustom-network-mode-not-public
+      Description: Checks whether Amazon Bedrock Agents custom browser tools are not configured with public network mode.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Bedrock::Agent
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCKAGENTCORE_BROWSERCUSTOM_NETWORK_MODE_NOT_PUBLIC
+      InputParameters: {}
+  BedrockagentcoreBrowsercustomRecordingEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrockagentcore-browsercustom-recording-enabled
+      Description: Checks whether Amazon Bedrock Agents custom browser tools have session recording enabled.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Bedrock::Agent
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCKAGENTCORE_BROWSERCUSTOM_RECORDING_ENABLED
+      InputParameters: {}
+  BedrockagentcoreCodeinterpreterNetworkmodeCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrockagentcore-codeinterpreter-networkmode-check
+      Description: Checks whether the Amazon Bedrock Agents code interpreter tool is not configured with public network access.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Bedrock::Agent
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCKAGENTCORE_CODEINTERPRETER_NETWORKMODE_CHECK
+      InputParameters: {}
+  BedrockagentcoreGatewayAuthorizerEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrockagentcore-gateway-authorizer-enabled
+      Description: Checks whether an authorizer is enabled on Amazon Bedrock Agents knowledge base gateways.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Bedrock::Agent
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCKAGENTCORE_GATEWAY_AUTHORIZER_ENABLED
+      InputParameters: {}
+  BedrockagentcoreGatewayEncryptionEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrockagentcore-gateway-encryption-enabled
+      Description: Checks if Amazon Aurora PostgreSQL global database clusters are running on a specified minimum supported engine version. The rule is NON_COMPLIANT if the database is running on an older version.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Bedrock::Agent
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCKAGENTCORE_GATEWAY_ENCRYPTION_ENABLED
+      InputParameters: {}
+  BedrockagentcoreRuntimePrivateNetworkRequiredRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: bedrockagentcore-runtime-private-network-required
+      Description: Checks whether Amazon Bedrock Agents runtime is configured to use only private network connectivity.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::Bedrock::Agent
+      Source:
+        Owner: AWS
+        SourceIdentifier: BEDROCKAGENTCORE_RUNTIME_PRIVATE_NETWORK_REQUIRED
+      InputParameters: {}
+  CloudtrailAllReadS3DataEventCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-all-read-s3-data-event-check
+      Description: Checks if an AWS CloudTrail multi-Region trail is enabled and logs all read S3 data events for your buckets. The rule is NON_COMPLIANT if no multi-Region trail logs all read S3 data event types for all current and future S3 buckets.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::::Account
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_ALL_READ_S3_DATA_EVENT_CHECK
+      InputParameters: {}
+  CloudtrailAllWriteS3DataEventCheckRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-all-write-s3-data-event-check
+      Description: Checks if an AWS CloudTrail multi-Region trail is enabled and logs all write S3 data events for your buckets. The rule is NON_COMPLIANT if no multi-Region trail logs all write S3 data event types for all current and future S3 buckets.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::::Account
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_ALL_WRITE_S3_DATA_EVENT_CHECK
+      InputParameters: {}
+  CloudtrailS3BucketAccessLoggingRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-s3-bucket-access-logging
+      Description: Checks if the S3 bucket configurations for your AWS CloudTrail logs have Amazon S3 server access logging enabled. The rule is NON_COMPLIANT if at least one S3 bucket for a CloudTrail trail does not have S3 server access logging enabled.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::CloudTrail::Trail
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_S3_BUCKET_ACCESS_LOGGING
+      InputParameters: {}
+  CloudtrailS3BucketPublicAccessProhibitedRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-s3-bucket-public-access-prohibited
+      Description: Checks if the S3 bucket configurations for your AWS CloudTrail logs block public access. The rule is NON_COMPLIANT if at least one S3 bucket for a CloudTrail trail is publicly accessible.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::CloudTrail::Trail
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_S3_BUCKET_PUBLIC_ACCESS_PROHIBITED
+      InputParameters: {}
+  CloudtrailS3DataeventsEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-s3-dataevents-enabled
+      Description: Checks if at least one AWS CloudTrail trail is logging Amazon Simple Storage Service (Amazon S3) data events for all S3 buckets. The rule is NON_COMPLIANT if there are trails or if no trails record S3 data events.
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_S3_DATAEVENTS_ENABLED
+      InputParameters: {}
+  CloudtrailSecurityTrailEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-security-trail-enabled
+      Description: 'Checks that there is at least one AWS CloudTrail trail defined with security best practices. This rule is COMPLIANT if there is at least one trail that meets all of the following:'
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_SECURITY_TRAIL_ENABLED
+      InputParameters: {}
+  CloudTrailLogFileValidationEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloud-trail-log-file-validation-enabled
+      Description: Checks if AWS CloudTrail creates a signed digest file with logs. AWS recommends that the file validation must be enabled on all trails. The rule is NON_COMPLIANT if the validation is not enabled.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::CloudTrail::Trail
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED
+      InputParameters: {}
+  CloudtrailEnabledRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-enabled
+      Description: "Checks if an AWS CloudTrail trail is enabled in your AWS account. The rule is NON_COMPLIANT if a trail is not enabled. Optionally, the rule checks a specific S3 bucket, Amazon Simple Notification Service (Amazon SNS) topic, and CloudWatch log group."
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUD_TRAIL_ENABLED
+      InputParameters: {}
+  CloudtrailEventDataStoreMultiRegionRule:
+    Type: AWS::Config::ConfigRule
+    Properties:
+      ConfigRuleName: cloudtrail-event-data-store-multi-region
+      Description: Checks if AWS CloudTrail event data stores have multi-region enabled when ingesting live events. The rule is NON_COMPLIANT if configuration.MultiRegionEnabled is false.
+      Scope:
+        ComplianceResourceTypes:
+          - AWS::CloudTrail::EventDataStore
+      Source:
+        Owner: AWS
+        SourceIdentifier: CLOUDTRAIL_EVENT_DATA_STORE_MULTI_REGION
+      InputParameters: {}
