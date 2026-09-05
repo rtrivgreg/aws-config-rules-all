@@ -1,0 +1,18 @@
+[
+  "s3-bucket-public-read-prohibited",
+  "alb-waf-enabled",
+  "access-keys-rotated",
+  "encrypted-volumes",
+  "api-gw-endpoint-type-check",
+  "desired-instance-type",
+  "vpc-endpoint-enabled",
+  "s3-lifecycle-policy-check",
+  "restricted-common-ports",
+  "iam-password-policy",
+  "eks-cluster-oldest-supported-version",
+  "eks-cluster-supported-version",
+  "ec2-managedinstance-applications-required",
+  "ec2-managedinstance-applications-blacklisted",
+  "bedrock-agentcore-memory-event-expiry-duration",
+  "cloudwatch-alarm-resource-check"
+]
