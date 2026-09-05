@@ -1,0 +1,34 @@
+**Y62 Config pipeline: bindingsNG / cpgNG / upackNG**  
+Team Tango — engineering briefing
+
+These three scripts are the production path from AWS managed-rule metadata to a deployed AWS Config conformance pack for organizational group `26y`. They share one DynamoDB catalog. They do not share write privileges. Confusing those write boundaries is the main operational risk.
+
+**Shared catalog** (`y62db-config-rule-catalog`, `us-east-1`)
+
+- `RULE_PROFILE` — NIAID baseline for one rule: official description and AWS `source_identifier`.
+- `PARAMETER_DEF` — each InputParameter: name, required flag, catalog default, type.
+- `RULE_BINDING` — group overlay only, for example `GROUP#26y#BINDING#default`. This is the production parameter set for 26y. It is not the NIAID baseline.
+
+**Ownership**
+
+`bindingsNG.py` is the catalog writer. Default mode writes only `RULE_BINDING` rows so a group can overlay values on the NIAID baseline. `--update` rebuilds `PROFILE#` and `PARAMDEF#` from the AWS managed-rule CloudFormation template. It never writes `GROUP#`. If a required parameter has no real catalog default and no existing binding value, persist is blocked (`BLOCKED_MISSING_REQUIRED`). It does not deploy Config.
+
+`cpgNG.py` is the pack emitter. It reads profile, paramdefs, and the 26y binding, then writes deployable pack YAML: required parameters plus optional parameters the binding actually set. Optional-parameter notes go on a sidecar CSV next to each pack part, not into the Config rule Description (AWS limit 256 characters). It does not write DynamoDB and does not call `PutConformancePack`.
+
+`upackNG.py` is the deploy loop. It puts the pack YAML to AWS Config. On failure it maps the error to one rule, strips that rule from a working copy, records a suggested catalog repair, and retries. It does not invent baseline PROFILE/PARAMDEF rows and does not silently patch 26y. Suggested DynamoDB CLI is printed, not executed. If the error cannot be mapped to one rule, the loop stops.
+
+**Production path for 26y**
+
+AWS CFN managed-rule template → `bindingsNG --update` (NIAID baseline only) → `bindingsNG` default mode (26y binding) → `cpgNG` (pack YAML + sidecar) → `upackNG` (deploy / strip / repair notes).
+
+`--update` must not be used to “refresh” 26y bindings. Those rows are production overlays. Baseline refresh and group overlay are separate steps on purpose.
+
+**What works now vs. what is extra**
+
+Operational today: default binding writes, `--update` baseline reconcile from CFN, pack emit from the catalog, deploy-and-strip. Known failure modes: CFN fetch miss (skip that rule, no persist), `BLOCKED_MISSING_REQUIRED`, unmappable deploy error, description overflow if inventory text is left on the profile.
+
+Not on the deploy path: `mba_csv.py`, a read-only catalog export for review. It does not write DynamoDB and does not replace `cpgNG` sidecars.
+
+**Risk line for Tango**
+
+Treat `PROFILE#` / `PARAMDEF#` as NIAID truth, `GROUP#26y` as the live overlay, pack YAML as a generated artifact, and `upackNG` strip lists as evidence that a rule was removed from a deploy—not as a catalog change.
