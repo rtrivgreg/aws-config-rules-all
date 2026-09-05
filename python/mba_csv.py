@@ -128,6 +128,95 @@ def build_mba_rows(
     return rows
 
 
+def scan_catalog(
+    table,
+    *,
+    group: str,
+    binding: str,
+) -> tuple:
+    """One table scan. Returns (profiles, paramdefs, bindings) keyed by rule_id."""
+    from botocore.exceptions import BotoCoreError, ClientError
+
+    profiles: Dict[str, Dict[str, Any]] = {}
+    paramdefs: Dict[str, List[Dict[str, Any]]] = {}
+    bindings: Dict[str, Dict[str, Any]] = {}
+    wanted_binding = f"GROUP#{group}#BINDING#{binding}"
+    kwargs: Dict[str, Any] = {}
+    pages = 0
+    scanned = 0
+    try:
+        while True:
+            pages += 1
+            resp = table.scan(**kwargs)
+            items = resp.get("Items") or []
+            scanned += len(items)
+            _activity(pages, pages, f"scan items={scanned} profiles={len(profiles)}", pages)
+            for item in items:
+                pk = str(item.get("pk") or "")
+                sk = str(item.get("sk") or "")
+                if not pk.startswith("RULE#"):
+                    continue
+                rule_id = pk.split("RULE#", 1)[1]
+                if not rule_id:
+                    continue
+                if sk.startswith("PROFILE#"):
+                    profiles[rule_id] = item
+                elif sk.startswith("PARAMDEF#"):
+                    paramdefs.setdefault(rule_id, []).append(item)
+                elif sk == wanted_binding:
+                    bindings[rule_id] = item
+            last = resp.get("LastEvaluatedKey")
+            if not last:
+                break
+            kwargs["ExclusiveStartKey"] = last
+    except (ClientError, BotoCoreError) as exc:
+        print(f"DynamoDB scan failed: {exc}", file=sys.stderr)
+        sys.exit(1)
+    sys.stderr.write("\n")
+    sys.stderr.flush()
+    ng.progress(
+        "scan",
+        pages=pages,
+        items=scanned,
+        profiles=len(profiles),
+        paramdefs=sum(len(v) for v in paramdefs.values()),
+        bindings=len(bindings),
+    )
+    return profiles, paramdefs, bindings
+
+
+def collect_all_profile_rows(
+    *,
+    profiles: Dict[str, Dict[str, Any]],
+    paramdefs: Dict[str, List[Dict[str, Any]]],
+    bindings: Dict[str, Dict[str, Any]],
+    group: str,
+    niaid_override: Optional[str],
+    limit: int = 0,
+) -> List[Dict[str, str]]:
+    ids = sorted(profiles)
+    if limit and limit > 0:
+        ids = ids[:limit]
+    rows: List[Dict[str, str]] = []
+    n = len(ids)
+    for i, rule_id in enumerate(ids, start=1):
+        _activity(i, n, rule_id, i)
+        rows.extend(
+            build_mba_rows(
+                rule_id=rule_id,
+                group=group,
+                profile=profiles.get(rule_id),
+                param_defs=paramdefs.get(rule_id) or [],
+                binding_item=bindings.get(rule_id),
+                niaid_override=niaid_override,
+            )
+        )
+    if ids:
+        sys.stderr.write("\n")
+        sys.stderr.flush()
+    return rows
+
+
 def collect_rows(
     table,
     rule_id: str,
@@ -215,29 +304,37 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "CONFIG_RULE_CATALOG_TABLE", ng.DEFAULT_TABLE
     )
     ddb = ng.get_table(table_name, args.region)
-    if source == "all-profiles":
-        ids = ng.list_all_profile_ids(ddb)
-    if args.limit and args.limit > 0:
-        ids = ids[: args.limit]
-    ng.progress("select", source=source, count=len(ids), file=source_label, mode="csv")
     started = time.perf_counter()
     rows: List[Dict[str, str]] = []
-    show_activity = source == "all-profiles" and bool(ids)
-    for i, rule_id in enumerate(ids, start=1):
-        if show_activity:
-            _activity(i, len(ids), rule_id, i)
-        rows.extend(
-            collect_rows(
-                ddb,
-                rule_id,
-                group=args.group,
-                binding=args.binding,
-                niaid_override=args.niaid_version,
-            )
+    if source == "all-profiles":
+        ng.progress("select", source=source, count="scan", file=source_label, mode="csv")
+        profiles, paramdefs, bindings = scan_catalog(
+            ddb, group=args.group, binding=args.binding
         )
-    if show_activity:
-        sys.stderr.write("\n")
-        sys.stderr.flush()
+        rows = collect_all_profile_rows(
+            profiles=profiles,
+            paramdefs=paramdefs,
+            bindings=bindings,
+            group=args.group,
+            niaid_override=args.niaid_version,
+            limit=args.limit,
+        )
+    else:
+        if args.limit and args.limit > 0:
+            ids = ids[: args.limit]
+        ng.progress(
+            "select", source=source, count=len(ids), file=source_label, mode="csv"
+        )
+        for rule_id in ids:
+            rows.extend(
+                collect_rows(
+                    ddb,
+                    rule_id,
+                    group=args.group,
+                    binding=args.binding,
+                    niaid_override=args.niaid_version,
+                )
+            )
     elapsed_s = time.perf_counter() - started
     write_mba_csv(Path(args.csv_path), rows, elapsed_s=elapsed_s)
     ng.progress(
