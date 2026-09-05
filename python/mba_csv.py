@@ -14,6 +14,8 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
@@ -155,14 +157,29 @@ def collect_rows(
     )
 
 
-def write_mba_csv(path: Path, rows: List[Dict[str, str]]) -> None:
+def write_mba_csv(
+    path: Path,
+    rows: List[Dict[str, str]],
+    *,
+    elapsed_s: float,
+) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     with path.open("w", encoding="utf-8", newline="") as handle:
+        title = csv.writer(handle)
+        title.writerow(["Tango Report", f"{elapsed_s:.1f} seconds", generated])
         writer = csv.DictWriter(handle, fieldnames=list(MBA_CSV_COLUMNS))
         writer.writeheader()
         for row in rows:
             writer.writerow({key: row.get(key, "") for key in MBA_CSV_COLUMNS})
-    ng.progress("csv", path=str(path), rows=len(rows))
+    ng.progress("csv", path=str(path), rows=len(rows), elapsed_s=f"{elapsed_s:.1f}")
+
+
+def _activity(i: int, n: int, rule_id: str, tick: int) -> None:
+    spin = "|/-\\"[tick % 4]
+    label = rule_id if len(rule_id) <= 48 else rule_id[:45] + "..."
+    sys.stderr.write(f"\r[mba_csv] {spin} {i}/{n} {label:<48}")
+    sys.stderr.flush()
 
 
 def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
@@ -203,8 +220,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if args.limit and args.limit > 0:
         ids = ids[: args.limit]
     ng.progress("select", source=source, count=len(ids), file=source_label, mode="csv")
+    started = time.perf_counter()
     rows: List[Dict[str, str]] = []
-    for rule_id in ids:
+    show_activity = source == "all-profiles" and bool(ids)
+    for i, rule_id in enumerate(ids, start=1):
+        if show_activity:
+            _activity(i, len(ids), rule_id, i)
         rows.extend(
             collect_rows(
                 ddb,
@@ -214,8 +235,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                 niaid_override=args.niaid_version,
             )
         )
-    write_mba_csv(Path(args.csv_path), rows)
-    ng.progress("summary", binding_writes=0, csv_rows=len(rows), dry_run=1)
+    if show_activity:
+        sys.stderr.write("\n")
+        sys.stderr.flush()
+    elapsed_s = time.perf_counter() - started
+    write_mba_csv(Path(args.csv_path), rows, elapsed_s=elapsed_s)
+    ng.progress(
+        "summary",
+        binding_writes=0,
+        csv_rows=len(rows),
+        elapsed_s=f"{elapsed_s:.1f}",
+        dry_run=1,
+    )
     return 0
 
 
